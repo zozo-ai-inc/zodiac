@@ -6,7 +6,7 @@ test("confirmation can continue with an export to Import or without an export to
 	await serveApp(page);
 	await seed(page, { chat: true, settings: { API_KEY: "test-gemini-key", pinnedChatIds: '["migration-chat"]' } });
 	await page.goto(oldOrigin);
-	const gate = page.getByRole("dialog", { name: "Zodiac is now Zozo" });
+	const gate = page.getByRole("dialog", { name: "Zodiac is now Zozo Chat" });
 	await expect(gate).toBeVisible();
 	await expect(page.locator("#onboarding-overlay")).toBeHidden();
 	await expect(page.locator("#btn-migration-continue")).toBeDisabled();

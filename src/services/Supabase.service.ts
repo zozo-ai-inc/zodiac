@@ -241,8 +241,7 @@ export async function getCurrentUser() {
 					{
 						label: "Contact Support",
 						onClick: () => {
-							//mailto zodiac@faetalize.dev
-							window.location.href = "mailto:zodiac@faetalize.dev";
+							window.location.href = "mailto:support@chat.zozo.sh";
 						}
 					}
 				]
