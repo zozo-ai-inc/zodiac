@@ -1,0 +1,225 @@
+:root {
+	color-scheme: light dark;
+	--policy-background: #faf9f6;
+	--policy-text: #20252c;
+	--policy-muted: #59616b;
+	--policy-link: #2055a0;
+	--policy-border: #d8dde2;
+	--policy-panel: #f0f3f6;
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		sans-serif;
+	font-size: 16px;
+	line-height: 1.7;
+	background: var(--policy-background);
+	color: var(--policy-text);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.policy {
+	max-width: 54rem;
+	margin: 0 auto;
+	padding: 2rem clamp(1.25rem, 5vw, 3rem) 3rem;
+	overflow-wrap: anywhere;
+}
+
+.policy-header,
+.policy-header nav,
+.policy-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem 1.5rem;
+}
+
+.policy-header {
+	justify-content: space-between;
+	padding-bottom: 1.5rem;
+	border-bottom: 1px solid var(--policy-border);
+	margin-bottom: 2.5rem;
+}
+
+.policy-brand {
+	color: var(--policy-text);
+	font-size: 1.125rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.policy-header nav,
+.policy-footer {
+	font-size: 0.875rem;
+}
+
+[aria-current="page"] {
+	color: var(--policy-text);
+	font-weight: 600;
+}
+
+h1,
+h2 {
+	line-height: 1.25;
+	text-wrap: balance;
+}
+
+h1 {
+	margin: 0 0 0.75rem;
+	font-size: clamp(2rem, 6vw, 2.75rem);
+	letter-spacing: -0.035em;
+}
+
+h2 {
+	margin: 2.5rem 0 1rem;
+	font-size: 1.375rem;
+	letter-spacing: -0.015em;
+	scroll-margin-top: 1.5rem;
+}
+
+p,
+ul,
+ol {
+	margin: 0 0 1.25rem;
+}
+
+ul,
+ol {
+	padding-left: 1.5rem;
+}
+
+li + li {
+	margin-top: 0.65rem;
+}
+
+a {
+	color: var(--policy-link);
+	text-underline-offset: 0.18em;
+}
+
+a:hover {
+	text-decoration-thickness: 2px;
+}
+
+a:focus-visible {
+	outline: 3px solid var(--policy-link);
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+.policy-date {
+	color: var(--policy-muted);
+	font-size: 0.875rem;
+	margin-bottom: 1.75rem;
+}
+
+.policy-summary,
+.policy-contents {
+	margin: 2rem 0;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--policy-border);
+	border-radius: 0.75rem;
+	background: var(--policy-panel);
+}
+
+.policy-summary p,
+.policy-contents h2 {
+	margin: 0 0 0.75rem;
+}
+
+.policy-summary ul,
+.policy-contents ol {
+	margin-bottom: 0;
+}
+
+.policy-contents h2 {
+	font-size: 1rem;
+}
+
+.policy-contents li + li {
+	margin-top: 0.3rem;
+}
+
+address {
+	font-style: normal;
+}
+
+.policy-footer {
+	justify-content: space-between;
+	border-top: 1px solid var(--policy-border);
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+}
+
+.skip-link {
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	transform: translateY(-200%);
+	padding: 0.5rem 1rem;
+	background: var(--policy-background);
+	z-index: 1;
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--policy-background: #15181c;
+		--policy-text: #e7e9ed;
+		--policy-muted: #aab2bc;
+		--policy-link: #9bc3ff;
+		--policy-border: #3c424a;
+		--policy-panel: #20252b;
+	}
+}
+
+@media print {
+	:root {
+		color-scheme: light;
+		background: white;
+		color: black;
+	}
+
+	.policy {
+		max-width: none;
+		padding: 0;
+		font-size: 11pt;
+	}
+
+	.policy-header,
+	.policy-contents,
+	.policy-footer,
+	.skip-link {
+		display: none;
+	}
+
+	h2 {
+		break-after: avoid;
+	}
+
+	p,
+	li {
+		orphans: 3;
+		widows: 3;
+	}
+
+	a {
+		color: inherit;
+	}
+
+	.policy-date {
+		color: inherit;
+	}
+
+	.policy-summary {
+		background: white;
+		border-color: #aaa;
+	}
+}
