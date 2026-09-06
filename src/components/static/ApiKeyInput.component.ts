@@ -89,7 +89,7 @@ function updateImagePremiumToggleCopy(tier: SubscriptionTier): void {
 	const isMax = tier === "max";
 	ensuredPreferPremiumImageTitle.textContent = isMax ? "Use Hosted Image Generation" : "Use Image Credits";
 	ensuredPreferPremiumImageSubtitle.textContent = isMax
-		? "Generate and edit images through Zodiac instead of your own API key."
+		? "Generate and edit images through Zozo Chat instead of your own API key."
 		: "Generate and edit images with your credits instead of your own API key.";
 }
 

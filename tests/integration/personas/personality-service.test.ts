@@ -385,7 +385,7 @@ describe("Personality.service persona CRUD", () => {
 
 		const allPersonas = await personalityService.getAll();
 		expect(allPersonas).toEqual([expect.objectContaining({ id: "persona-keep", name: "Keep Me" })]);
-		expect((await personalityService.getSelected())?.name).toBe("zodiac");
+		expect((await personalityService.getSelected())?.name).toBe("Zozo Chat");
 
 		expect(document.querySelector("#personality-persona-delete")).toBeNull();
 		expect(document.querySelector("#personality-persona-keep")).not.toBeNull();
@@ -456,7 +456,7 @@ describe("Personality.service persona CRUD", () => {
 		expect(allPersonas).toEqual([
 			expect.objectContaining({ id: "persona-synced-keep", name: "Keep Synced Persona" })
 		]);
-		expect((await personalityService.getSelected())?.name).toBe("zodiac");
+		expect((await personalityService.getSelected())?.name).toBe("Zozo Chat");
 
 		expect(document.querySelector("#personality-persona-synced-delete")).toBeNull();
 		expect(document.querySelector("#personality-persona-synced-keep")).not.toBeNull();
