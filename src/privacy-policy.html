@@ -3,400 +3,415 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Privacy Policy</title>
-		<link rel="stylesheet" href="./styles/main.css" />
-		<link rel="stylesheet" href="./styles/dark.css" />
-		<link rel="stylesheet" href="./styles/light.css" />
+		<meta name="description" content="How Zozo AI, Inc. handles personal information in Zozo Chat." />
+		<title>Privacy Policy | Zozo Chat</title>
+		<link rel="stylesheet" href="./styles/policy.css" />
 	</head>
-
 	<body class="policy">
-		<h1>Privacy Policy</h1>
-		<p>Last updated: August 12, 2025</p>
-		<p>
-			This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your
-			information when You use the Service and tells You about Your privacy rights and how the law protects You.
-		</p>
-		<p>
-			We use Your Personal data to provide and improve the Service. By using the Service, You agree to the
-			collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been
-			created with the help of the
-			<a href="https://www.termsfeed.com/privacy-policy-generator/" target="_blank">Privacy Policy Generator</a>.
-		</p>
-		<h2>Interpretation and Definitions</h2>
-		<h3>Interpretation</h3>
-		<p>
-			The words of which the initial letter is capitalized have meanings defined under the following conditions.
-			The following definitions shall have the same meaning regardless of whether they appear in singular or in
-			plural.
-		</p>
-		<h3>Definitions</h3>
-		<p>For the purposes of this Privacy Policy:</p>
-		<ul>
-			<li>
+		<a class="skip-link" href="#policy-content">Skip to privacy policy</a>
+		<header class="policy-header">
+			<a class="policy-brand" href="https://chat.zozo.sh/">Zozo Chat</a>
+			<nav aria-label="Legal pages">
+				<a href="terms-of-service.html">Terms of Service</a>
+				<a href="privacy-policy.html" aria-current="page">Privacy Policy</a>
+			</nav>
+		</header>
+		<main id="policy-content" tabindex="-1">
+			<h1>Privacy Policy</h1>
+			<p class="policy-date">Last updated: September 6, 2026</p>
+			<p>
+				<strong>Zozo AI, Inc.</strong>, a Delaware corporation ("Zozo," "we," "us," or "our"), operates Zozo
+				Chat, formerly known as Zodiac. We are responsible for the personal information we process to operate
+				the Service and act as its controller where that term applies.
+			</p>
+			<p>
+				This policy covers Zozo Chat at <a href="https://chat.zozo.sh/">chat.zozo.sh</a>, its legacy domain
+				during the transition, and the Zozo account services used with it. Other Zozo products may provide
+				additional notices describing their own features and data handling.
+			</p>
+			<div class="policy-summary" aria-label="Privacy overview">
+				<p><strong>The key distinctions:</strong></p>
+				<ul>
+					<li>Without Cloud Sync, your chat library is stored in your browser.</li>
+					<li>AI requests still send the content needed for a response to the services processing it.</li>
+					<li>
+						Cloud Sync encrypts supported content on your device; account and billing data are separate.
+					</li>
+					<li>Zozo does not use your chats or images to train models or sell your personal information.</li>
+					<li>We use Google Analytics for site-usage analytics, not targeted advertising.</li>
+				</ul>
+			</div>
+			<nav class="policy-contents" aria-label="Privacy contents">
+				<h2>Contents</h2>
+				<ol>
+					<li><a href="#information">Information we process</a></li>
+					<li><a href="#ai-processing">AI requests and provider processing</a></li>
+					<li><a href="#cloud-sync">Cloud Sync and encryption</a></li>
+					<li><a href="#takeout">Takeout and the domain transition</a></li>
+					<li><a href="#purposes">Purposes and legal bases</a></li>
+					<li><a href="#recipients">Who receives information</a></li>
+					<li><a href="#browser-storage">Browser storage and analytics</a></li>
+					<li><a href="#retention">Retention and deletion</a></li>
+					<li><a href="#international">International processing</a></li>
+					<li><a href="#rights">Your choices and rights</a></li>
+					<li><a href="#children">Children</a></li>
+					<li><a href="#changes">Changes to this policy</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ol>
+			</nav>
+
+			<section aria-labelledby="information">
+				<h2 id="information">1. Information we process</h2>
+				<ul>
+					<li>
+						<strong>Account and profile information:</strong> email address, account identifier,
+						authentication and security records, and profile information you provide, such as an avatar,
+						username, preferred name, or additional instructions. Profile information is stored separately
+						from the encrypted chat library. Public-facing profile fields, such as your username or avatar,
+						may be visible when you use community features.
+					</li>
+					<li>
+						<strong>Content and preferences:</strong> prompts, conversation context, personas, files,
+						images, generated results, selected models, LoRAs, and customizations used by the features you
+						choose. Where these are stored or transmitted depends on local storage, Cloud Sync, and the
+						particular request.
+					</li>
+					<li>
+						<strong>Billing and entitlements:</strong> Stripe customer, subscription, price, and transaction
+						identifiers; payment or subscription status; plan and renewal information; credit balances; and
+						usage allowances. Stripe processes payment details. We do not store full card numbers or card
+						security codes.
+					</li>
+					<li>
+						<strong>Operational information:</strong> IP address, browser and device information, request
+						times and identifiers, errors, security events, activity timestamps, model selections, token
+						counts, costs, fallback events, and storage usage. Some records are associated with your account
+						identifier or email address.
+					</li>
+					<li>
+						<strong>Communications and community activity:</strong> information you send us for support;
+						public content, comments, and reports you choose to submit; moderation records; and whether an
+						in-app announcement was shown, dismissed, or acted on.
+					</li>
+				</ul>
 				<p>
-					<strong>Account</strong> means a unique account created for You to access our Service or parts of
-					our Service.
+					We obtain information from you and your browser, from the features you use, and from service
+					providers such as Stripe for payment events. Information stored only on your device is not
+					automatically available to our support team.
 				</p>
-			</li>
-			<li>
+			</section>
+
+			<section aria-labelledby="ai-processing">
+				<h2 id="ai-processing">2. AI requests and provider processing</h2>
 				<p>
-					<strong>Affiliate</strong> means an entity that controls, is controlled by or is under common
-					control with a party, where &quot;control&quot; means ownership of 50% or more of the shares, equity
-					interest or other securities entitled to vote for election of directors or other managing authority.
+					When you send a message or request an image, relevant Input is transmitted to the services needed to
+					produce the result. This can include the current prompt, earlier conversation context, persona and
+					profile instructions, attached files, reference images, and model settings. Supporting requests for
+					titles, summaries, suggestions, search, or file processing may also use relevant content. A fallback
+					can use another model or provider.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Company</strong> (referred to as either &quot;the Company&quot;, &quot;We&quot;,
-					&quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to zodiac ai.
+					For Zozo-provided AI features, our backend processes the request and forwards it primarily to
+					OpenRouter or Runware and the model providers they use. OpenRouter requests can include a Zozo
+					account identifier for usage and abuse management. Image editing may temporarily store input images
+					on our infrastructure and provide a time-limited access link to the image provider.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any
-					other device by a website, containing the details of Your browsing history on that website among its
-					many uses.
+					When you choose a supported bring-your-own-key (BYOK) feature, requests can go directly from your
+					browser to the selected provider, such as OpenRouter or Google for Gemini. That provider receives
+					the request and connection information, including your IP address, and processes it under its terms
+					and account settings.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Device</strong> means any device that can access the Service such as a computer, a cellphone
-					or a digital tablet.
+					<strong>Zozo does not use your chats or images to train AI models.</strong> This statement describes
+					Zozo's own practices. The providers processing requests have their own retention, security, and
+					model-training policies, which can depend on the model and account settings. We do not promise that
+					every provider operates with zero retention or identical data-use rules. See
+					<a href="https://openrouter.ai/privacy">OpenRouter's Privacy Policy</a>,
+					<a href="https://openrouter.ai/docs/guides/privacy/provider-logging"
+						>OpenRouter's provider data policies</a
+					>, and <a href="https://runware.ai/privacy">Runware's Privacy Policy</a>.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Personal Data</strong> is any information that relates to an identified or identifiable
-					individual.
+					Private chat storage is not a public feed. However, content submitted for generation is available in
+					readable form to the systems processing that request. Operational logs can include diagnostic or
+					provider error details; this service does not make a blanket "nothing is ever logged" promise.
 				</p>
-			</li>
-			<li>
-				<p><strong>Service</strong> refers to the Website.</p>
-			</li>
-			<li>
+			</section>
+
+			<section aria-labelledby="cloud-sync">
+				<h2 id="cloud-sync">3. Cloud Sync and encryption</h2>
 				<p>
-					<strong>Service Provider</strong> means any natural or legal person who processes the data on behalf
-					of the Company. It refers to third-party companies or individuals employed by the Company to
-					facilitate the Service, to provide the Service on behalf of the Company, to perform services related
-					to the Service or to assist the Company in analyzing how the Service is used.
+					Cloud Sync is optional and requires an eligible plan. It encrypts supported chats, personas,
+					settings, and media on your device before uploading them. Your separate encryption password derives
+					the key used to unlock this content; the Cloud Sync service does not receive that password or store
+					the decryption key. We cannot recover the encryption password for you.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Usage Data</strong> refers to data collected automatically, either generated by the use of
-					the Service or from the Service infrastructure itself (for example, the duration of a page visit).
+					Some settings, including saved BYOK API keys, are included in encrypted settings sync. Locally saved
+					settings and keys remain accessible to the browser profile and are not necessarily encrypted on the
+					device. When Cloud Sync is enabled, chat and persona content is normally loaded into memory after
+					unlocking rather than kept as a full permanent local copy. Turning sync off offers separate choices
+					for retaining a local copy.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>Website</strong> refers to zodiac ai, accessible from
-					<a href="https://zodiac.faetalize.dev" rel="external nofollow noopener" target="_blank"
-						>https://zodiac.faetalize.dev</a
-					>
+					Encryption of synced content does not cover everything in your account. Account and profile fields,
+					subscriptions, operational logs, and sync metadata remain separately processed. Sync metadata can
+					include record and account identifiers, timestamps, deletion markers, encrypted file sizes, usage
+					totals, and encryption verification information. Uploading a profile picture or submitting an image
+					for editing is separate from encrypted Cloud Sync.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>You</strong> means the individual accessing or using the Service, or the company, or other
-					legal entity on behalf of which such individual is accessing or using the Service, as applicable.
+					Cloud encryption also does not prevent the AI processing described above: sending a synced message
+					for generation requires the app to decrypt the relevant content and submit it. Keep your device,
+					login, and encryption password secure.
 				</p>
-			</li>
-		</ul>
-		<h2>Collecting and Using Your Personal Data</h2>
-		<h3>Types of Data Collected</h3>
-		<h4>Personal Data</h4>
-		<p>
-			While using Our Service, We may ask You to provide Us with certain personally identifiable information that
-			can be used to contact or identify You. Personally identifiable information may include, but is not limited
-			to:
-		</p>
-		<ul>
-			<li>
-				<p>Email address</p>
-			</li>
-			<li>
-				<p>Usage Data</p>
-			</li>
-		</ul>
-		<h4>Usage Data</h4>
-		<p>Usage Data is collected automatically when using the Service.</p>
-		<p>
-			Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address),
-			browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the
-			time spent on those pages, unique device identifiers and other diagnostic data.
-		</p>
-		<p>
-			When You access the Service by or through a mobile device, We may collect certain information automatically,
-			including, but not limited to, the type of mobile device You use, Your mobile device unique ID, the IP
-			address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use,
-			unique device identifiers and other diagnostic data.
-		</p>
-		<p>
-			We may also collect information that Your browser sends whenever You visit our Service or when You access
-			the Service by or through a mobile device.
-		</p>
-		<h4>Tracking Technologies and Cookies</h4>
-		<p>
-			We use Cookies and similar tracking technologies to track the activity on Our Service and store certain
-			information. Tracking technologies used are beacons, tags, and scripts to collect and track information and
-			to improve and analyze Our Service. The technologies We use may include:
-		</p>
-		<ul>
-			<li>
-				<strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can
-				instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You
-				do not accept Cookies, You may not be able to use some parts of our Service. Unless you have adjusted
-				Your browser setting so that it will refuse Cookies, our Service may use Cookies.
-			</li>
-			<li>
-				<strong>Web Beacons.</strong> Certain sections of our Service and our emails may contain small
-				electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel
-				gifs) that permit the Company, for example, to count users who have visited those pages or opened an
-				email and for other related website statistics (for example, recording the popularity of a certain
-				section and verifying system and server integrity).
-			</li>
-		</ul>
-		<p>
-			Cookies can be &quot;Persistent&quot; or &quot;Session&quot; Cookies. Persistent Cookies remain on Your
-			personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You
-			close Your web browser. You can learn more about cookies on
-			<a href="https://www.termsfeed.com/blog/cookies/#What_Are_Cookies" target="_blank">TermsFeed website</a>
-			article.
-		</p>
-		<p>We use both Session and Persistent Cookies for the purposes set out below:</p>
-		<ul>
-			<li>
-				<p><strong>Necessary / Essential Cookies</strong></p>
-				<p>Type: Session Cookies</p>
-				<p>Administered by: Us</p>
+			</section>
+
+			<section aria-labelledby="takeout">
+				<h2 id="takeout">4. Takeout and the domain transition</h2>
 				<p>
-					Purpose: These Cookies are essential to provide You with services available through the Website and
-					to enable You to use some of its features. They help to authenticate users and prevent fraudulent
-					use of user accounts. Without these Cookies, the services that You have asked for cannot be
-					provided, and We only use these Cookies to provide You with those services.
+					<strong>Settings → Data Management</strong> lets you export selected data categories into a unified
+					takeout file and import supported takeout or legacy chat/persona files. Exports are assembled in
+					your browser; exporting from Cloud Sync first downloads and decrypts the selected information. A
+					takeout is a readable backup, not an encrypted Cloud Sync copy. API keys are excluded by default and
+					require a separate choice to include them.
 				</p>
-			</li>
-			<li>
-				<p><strong>Cookies Policy / Notice Acceptance Cookies</strong></p>
-				<p>Type: Persistent Cookies</p>
-				<p>Administered by: Us</p>
-				<p>Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</p>
-			</li>
-			<li>
-				<p><strong>Functionality Cookies</strong></p>
-				<p>Type: Persistent Cookies</p>
-				<p>Administered by: Us</p>
 				<p>
-					Purpose: These Cookies allow us to remember choices You make when You use the Website, such as
-					remembering your login details or language preference. The purpose of these Cookies is to provide
-					You with a more personal experience and to avoid You having to re-enter your preferences every time
-					You use the Website.
+					Importing to local storage saves data in that browser. Choosing a Cloud Sync destination uploads the
+					imported content through encrypted sync. Exporting does not itself publish content or delete the
+					source. Anyone who receives a readable takeout may be able to read its contents and use any keys it
+					contains.
 				</p>
-			</li>
-		</ul>
-		<p>
-			For more information about the cookies we use and your choices regarding cookies, please visit our Cookies
-			Policy or the Cookies section of our Privacy Policy.
-		</p>
-		<h3>Use of Your Personal Data</h3>
-		<p>The Company may use Personal Data for the following purposes:</p>
-		<ul>
-			<li>
 				<p>
-					<strong>To provide and maintain our Service</strong>, including to monitor the usage of our Service.
+					Zozo Chat's new domain and Zodiac's old domain have separate browser storage and login sessions.
+					Users with local data can use takeout to carry it across. Cloud Sync users can sign in and unlock
+					their existing data at the new domain. The migration URL carries a flow indicator, not your chats,
+					backup file, or authentication credentials. Moving to the new domain does not itself erase data
+					stored under the old one.
 				</p>
-			</li>
-			<li>
+			</section>
+
+			<section aria-labelledby="purposes">
+				<h2 id="purposes">5. Purposes and legal bases</h2>
+				<p>We use the information described above to:</p>
+				<ul>
+					<li>Create and secure accounts and provide the features, AI requests, and storage you request.</li>
+					<li>Process purchases, manage subscriptions and allowances, and resolve payment issues.</li>
+					<li>Respond to support requests and send account or security messages.</li>
+					<li>Maintain reliability, understand site usage, investigate errors, and prevent abuse.</li>
+					<li>Operate community features, enforce service rules, and deliver relevant in-app notices.</li>
+					<li>Meet legal obligations, maintain required records, and establish or defend legal claims.</li>
+				</ul>
 				<p>
-					<strong>To manage Your Account:</strong> to manage Your registration as a user of the Service. The
-					Personal Data You provide can give You access to different functionalities of the Service that are
-					available to You as a registered user.
+					Where the EEA or UK data-protection rules apply, the legal bases depend on the activity: performance
+					of our contract for requested account, AI, billing, and sync services; legitimate interests in
+					maintaining, securing, and improving the Service where those interests are not overridden by your
+					rights; compliance with legal obligations; and consent where the law requires it, including for
+					non-essential browser storage or analytics where applicable. You may withdraw consent without
+					affecting earlier lawful processing.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>For the performance of a contract:</strong> the development, compliance and undertaking of
-					the purchase contract for the products, items or services You have purchased or of any other
-					contract with Us through the Service.
+					We do not sell your personal information or share it for targeted advertising. Our Google Analytics
+					use is for site-usage analytics only. Reading this policy, accepting our Terms, or dismissing an
+					announcement is not a substitute for separate consent where the law requires it.
 				</p>
-			</li>
-			<li>
+			</section>
+
+			<section aria-labelledby="recipients">
+				<h2 id="recipients">6. Who receives information</h2>
+				<ul>
+					<li>
+						<strong>Supabase:</strong> account authentication, profiles, databases, encrypted sync storage,
+						backend processing, and associated operational records.
+					</li>
+					<li>
+						<strong>Cloudflare and asset-delivery services:</strong> website hosting, delivery, security,
+						and resources such as fonts and libraries. Those requests disclose connection information,
+						including an IP address, to the service receiving them.
+					</li>
+					<li>
+						<strong>OpenRouter, Runware, and their applicable providers:</strong> AI generation and
+						supporting processing. Civitai may receive model or LoRA lookups, and Runware may receive the
+						associated model references for an image request. A provider selected through BYOK receives the
+						applicable direct requests.
+					</li>
+					<li>
+						<strong>Stripe:</strong> payment processing, billing, fraud prevention, and subscription
+						management.
+					</li>
+					<li>
+						<strong>Resend and Proton Mail:</strong> account emails and correspondence, including email
+						addresses, message content, and delivery information.
+					</li>
+					<li><strong>Google Analytics:</strong> site-usage measurement as described below.</li>
+				</ul>
 				<p>
-					<strong>To contact You:</strong> To contact You by email, telephone calls, SMS, or other equivalent
-					forms of electronic communication, such as a mobile application's push notifications regarding
-					updates or informative communications related to the functionalities, products or contracted
-					services, including the security updates, when necessary or reasonable for their implementation.
+					Our personnel and advisers may access information needed for support, operations, security,
+					accounting, or legal work. Third-party services may act as our processors or independently for their
+					own legal and service obligations. Their notices describe their own practices; using a provider does
+					not remove our responsibility for our handling of your information.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>To provide You</strong> with news, special offers and general information about other goods,
-					services and events which we offer that are similar to those that you have already purchased or
-					enquired about unless You have opted not to receive such information.
+					We may disclose information where required by law or reasonably necessary to address fraud, protect
+					people's rights and safety, enforce our agreements, or respond to legal claims. Information may also
+					be transferred in a merger, reorganization, or sale of the Service, subject to applicable law,
+					notice requirements, and the privacy commitments attached to it. Information you publish or share is
+					also available to the people receiving it.
 				</p>
-			</li>
-			<li>
-				<p><strong>To manage Your requests:</strong> To attend and manage Your requests to Us.</p>
-			</li>
-			<li>
+			</section>
+
+			<section aria-labelledby="browser-storage">
+				<h2 id="browser-storage">7. Browser storage and analytics</h2>
 				<p>
-					<strong>For business transfers:</strong> We may use Your information to evaluate or conduct a
-					merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some
-					or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar
-					proceeding, in which Personal Data held by Us about our Service users is among the assets
-					transferred.
+					The app uses browser storage to remember sessions, chats, preferences, keys, and interface state.
+					This includes IndexedDB, localStorage, and session-related storage. Some providers may also use
+					cookies. Clearing browser data can sign you out and remove your only local copy of content; export
+					anything you need first.
 				</p>
-			</li>
-			<li>
 				<p>
-					<strong>For other purposes</strong>: We may use Your information for other purposes, such as data
-					analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and
-					to evaluate and improve our Service, products, services, marketing and your experience.
+					The app includes Google Analytics to measure visits and use of the website. Depending on
+					configuration and browser settings, this can involve cookies or similar identifiers, page and
+					interaction information, referral information, browser/device details, and approximate location
+					derived from connection information. We use it for site-usage analytics, not targeted advertising.
+					See
+					<a href="https://policies.google.com/privacy">Google's Privacy Policy</a> and its
+					<a href="https://tools.google.com/dlpage/gaoptout">Analytics opt-out browser add-on</a>.
 				</p>
-			</li>
-		</ul>
-		<p>We may share Your personal information in the following situations:</p>
-		<ul>
-			<li>
-				<strong>With Service Providers:</strong> We may share Your personal information with Service Providers
-				to monitor and analyze the use of our Service, to contact You.
-			</li>
-			<li>
-				<strong>For business transfers:</strong> We may share or transfer Your personal information in
-				connection with, or during negotiations of, any merger, sale of Company assets, financing, or
-				acquisition of all or a portion of Our business to another company.
-			</li>
-			<li>
-				<strong>With Affiliates:</strong> We may share Your information with Our affiliates, in which case we
-				will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and
-				any other subsidiaries, joint venture partners or other companies that We control or that are under
-				common control with Us.
-			</li>
-			<li>
-				<strong>With business partners:</strong> We may share Your information with Our business partners to
-				offer You certain products, services or promotions.
-			</li>
-			<li>
-				<strong>With other users:</strong> when You share personal information or otherwise interact in the
-				public areas with other users, such information may be viewed by all users and may be publicly
-				distributed outside.
-			</li>
-			<li>
-				<strong>With Your consent</strong>: We may disclose Your personal information for any other purpose with
-				Your consent.
-			</li>
-		</ul>
-		<h3>Retention of Your Personal Data</h3>
-		<p>
-			The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this
-			Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal
-			obligations (for example, if we are required to retain your data to comply with applicable laws), resolve
-			disputes, and enforce our legal agreements and policies.
-		</p>
-		<p>
-			The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for
-			a shorter period of time, except when this data is used to strengthen the security or to improve the
-			functionality of Our Service, or We are legally obligated to retain this data for longer time periods.
-		</p>
-		<h3>Transfer of Your Personal Data</h3>
-		<p>
-			Your information, including Personal Data, is processed at the Company's operating offices and in any other
-			places where the parties involved in the processing are located. It means that this information may be
-			transferred to — and maintained on — computers located outside of Your state, province, country or other
-			governmental jurisdiction where the data protection laws may differ than those from Your jurisdiction.
-		</p>
-		<p>
-			Your consent to this Privacy Policy followed by Your submission of such information represents Your
-			agreement to that transfer.
-		</p>
-		<p>
-			The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in
-			accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization
-			or a country unless there are adequate controls in place including the security of Your data and other
-			personal information.
-		</p>
-		<h3>Delete Your Personal Data</h3>
-		<p>
-			You have the right to delete or request that We assist in deleting the Personal Data that We have collected
-			about You.
-		</p>
-		<p>Our Service may give You the ability to delete certain information about You from within the Service.</p>
-		<p>
-			You may update, amend, or delete Your information at any time by signing in to Your Account, if you have
-			one, and visiting the account settings section that allows you to manage Your personal information. You may
-			also contact Us to request access to, correct, or delete any personal information that You have provided to
-			Us.
-		</p>
-		<p>
-			Please note, however, that We may need to retain certain information when we have a legal obligation or
-			lawful basis to do so.
-		</p>
-		<h3>Disclosure of Your Personal Data</h3>
-		<h4>Business Transactions</h4>
-		<p>
-			If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We
-			will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy
-			Policy.
-		</p>
-		<h4>Law enforcement</h4>
-		<p>
-			Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so
-			by law or in response to valid requests by public authorities (e.g. a court or a government agency).
-		</p>
-		<h4>Other legal requirements</h4>
-		<p>The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:</p>
-		<ul>
-			<li>Comply with a legal obligation</li>
-			<li>Protect and defend the rights or property of the Company</li>
-			<li>Prevent or investigate possible wrongdoing in connection with the Service</li>
-			<li>Protect the personal safety of Users of the Service or the public</li>
-			<li>Protect against legal liability</li>
-		</ul>
-		<h3>Security of Your Personal Data</h3>
-		<p>
-			The security of Your Personal Data is important to Us, but remember that no method of transmission over the
-			Internet, or method of electronic storage is 100% secure. While We strive to use commercially acceptable
-			means to protect Your Personal Data, We cannot guarantee its absolute security.
-		</p>
-		<h2>Children's Privacy</h2>
-		<p>
-			Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable
-			information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your
-			child has provided Us with Personal Data, please contact Us. If We become aware that We have collected
-			Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to
-			remove that information from Our servers.
-		</p>
-		<p>
-			If We need to rely on consent as a legal basis for processing Your information and Your country requires
-			consent from a parent, We may require Your parent's consent before We collect and use that information.
-		</p>
-		<h2>Links to Other Websites</h2>
-		<p>
-			Our Service may contain links to other websites that are not operated by Us. If You click on a third party
-			link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy
-			of every site You visit.
-		</p>
-		<p>
-			We have no control over and assume no responsibility for the content, privacy policies or practices of any
-			third party sites or services.
-		</p>
-		<h2>Changes to this Privacy Policy</h2>
-		<p>
-			We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new
-			Privacy Policy on this page.
-		</p>
-		<p>
-			We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming
-			effective and update the &quot;Last updated&quot; date at the top of this Privacy Policy.
-		</p>
-		<p>
-			You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy
-			are effective when they are posted on this page.
-		</p>
-		<h2>Contact Us</h2>
-		<p>If you have any questions about this Privacy Policy, You can contact us:</p>
-		<ul>
-			<li>By email: faetalize@proton.me</li>
-		</ul>
+				<p>
+					Browser privacy controls can restrict cookies and other storage, although they may affect features.
+					The Analytics opt-out add-on applies only to supported browsers. These options do not replace any
+					consent or opt-out mechanism required by the laws that apply to you.
+				</p>
+			</section>
+
+			<section aria-labelledby="retention">
+				<h2 id="retention">8. Retention and deletion</h2>
+				<ul>
+					<li>
+						<strong>Local data and takeout files:</strong> remain in your browser or wherever you save them
+						until you or your device removes them. We cannot remotely retrieve or erase a backup you have
+						downloaded.
+					</li>
+					<li>
+						<strong>Cloud Sync:</strong> encrypted content remains until you delete or wipe it, close the
+						account, or it is removed under the subscription-expiry process, subject to necessary legal
+						retention. Disabling sync alone does not erase the cloud copy. The current expiry flow provides
+						seven days from an ended subscription's recorded period end for final download, after which its
+						cloud data is eligible for deletion.
+					</li>
+					<li>
+						<strong>Temporary processing files:</strong> image-editing inputs are uploaded for the request
+						and the service attempts to remove them after processing. Provider-hosted files follow that
+						provider's retention rules. Expiration of an access link is not the same as deletion of the
+						underlying file.
+					</li>
+					<li>
+						<strong>Account, usage, support, and moderation records:</strong> are retained for as long as
+						needed to operate the account, manage entitlements, resolve support or abuse matters, and meet
+						legal obligations. The period depends on the record's purpose, ongoing account activity,
+						unresolved incidents or disputes, and applicable recordkeeping requirements.
+					</li>
+					<li>
+						<strong>Financial and legal records:</strong> may be retained after account closure for tax,
+						accounting, fraud prevention, and legal obligations. Deletion does not require us to remove
+						records that law requires us to keep.
+					</li>
+				</ul>
+				<p>
+					Deletion from the active interface is not always immediate erasure from every system. Sync deletion
+					markers, scheduled cleanup, and backups can persist until cleanup or backup rotation completes.
+					Copies held independently by a provider or a person with whom you shared information may require a
+					separate request.
+				</p>
+			</section>
+
+			<section aria-labelledby="international">
+				<h2 id="international">9. International processing</h2>
+				<p>
+					Zozo AI, Inc. is a US corporation. Our current primary Supabase project is hosted in the European
+					Union, but hosting, support, email, payment, analytics, and AI providers may process information in
+					the United States and other countries. Hosting the database in the EU does not mean that all AI
+					requests or other processing remain there.
+				</p>
+				<p>
+					Where applicable law restricts international transfers, the transfer must use an appropriate legal
+					mechanism, such as an applicable adequacy decision or contractual safeguards. Contact us for
+					information about the safeguards applicable to your data. Accepting the Terms or this notice does
+					not itself waive these protections.
+				</p>
+			</section>
+
+			<section aria-labelledby="rights">
+				<h2 id="rights">10. Your choices and rights</h2>
+				<p>
+					You can update account information, use the export/import controls, delete local items, or manage
+					encrypted sync using the available app controls. To request account closure or help with information
+					held by us, email
+					<a href="mailto:support@chat.zozo.sh">support@chat.zozo.sh</a>. A shared Zozo account may be used by
+					more than one product, so tell us whether you want to remove Chat data or close the entire account.
+				</p>
+				<p>
+					Depending on your location, you may have rights to know about and access personal information,
+					correct it, request deletion or a portable copy, restrict or object to processing, withdraw consent,
+					or opt out of sale, sharing, or targeted advertising. Where applicable, you may act through an
+					authorized agent or appeal our response. We will consider requests under the law that applies to you
+					and will not discriminate against you for exercising protected rights.
+				</p>
+				<p>
+					We may need information reasonably necessary to verify your identity or an agent's authority. Some
+					requests are subject to exceptions, including other people's rights and records we must retain. We
+					cannot decrypt your Cloud Sync content without the encryption password, which you should not send to
+					support. Use the app's unlock and takeout controls for a readable copy.
+				</p>
+				<p>
+					You may complain to your local data-protection authority, including an EEA supervisory authority or
+					the UK Information Commissioner's Office where applicable. You can also contact
+					<a href="mailto:contact@zozo.sh">contact@zozo.sh</a> about a privacy concern.
+				</p>
+			</section>
+
+			<section aria-labelledby="children">
+				<h2 id="children">11. Children</h2>
+				<p>
+					The Service is not directed to children under 13, and we do not knowingly collect personal
+					information from children under 13. Users must also meet any higher minimum age that applies where
+					they live. If you believe a child has provided information contrary to these requirements, contact
+					us so we can investigate and take appropriate action, including deletion where required. Where
+					parental permission is required by law, use of the Service must meet that requirement.
+				</p>
+			</section>
+
+			<section aria-labelledby="changes">
+				<h2 id="changes">12. Changes to this policy</h2>
+				<p>
+					We will update the date above when revising this policy and provide a prominent in-app banner or
+					dialog for material changes, with notice before they take effect where required. We will obtain
+					consent where required for a new use of information. A change of company name, product name, or
+					domain does not by itself authorize unrelated new uses of previously collected data.
+				</p>
+			</section>
+
+			<section aria-labelledby="contact">
+				<h2 id="contact">13. Contact</h2>
+				<p>
+					Privacy and product support:
+					<a href="mailto:support@chat.zozo.sh">support@chat.zozo.sh</a><br />
+					Company correspondence:
+					<a href="mailto:contact@zozo.sh">contact@zozo.sh</a>
+				</p>
+				<address>
+					<strong>Zozo AI, Inc.</strong><br />
+					Mailing address:<br />
+					2810 N Church St STE 90635<br />
+					Wilmington, DE 19802<br />
+					United States
+				</address>
+			</section>
+		</main>
+		<footer class="policy-footer">
+			<a href="terms-of-service.html">Terms of Service</a>
+			<a href="#policy-content">Back to top</a>
+		</footer>
 	</body>
 </html>

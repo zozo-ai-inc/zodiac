@@ -32,7 +32,7 @@ export async function validateOpenRouterApiKey(apiKey: string): Promise<boolean>
 				Authorization: `Bearer ${trimmed}`,
 				"Content-Type": "application/json",
 				"HTTP-Referer": window.location.origin,
-				"X-OpenRouter-Title": "Zodiac"
+				"X-OpenRouter-Title": "Zozo Chat"
 			},
 			body: JSON.stringify({
 				model: OPENROUTER_VALIDATION_MODEL,

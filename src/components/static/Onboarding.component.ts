@@ -1206,7 +1206,7 @@ function setupSummary(): void {
 
 					onboardingService.hide();
 					toastService.info({
-						title: "Welcome to Zodiac!",
+						title: "Welcome to Zozo Chat!",
 						text: "You're all set~"
 					});
 				}
@@ -1352,7 +1352,7 @@ function setupSubscriptionConfirmation(): void {
 							// Subscription flow - go to plan selection
 							toastService.info({
 								title: "Signed in",
-								text: "You're ready to explore Zodiac Pro."
+								text: "You're ready to explore Zozo Chat Pro."
 							});
 							onboardingService.goToStep(OnboardingStep.PLAN_SELECTION);
 						} else {

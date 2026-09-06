@@ -48,7 +48,7 @@ function getHeaders(apiKey: string): Record<string, string> {
 		Authorization: `Bearer ${apiKey}`,
 		"Content-Type": "application/json",
 		"HTTP-Referer": window.location.origin,
-		"X-OpenRouter-Title": "Zodiac"
+		"X-OpenRouter-Title": "Zozo Chat"
 	};
 }
 

@@ -998,7 +998,7 @@ function setupGeneratedImageInteractions(root: HTMLElement) {
 				a.href = img.src;
 				// attempt to infer extension from mime
 				const ext = (img.src.match(/data:(.*?);/)?.[1] || "image/png").split("/")[1];
-				a.download = `zodiac-image-${Date.now()}.${ext}`;
+				a.download = `zozo-chat-image-${Date.now()}.${ext}`;
 				document.body.appendChild(a);
 				a.click();
 				a.remove();

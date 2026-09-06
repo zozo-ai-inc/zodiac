@@ -136,6 +136,10 @@ export function getSyncStatus(): SyncStatus {
 	return syncStatus;
 }
 
+export function getPendingSyncOperationCount(): number {
+	return offlineQueue.length;
+}
+
 // ── Sync prompt tracking ───────────────────────────────────────────────────
 
 export function hasSeenSyncPrompt(): boolean {
@@ -198,7 +202,7 @@ function enqueue(op: Omit<QueuedOperation, "id" | "timestamp">): void {
  * Fetch the user's sync preferences from Supabase.
  * Returns null if no row exists (user never set up sync).
  */
-export async function fetchSyncPreferences(): Promise<SyncPreferences | null> {
+export async function fetchSyncPreferences(options: { throwOnError?: boolean } = {}): Promise<SyncPreferences | null> {
 	const user = await getCurrentUser();
 	if (!user) return null;
 
@@ -208,6 +212,9 @@ export async function fetchSyncPreferences(): Promise<SyncPreferences | null> {
 		.eq("user_id", user.id)
 		.maybeSingle();
 
+	if (error && options.throwOnError) {
+		throw new Error("Unable to check whether Cloud Sync is enabled. Reconnect and try importing again.");
+	}
 	if (error || !data) {
 		syncPrefsCache = null;
 		return null;
@@ -646,6 +653,10 @@ async function materializeMessageBlobBackedMedia(message: Message): Promise<Mess
 	}
 
 	return message;
+}
+
+export async function materializeMessagesForPortableExport(messages: Message[]): Promise<Message[]> {
+	return await Promise.all(messages.map((message) => materializeMessageBlobBackedMedia(message)));
 }
 
 export async function restoreRemoteDataToLocalUnencrypted(): Promise<boolean> {
