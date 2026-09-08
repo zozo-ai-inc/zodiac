@@ -248,7 +248,9 @@ User preferences use `localStorage` with service-level get/set wrappers. See [sr
 
 ### Styling
 
-- **Custom CSS** - Hand-written styles in `src/styles/main.css`, `src/styles/dark.css`, `src/styles/light.css`
+- **Custom CSS** - `src/styles/main.css` is the single app stylesheet entry point. Shared styles live in `base.css`, `tokens.css`, `layout.css`, and `components/`; feature styles live in `features/`. See [src/styles/README.md](src/styles/README.md) for ownership and cascade conventions.
+- **Responsive styles** - Keep states, media queries, and feature animations beside the owning component or feature. Preserve import order and selector specificity when moving rules.
+- **Mode defaults** - `src/styles/dark.css` and `src/styles/light.css` supply mode tokens; components consume those variables in their own files.
 - **Tailwind base reset** - `@import "tailwindcss"` in main.css for normalization only (no utility classes used)
 - **Dynamic theming** - CSS custom properties in `src/styles/themes/{color}-{mode}.css` (e.g., `blue-dark.css`)
 - **No utility classes** - HTML uses semantic class names, not Tailwind utilities
