@@ -1,0 +1,71 @@
+.navbar {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	border-radius: 0.625rem;
+	margin-bottom: 0.5rem;
+	z-index: 0;
+	align-items: center;
+	padding: 0.1875rem;
+}
+
+.navbar-tab {
+	flex-grow: 1;
+	flex-basis: 0;
+	flex-shrink: 0;
+	overflow: hidden;
+	padding: 0.45rem 0.5rem;
+	text-align: center;
+	border-radius: 0.5rem;
+	z-index: 2;
+	-webkit-tap-highlight-color: transparent;
+	cursor: pointer;
+	transition:
+		color 0.2s ease,
+		background-color 0.15s ease;
+	font-weight: 600;
+	color: var(--navbar-tab-fg);
+	text-transform: capitalize;
+	letter-spacing: 0.01em;
+	font-size: 0.8125rem;
+}
+
+.navbar-tab-active {
+	color: var(--navbar-tab-fg-active);
+}
+
+.navbar-tab-highlight {
+	padding: 0;
+	background-color: var(--navbar-tab-highlight-bg);
+	box-sizing: border-box;
+	margin: 0;
+	position: absolute;
+	border-radius: 0.5rem;
+	transition:
+		left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+		width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	height: calc(100% - 0.375rem);
+	top: 0.1875rem;
+	z-index: 1;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.navbar-tab:not(.navbar-tab-active):hover {
+	background-color: var(--navbar-tab-hover-bg);
+}
+
+@media (max-width: 1032px) {
+	.navbar {
+		position: relative;
+	}
+}
+
+[data-mode="light"] .navbar-tab-highlight {
+	box-shadow:
+		0 1px 4px rgba(0, 0, 0, 0.1),
+		0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .navbar {
+	background-color: var(--navbar-bg);
+}

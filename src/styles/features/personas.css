@@ -1,0 +1,318 @@
+#btn-add-tone-example {
+	background-color: var(--card-add-personality-bg);
+	border: 1px dashed var(--card-add-personality-border);
+}
+
+.tone-example-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.tone-example-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.tone-example-label {
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.tone-example-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.tone-example-row .tone-example {
+	flex: 1 1 auto;
+}
+
+.tone-example-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	padding: 0.35rem;
+	border-radius: 0.5rem;
+	font-size: 1.5rem;
+	line-height: 1;
+	color: inherit;
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease,
+		transform 0.15s ease;
+	flex-shrink: 0;
+}
+
+.tone-example-remove:hover {
+	background-color: var(--tone-example-remove-hover);
+}
+
+.tone-example-remove:active {
+	background-color: var(--tone-example-remove-active);
+	transform: scale(0.96);
+}
+
+.card-personality .btn-textual {
+	color: var(--card-personality-fg) !important;
+	text-shadow:
+		0 0 10px #000000,
+		0 0 5px #181818;
+}
+
+.card-personality .btn-textual:hover {
+	text-shadow:
+		0 0 2px #000000,
+		0 0 2px #000000 !important;
+	color: white;
+}
+
+.card-personality .btn-pin-card.active {
+	color: #ffd166 !important;
+	text-shadow:
+		0 0 6px rgba(0, 0, 0, 0.8),
+		0 0 8px rgba(255, 209, 102, 0.65);
+}
+
+.personality-prompt {
+	display: none;
+}
+
+.prompt-field {
+	resize: vertical;
+	height: 7rem;
+}
+
+#personalitiesDiv {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	overflow-y: auto;
+}
+
+.persona-group-divider {
+	margin-top: 0.7rem;
+}
+
+.btn-array-personalityactions {
+	display: flex;
+	justify-content: end;
+	gap: 0.3rem;
+}
+
+.card-personality {
+	position: relative;
+	border-radius: 0.75rem;
+	overflow: hidden;
+	display: flex;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	color: #e4e4e4;
+	background-color: black;
+	background-size: cover;
+	background-position: center;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+	min-height: 3.25rem;
+	text-wrap: nowrap;
+	padding: 0.75rem 0.875rem;
+	gap: 0.5rem;
+
+	-webkit-tap-highlight-color: transparent;
+	cursor: pointer;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.card-personality:hover {
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-personality * {
+	z-index: 1;
+}
+
+.card-personality .background-img {
+	position: absolute;
+	filter: brightness(0.45);
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	z-index: 0;
+	opacity: 0;
+}
+
+.card-personality .background-img[src]:not([src=""]):not([src="undefined"]):not([src="null"]) {
+	opacity: 1;
+}
+
+.card-personality:hover:not(:has(input[name="personality"]:checked)) .background-img {
+	filter: brightness(0.65);
+}
+
+.personality-info {
+	overflow: hidden;
+
+	text-shadow:
+		0 0 10px #000000,
+		0 0 5px #181818;
+}
+
+.personality-info * {
+	margin: 0;
+	padding-inline: 0.5rem;
+}
+
+.personality-header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding-left: 0;
+	min-width: 0;
+}
+
+.personality-title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	flex-shrink: 1;
+}
+
+.personality-prompt {
+	display: none;
+	position: absolute;
+}
+
+.card-personality * {
+	/* unselectable */
+	-webkit-user-select: none;
+	/* Safari */
+	-moz-user-select: none;
+	/* Firefox */
+	-ms-user-select: none;
+	/* IE10+/Edge */
+	user-select: none;
+	/* Standard */
+}
+
+.card-personality input {
+	display: none;
+	position: absolute;
+}
+
+.personality-description {
+	display: none;
+}
+
+.card-personality:has(input[name="personality"]:checked) .background-img {
+	filter: brightness(1);
+}
+
+.card-personality:has(input[name="personality"]:checked) {
+	min-height: 10rem;
+	text-wrap: wrap;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-direction: column;
+	gap: 0;
+}
+
+.pfp {
+	height: 28px;
+	width: 28px;
+	border-radius: 6px;
+	object-fit: cover;
+	image-rendering: auto;
+}
+
+.card-personality:has(input[name="personality"]:checked) .personality-description {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+/* When card is expanded (checked), move badge to top-left corner */
+.card-personality:has(input[name="personality"]:checked) .sync-badge {
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	padding: 0.2rem 0.5rem;
+	font-size: 0.6rem;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	border-radius: 0.5rem;
+}
+
+.card-add-personality {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 3rem;
+	padding: 0.75rem;
+	height: auto;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease;
+	border-radius: 0.75rem;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.add-personality-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+.add-icon {
+	opacity: 0.7;
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .tone-example-remove {
+	color: var(--tone-example-remove-fg);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .tone-example-remove:hover,
+:is([data-mode="dark"], [data-mode="light"]) .tone-example-remove:focus-visible {
+	color: var(--tone-example-remove-hover-fg);
+}
+
+[data-mode="dark"] #btn-add-tone-example {
+	background-color: var(--btn-add-tone-bg);
+	color: var(--btn-add-tone-fg);
+}
+
+[data-mode="dark"] #btn-add-tone-example:hover {
+	background-color: var(--btn-add-tone-hover-bg);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .card-add-personality {
+	background-color: var(--card-add-personality-bg);
+	border: 1px dashed var(--card-add-personality-border);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .card-add-personality:hover {
+	background-color: var(--card-add-personality-hover-bg);
+	border-color: var(--card-add-personality-hover-border);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .card-add-personality .add-icon {
+	color: var(--card-add-personality-icon-fg);
+}

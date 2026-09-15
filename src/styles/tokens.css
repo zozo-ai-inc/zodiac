@@ -1,0 +1,22 @@
+:root {
+	--vvh: 100dvh;
+	--vv-offset-top: 0px;
+	--maintenance-banner-height: 2.5rem;
+	--elevated-ui-shadow: 0 0 12px 0px rgb(0 0 0 / 15%);
+	--elevated-ui-outline: 1px solid rgba(0, 0, 0, 0.1);
+	--menu-spawn-top-offset: 4px;
+
+	/* App-level stacking. Local children keep their own small stacking indices. */
+	--layer-composer: 10;
+	--layer-sidebar: 11;
+	--layer-dropdown: 20;
+	--layer-maintenance-banner: 100;
+	--layer-lightbox: 1000;
+	--layer-mentions: 1200;
+	--layer-credits-popover: 9999;
+	--layer-overlay: 10000;
+	--layer-dialog: 10001;
+	--layer-surface: 10020;
+	--layer-dropdown-portal: 10030;
+	--layer-toast: 99999;
+}
