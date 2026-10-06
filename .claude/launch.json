@@ -1,0 +1,12 @@
+{
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "dev",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "dev:http"],
+			"autoPort": true,
+			"port": 5174
+		}
+	]
+}
