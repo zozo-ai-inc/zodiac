@@ -55,6 +55,8 @@ npm run sync-db-types  # Sync Supabase types to src/types/database.types.ts
 - Open a pull request from the prepared release branch into `main` with the `skip-changelog` label, then stop for the user to review and manually merge or close it.
 - After the user merges the release pull request, open a second pull request from `main` into `production`, then stop for the user to review and manually merge or close it.
 - Cloudflare deploys after the user merges the pull request into `production`. No release backmerge is needed because release preparation entered `main` before promotion.
+- Each promotion adds a merge commit that exists only on `production`, so `git rev-list main..production` normally lists the latest promotion merge. This is expected and carries no code difference.
+- The `production` branch protection intentionally has "Require branches to be up to date before merging" turned off (the `verify` check and the pull request requirement stay on). With it on, the source branch `main` would have to contain every `production` merge commit, which forces an empty "synchronize production history" pull request into `main` before each promotion. Do not turn it back on or add such sync pull requests.
 
 ### Pull request release classification
 
