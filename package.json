@@ -41,6 +41,7 @@
 	"scripts": {
 		"type-check": "tsc --noEmit",
 		"dev": "vite",
+		"dev:http": "vite --config vite.http.config.mts",
 		"devlocal": "vite --host",
 		"build": "npm run type-check && vite build",
 		"lint": "eslint . --cache",
