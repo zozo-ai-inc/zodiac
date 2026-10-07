@@ -16,6 +16,35 @@
 	white-space: normal;
 }
 
+.maintenance-banner-dismiss {
+	position: absolute;
+	top: 50%;
+	right: 0.5rem;
+	transform: translateY(-50%);
+	padding: 0.25rem;
+	background: transparent;
+	border: none;
+	color: inherit;
+	cursor: pointer;
+	opacity: 0.7;
+	transition: opacity 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.maintenance-banner-dismiss:hover {
+	opacity: 1;
+}
+
+.maintenance-banner-dismiss .material-symbols-outlined {
+	font-size: 1.1rem;
+}
+
+.maintenance-banner--dismissible {
+	padding-right: 2.5rem;
+}
+
 .maintenance-banner--normal {
 	background-color: var(--primary);
 	color: var(--button-fg);
