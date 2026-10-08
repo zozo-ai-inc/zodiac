@@ -42,6 +42,10 @@ async function mainContainerTop(page: Page): Promise<number> {
 	return await page.locator("#main-container").evaluate((element) => element.getBoundingClientRect().top);
 }
 
+async function bannerHeight(page: Page): Promise<number> {
+	return await page.locator("#maintenance-banner").evaluate((element) => element.getBoundingClientRect().height);
+}
+
 test("dismissing the maintenance banner hides it, restores the layout, and survives a reload", async ({ page }) => {
 	await serveBanner(page, { enabled: true, message: "Scheduled maintenance tonight." });
 	await loadWithBannerConfigApplied(page, () => page.goto("/"));
@@ -126,4 +130,35 @@ test("a non-dismissible maintenance banner has no close button and ignores a sav
 
 	await expect(banner).toBeVisible();
 	await expect(page.locator("#maintenance-banner-dismiss")).toBeHidden();
+});
+
+test("the maintenance banner shrinks back after a narrow viewport made it taller", async ({ page }) => {
+	const wideViewport = { width: 1280, height: 720 };
+	await page.setViewportSize(wideViewport);
+	await serveBanner(page, {
+		enabled: true,
+		message: "Scheduled maintenance tonight. Cloud sync and image generation will be unavailable for an hour."
+	});
+	await loadWithBannerConfigApplied(page, () => page.goto("/"));
+
+	const wideBannerHeight = await bannerHeight(page);
+	const wideMainTop = await mainContainerTop(page);
+
+	await page.setViewportSize({ width: 320, height: 720 });
+
+	await expect
+		.poll(() => bannerHeight(page), { message: "banner should grow when its message wraps" })
+		.toBeGreaterThan(wideBannerHeight);
+	await expect
+		.poll(() => mainContainerTop(page), { message: "content should move down with the taller banner" })
+		.toBeGreaterThan(wideMainTop);
+
+	await page.setViewportSize(wideViewport);
+
+	await expect
+		.poll(() => bannerHeight(page), { message: "banner should shrink back once its message fits again" })
+		.toBe(wideBannerHeight);
+	await expect
+		.poll(() => mainContainerTop(page), { message: "content should move back up with the shorter banner" })
+		.toBe(wideMainTop);
 });
