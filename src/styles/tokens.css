@@ -1,7 +1,9 @@
 :root {
 	--vvh: 100dvh;
 	--vv-offset-top: 0px;
-	--maintenance-banner-height: 2.5rem;
+	--maintenance-banner-min-height: 2.5rem;
+	/* Overwritten at runtime with the banner's measured height. */
+	--maintenance-banner-height: var(--maintenance-banner-min-height);
 	--elevated-ui-shadow: 0 0 12px 0px rgb(0 0 0 / 15%);
 	--elevated-ui-outline: 1px solid rgba(0, 0, 0, 0.1);
 	--menu-spawn-top-offset: 4px;

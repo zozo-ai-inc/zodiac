@@ -5,7 +5,7 @@
 	top: 0;
 	left: 0;
 	right: 0;
-	min-height: var(--maintenance-banner-height);
+	min-height: var(--maintenance-banner-min-height);
 	display: flex;
 	align-items: center;
 	justify-content: center;
