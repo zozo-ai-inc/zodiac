@@ -32,8 +32,10 @@ body.maintenance-banner-visible #main-container {
 	width: 100dvw;
 	height: var(--vvh, 100dvh);
 	min-height: var(--vvh, 100dvh);
-	/* Closed settings sits past the right edge; clip it so the page cannot be scrolled sideways to it. */
+	/* A stowed sidebar sits past the edge; clip it so the page cannot be scrolled sideways to it. */
 	overflow-x: clip;
+	/* Cancels a sidebar's width, its inner margin, and the row gap, so the chat takes over its space. */
+	--sidebar-stowed-margin: calc(-1 * (25rem + 0.75rem + 0.5rem));
 }
 
 #chat-title {
@@ -69,7 +71,7 @@ body.maintenance-banner-visible #main-container {
 		visibility 0s linear 0.3s;
 }
 
-.settings-sidebar--open {
+body.settings-open .settings-sidebar {
 	visibility: visible;
 	transition-delay: 0s;
 }
@@ -292,41 +294,37 @@ body.maintenance-banner-visible #main-container {
 	}
 }
 
-/*
- * Wide screens: settings sits in the row and pushes the chat, like the sidebar does. The closed margin
- * cancels its width, left margin, and the row gap. 86rem is both sidebars, their margins and gaps, plus
- * the 32rem minimum of #mainContent.
- */
-@media (width > 86rem) {
+/* Desktop: settings sits in the row and pushes the chat, like the sidebar does. */
+@media (width > 1032px) {
 	.settings-sidebar {
-		margin-right: calc(-1 * (25rem + 0.75rem + 0.5rem));
+		margin-right: var(--sidebar-stowed-margin);
 	}
 
-	.settings-sidebar--open {
+	body.settings-open .settings-sidebar {
 		margin-right: 0.75rem;
 	}
 }
 
-/* In between, there is no room to push the chat, so settings floats over its right edge. */
+/*
+ * Below 86rem (both sidebars with their margins and gaps, plus the 32rem minimum of #mainContent) the row
+ * cannot hold everything, so the sidebar gives way while settings is open.
+ */
 @media (1032px < width <= 86rem) {
-	.settings-sidebar {
-		position: fixed;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		transform: translateX(calc(100% + 0.75rem));
+	.sidebar {
+		transition:
+			margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			visibility 0s linear;
 	}
 
-	.settings-sidebar--open {
-		transform: none;
-	}
-
-	body.maintenance-banner-visible .settings-sidebar {
-		top: var(--maintenance-banner-height);
+	body.settings-open .sidebar {
+		margin-left: var(--sidebar-stowed-margin);
+		visibility: hidden;
+		transition-delay: 0s, 0.3s;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.sidebar,
 	.settings-sidebar {
 		transition: none;
 	}
@@ -357,7 +355,7 @@ body.maintenance-banner-visible #main-container {
 		transform: translateX(100%);
 	}
 
-	.settings-sidebar--open {
+	body.settings-open .settings-sidebar {
 		transform: none;
 	}
 

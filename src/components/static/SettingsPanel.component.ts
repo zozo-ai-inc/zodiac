@@ -12,19 +12,20 @@ const settingsSidebar = settingsSidebarElement;
 const openSettingsButton = openSettingsButtonElement;
 const closeSettingsButton = closeSettingsButtonElement;
 
-const OPEN_CLASS = "settings-sidebar--open";
+// On <body> because the sidebar also reacts: on narrower desktops it gives way while settings is open.
+const OPEN_CLASS = "settings-open";
 
 let focusRestoreTarget: HTMLElement | null = null;
 
 function isOpen(): boolean {
-	return settingsSidebar.classList.contains(OPEN_CLASS);
+	return document.body.classList.contains(OPEN_CLASS);
 }
 
 function openSettings(): void {
 	if (isOpen()) return;
 	focusRestoreTarget = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 	settingsSidebar.inert = false;
-	settingsSidebar.classList.add(OPEN_CLASS);
+	document.body.classList.add(OPEN_CLASS);
 	openSettingsButton.setAttribute("aria-expanded", "true");
 	settingsSidebar.focus({ preventScroll: true });
 }
@@ -32,7 +33,7 @@ function openSettings(): void {
 function closeSettings(): void {
 	if (!isOpen()) return;
 	const hadFocus = settingsSidebar.contains(document.activeElement);
-	settingsSidebar.classList.remove(OPEN_CLASS);
+	document.body.classList.remove(OPEN_CLASS);
 	// Closed, the panel is only moved off-screen, so it must not stay reachable by keyboard.
 	settingsSidebar.inert = true;
 	openSettingsButton.setAttribute("aria-expanded", "false");
