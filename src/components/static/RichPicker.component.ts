@@ -2,7 +2,7 @@ import * as surfaceService from "../../services/Surface.service";
 import * as pinningService from "../../services/Pinning.service";
 import { onAppEvent, onDocumentEvent } from "../../events";
 import * as helpers from "../../utils/helpers";
-import { getChatModelDefinition, type ChatModelDefinition } from "../../types/Models";
+import { getChatModelDefinition, isChatModelDeprecated, type ChatModelDefinition } from "../../types/Models";
 import { transitionSheetHeight } from "./AdaptiveSheet.component";
 import claudeIconUrl from "../../assets/model-family-icons/claude.svg?url";
 import deepseekIconUrl from "../../assets/model-family-icons/deepseek.svg?url";
@@ -181,6 +181,7 @@ const OTHER_FAMILY: ModelFamily = {
 	test: () => true
 };
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+const retirementDateFormatter = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" });
 const MODEL_PICKER_GROUP_ORDER = ["Flash Lite", "Flash", "Pro", "Haiku", "Sonnet", "Opus", "Fable"];
 
 // Which family page is currently shown, and whether we skipped the family list because only one exists.
@@ -337,6 +338,18 @@ function createChip(className: string, label: string, iconUrl?: string): HTMLSpa
 	return chip;
 }
 
+// Warns about a model with an upcoming deprecation date, shown in the viewer's own timezone.
+function createRetirementChip(definition: ChatModelDefinition): HTMLSpanElement | null {
+	if (!definition.deprecationDate || isChatModelDeprecated(definition)) return null;
+
+	const retiresAt = new Date(definition.deprecationDate);
+	if (Number.isNaN(retiresAt.getTime())) return null;
+
+	const chip = createChip("model-picker-retiring", `Retires ${retirementDateFormatter.format(retiresAt)}`);
+	chip.title = `No longer available from ${retiresAt.toLocaleString()}`;
+	return chip;
+}
+
 function createFamilyRow(group: FamilyGroup): HTMLButtonElement {
 	const { family, models } = group;
 	const row = document.createElement("button");
@@ -422,7 +435,8 @@ function createModelRow(entry: ModelEntry): HTMLDivElement {
 
 	if (entry.definition) {
 		const supported = CAPABILITIES.filter((capability) => capability.test(entry.definition!));
-		const hasChips = entry.definition.mega || entry.definition.provider === "openrouter";
+		const retirementChip = createRetirementChip(entry.definition);
+		const hasChips = entry.definition.mega || entry.definition.provider === "openrouter" || retirementChip !== null;
 
 		if (supported.length > 0 || hasChips) {
 			const meta = document.createElement("span");
@@ -444,6 +458,8 @@ function createModelRow(entry: ModelEntry): HTMLDivElement {
 			if (entry.definition.provider === "openrouter") {
 				meta.append(createChip("model-picker-openrouter", "OpenRouter", openRouterIconUrl));
 			}
+
+			if (retirementChip) meta.append(retirementChip);
 
 			text.append(meta);
 		}

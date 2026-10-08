@@ -1,17 +1,34 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+	CHAT_MODELS,
 	DEFAULT_OPENROUTER_TITLE_MODEL,
 	ImageModelId,
 	ImageModelProvider,
 	ImagePromptType,
+	OPENROUTER_CHAT_MODELS,
+	formatOriginModelLabel,
+	getAccessibleChatModels,
 	getAccessibleRoleplaySuggestionModels,
 	getChatModelDefinition,
+	getValidChatModel,
 	getValidRoleplaySuggestionModel,
 	modelRequiresThinking,
 	type ChatModelAccess
 } from "../../src/types/Models";
 import { DEFAULT_IMAGE_EDIT_MODEL, DEFAULT_IMAGE_MODEL, IMAGE_MODELS } from "../../src/constants/ImageModels";
+
+// Which chat models are offered depends on the clock once a model has a deprecation date.
+const BEFORE_ANY_DEPRECATION = "2026-10-01T00:00:00Z";
+
+function setNow(isoDateTime: string): void {
+	vi.useFakeTimers({ toFake: ["Date"] });
+	vi.setSystemTime(new Date(isoDateTime));
+}
+
+afterEach(() => {
+	vi.useRealTimers();
+});
 
 describe("default model roles", () => {
 	it("uses GLM 5 for local OpenRouter chat title generation", () => {
@@ -145,6 +162,7 @@ describe("roleplay suggestion models", () => {
 	});
 
 	it("includes only models flagged for roleplay suggestions", () => {
+		setNow(BEFORE_ANY_DEPRECATION);
 		const fullAccess: ChatModelAccess = { hasGeminiAccess: true, hasOpenRouterAccess: true };
 
 		const expectedModels = [
@@ -206,5 +224,125 @@ describe("roleplay suggestion models", () => {
 		};
 
 		expect(getValidRoleplaySuggestionModel("gemini-3.5-flash", premiumAccess)).toBe("google/gemini-3.5-flash");
+	});
+});
+
+describe("thinking-required models", () => {
+	it("requires thinking for exactly the OpenRouter models whose reasoning is mandatory", () => {
+		const expectedModels = [
+			"google/gemini-3.5-flash",
+			"google/gemini-3.5-flash-lite",
+			"google/gemini-3.6-flash",
+			"google/gemini-3.7-flash",
+			"google/gemini-3.8-flash",
+			"google/gemini-3.1-pro-preview",
+			"google/gemini-2.5-pro",
+			"openai/gpt-5.4-pro",
+			"openai/gpt-6-astra",
+			"openai/gpt-6.1-sol",
+			"openai/gpt-oss-120b",
+			"anthropic/claude-fable-5",
+			"anthropic/claude-fable-5.1",
+			"anthropic/claude-opus-5.5",
+			"anthropic/claude-sonnet-5.5",
+			"z-ai/glm-5.3",
+			"z-ai/glm-5.3-flash",
+			"z-ai/glm-5.3-flashx",
+			"z-ai/glm-5.3-prime",
+			"qwen/qwen3.8-max-0902",
+			"qwen/qwen3.8-max-prime",
+			"x-ai/grok-4.5",
+			"x-ai/grok-4.6",
+			"x-ai/grok-4.7"
+		];
+		const receivedModels = OPENROUTER_CHAT_MODELS.filter((model) => model.requiresThinking).map(
+			(model) => model.id
+		);
+
+		expect(receivedModels.sort()).toEqual(expectedModels.sort());
+	});
+});
+
+describe("chat model deprecation", () => {
+	const fullAccess: ChatModelAccess = { hasGeminiAccess: true, hasOpenRouterAccess: true };
+	const premiumAccess: ChatModelAccess = {
+		hasGeminiAccess: true,
+		hasOpenRouterAccess: true,
+		isPremiumEndpointPreferred: true
+	};
+
+	it("stores the backend's deprecation dates, shared by the Gemini-key variants of those models", () => {
+		const datedModels = Object.fromEntries(
+			CHAT_MODELS.filter((model) => model.deprecationDate).map((model) => [model.id, model.deprecationDate])
+		);
+
+		expect(datedModels).toEqual({
+			"gemini-2.5-flash": "2026-10-20T00:00:00Z",
+			"gemini-2.5-flash-lite": "2026-10-20T00:00:00Z",
+			"gemini-2.5-pro": "2026-10-20T00:00:00Z",
+			"google/gemini-2.5-flash": "2026-10-20T00:00:00Z",
+			"google/gemini-2.5-flash-lite": "2026-10-20T00:00:00Z",
+			"google/gemini-2.5-pro": "2026-10-20T00:00:00Z",
+			"openai/gpt-5.3-chat": "2026-10-08T00:00:00Z",
+			"qwen/qwen3.6-max-preview": "2026-10-09T00:00:00Z"
+		});
+	});
+
+	it("gives every deprecation date an explicit timezone", () => {
+		for (const model of CHAT_MODELS.filter((candidate) => candidate.deprecationDate)) {
+			expect(model.deprecationDate, model.id).toMatch(
+				/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/
+			);
+			expect(Number.isFinite(Date.parse(model.deprecationDate!)), model.id).toBe(true);
+		}
+	});
+
+	it("offers a model and its Gemini-key variant until the deprecation moment and not from then on", () => {
+		setNow("2026-10-19T23:59:59.999Z");
+		const offeredBefore = getAccessibleChatModels(fullAccess).map((model) => model.id);
+		expect(offeredBefore).toContain("google/gemini-2.5-flash");
+		expect(offeredBefore).toContain("gemini-2.5-flash");
+
+		setNow("2026-10-20T00:00:00.000Z");
+		const offeredFromThenOn = getAccessibleChatModels(fullAccess).map((model) => model.id);
+		expect(offeredFromThenOn).not.toContain("google/gemini-2.5-flash");
+		expect(offeredFromThenOn).not.toContain("gemini-2.5-flash");
+	});
+
+	it("drops a deprecated model from roleplay suggestions", () => {
+		setNow("2026-10-08T23:59:59Z");
+		expect(getAccessibleRoleplaySuggestionModels(fullAccess).map((model) => model.id)).toContain(
+			"qwen/qwen3.6-max-preview"
+		);
+
+		setNow("2026-10-09T00:00:00Z");
+		expect(getAccessibleRoleplaySuggestionModels(fullAccess).map((model) => model.id)).not.toContain(
+			"qwen/qwen3.6-max-preview"
+		);
+	});
+
+	it("replaces a saved model with an offered one once it is deprecated", () => {
+		setNow("2026-10-08T23:59:59Z");
+		expect(getValidChatModel("qwen/qwen3.6-max-preview", premiumAccess)).toBe("qwen/qwen3.6-max-preview");
+
+		setNow("2026-10-09T00:00:00Z");
+		const replacement = getValidChatModel("qwen/qwen3.6-max-preview", premiumAccess);
+
+		expect(replacement).not.toBe("qwen/qwen3.6-max-preview");
+		expect(getAccessibleChatModels(premiumAccess).map((model) => model.id)).toContain(replacement);
+	});
+
+	it("replaces a saved roleplay suggestion model with an offered one once it is deprecated", () => {
+		setNow("2026-10-09T00:00:00Z");
+		const replacement = getValidRoleplaySuggestionModel("qwen/qwen3.6-max-preview", premiumAccess);
+
+		expect(replacement).not.toBe("qwen/qwen3.6-max-preview");
+		expect(getAccessibleRoleplaySuggestionModels(premiumAccess).map((model) => model.id)).toContain(replacement);
+	});
+
+	it("keeps labelling messages written by a deprecated model", () => {
+		setNow("2027-01-01T00:00:00Z");
+
+		expect(formatOriginModelLabel("openai/gpt-5.3-chat")).toBe("GPT-5.3 Chat");
 	});
 });

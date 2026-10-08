@@ -118,12 +118,16 @@ function bootstrapRoleplayDom(): void {
 describe("roleplay suggestion model dropdown", () => {
 	beforeEach(() => {
 		vi.resetModules();
+		// Pinned before any model's deprecation date, so the list below does not change as those dates pass.
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date("2026-10-01T00:00:00Z"));
 		bootstrapRoleplayDom();
 		window.localStorage.setItem(SETTINGS_STORAGE_KEYS.API_KEY, "test-gemini-key");
 		window.localStorage.setItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY, "test-openrouter-key");
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		document.body.innerHTML = "";
 		window.localStorage.clear();
 	});

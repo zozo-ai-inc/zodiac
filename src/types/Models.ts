@@ -48,6 +48,9 @@ export interface ChatModelDefinition {
 	consumesImageCredits?: boolean;
 	roleplayModeSuggester?: boolean;
 	roleplaySuggestionThinkingCap?: number;
+	// ISO 8601 date-time with timezone (e.g. "2026-10-20T00:00:00Z"); from that moment on, the model is no longer offered.
+	// Keep in sync with PREMIUM_MODELS in zozo-edge's handle-pro-request-x.
+	deprecationDate?: string;
 }
 
 export interface ChatModelAccess {
@@ -138,7 +141,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z"
 	},
 	{
 		id: ChatModel.FLASH_2_5,
@@ -151,7 +155,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z"
 	},
 	{
 		id: ChatModel.FLASH_LITE_2_5,
@@ -164,7 +169,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z"
 	}
 ];
 
@@ -198,6 +204,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash Lite",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -328,6 +335,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -339,6 +347,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -380,7 +389,8 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-08T00:00:00Z"
 	},
 	{
 		id: "openai/gpt-4o",
@@ -487,6 +497,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -499,6 +510,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -511,6 +523,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -524,6 +537,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Sonnet",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -635,6 +649,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -647,6 +662,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -659,6 +675,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -671,6 +688,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -744,7 +762,8 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-09T00:00:00Z"
 	},
 	{
 		id: "qwen/qwen3.7-plus",
@@ -801,6 +820,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -813,6 +833,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -837,6 +858,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -849,6 +871,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -861,6 +884,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		requiresThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -943,9 +967,15 @@ export function modelSupportsTemperature(_model: string | null | undefined): boo
 	return true;
 }
 
+export function isChatModelDeprecated(model: Pick<ChatModelDefinition, "deprecationDate">): boolean {
+	if (!model.deprecationDate) return false;
+	const deprecatedAt = Date.parse(model.deprecationDate);
+	return Number.isFinite(deprecatedAt) && Date.now() >= deprecatedAt;
+}
+
 export function getAccessibleChatModels(access: ChatModelAccess): ChatModelDefinition[] {
 	return CHAT_MODELS.filter((model) => {
-		if (UI_DISABLED_CHAT_MODELS.has(model.id)) {
+		if (UI_DISABLED_CHAT_MODELS.has(model.id) || isChatModelDeprecated(model)) {
 			return false;
 		}
 
