@@ -81,8 +81,10 @@ body.maintenance-banner-visible #main-container {
 	line-height: 1.75rem;
 }
 
+/* The padding keeps the tap target at 1.75rem around the smaller icon. */
 #btn-close-settings {
-	font-size: 1.75rem;
+	padding: 0.25rem;
+	font-size: 1.25rem;
 }
 
 .sidebar-top-bar {
