@@ -6,7 +6,8 @@ interface MaintenanceBannerConfig {
 	enabled?: boolean;
 	message?: string;
 	style?: MaintenanceBannerStyle;
-	dismissible?: boolean;
+	dismissible: boolean;
+	id?: string;
 }
 
 const DISMISSED_STORAGE_KEY = "maintenance_banner_dismissed";
@@ -28,7 +29,7 @@ const maintenanceBannerDismiss = maintenanceBannerDismissElement;
 let currentSignature = "";
 
 function getSignature(config: MaintenanceBannerConfig): string {
-	return JSON.stringify([config.style ?? "normal", config.message ?? ""]);
+	return JSON.stringify([config.id ?? "", config.style ?? "normal", config.message ?? ""]);
 }
 
 function isDismissed(signature: string): boolean {
@@ -47,6 +48,14 @@ function persistDismissal(signature: string): void {
 	}
 }
 
+function clearDismissal(): void {
+	try {
+		localStorage.removeItem(DISMISSED_STORAGE_KEY);
+	} catch {
+		// Storage unavailable; nothing was persisted.
+	}
+}
+
 function syncMaintenanceBannerHeight(): void {
 	const bannerHeight = `${maintenanceBanner.offsetHeight}px`;
 	document.documentElement.style.setProperty("--maintenance-banner-height", bannerHeight);
@@ -62,7 +71,9 @@ function normalizeMaintenanceConfig(value: unknown): MaintenanceBannerConfig | n
 	}
 
 	const raw = value as Record<string, unknown>;
-	const normalized: MaintenanceBannerConfig = {};
+	const normalized: MaintenanceBannerConfig = {
+		dismissible: typeof raw.dismissible === "boolean" ? raw.dismissible : true
+	};
 
 	if (typeof raw.enabled === "boolean") {
 		normalized.enabled = raw.enabled;
@@ -76,8 +87,8 @@ function normalizeMaintenanceConfig(value: unknown): MaintenanceBannerConfig | n
 		normalized.style = raw.style;
 	}
 
-	if (typeof raw.dismissible === "boolean") {
-		normalized.dismissible = raw.dismissible;
+	if (typeof raw.id === "string" || typeof raw.id === "number") {
+		normalized.id = String(raw.id);
 	}
 
 	return normalized;
@@ -85,6 +96,7 @@ function normalizeMaintenanceConfig(value: unknown): MaintenanceBannerConfig | n
 
 function hideMaintenanceBanner(): void {
 	maintenanceBanner.classList.add("hidden");
+	maintenanceBanner.dataset.state = "hidden";
 	document.body.classList.remove("maintenance-banner-visible");
 }
 
@@ -95,10 +107,10 @@ function showMaintenanceBanner(config: MaintenanceBannerConfig): void {
 	maintenanceBannerText.textContent = text;
 	maintenanceBanner.classList.toggle("maintenance-banner--warning", style === "warning");
 	maintenanceBanner.classList.toggle("maintenance-banner--normal", style === "normal");
-	const dismissible = config.dismissible !== false;
-	maintenanceBannerDismiss.classList.toggle("hidden", !dismissible);
-	maintenanceBanner.classList.toggle("maintenance-banner--dismissible", dismissible);
+	maintenanceBannerDismiss.classList.toggle("hidden", !config.dismissible);
+	maintenanceBanner.classList.toggle("maintenance-banner--dismissible", config.dismissible);
 	maintenanceBanner.classList.remove("hidden");
+	maintenanceBanner.dataset.state = "visible";
 	syncMaintenanceBannerHeight();
 	document.body.classList.add("maintenance-banner-visible");
 }
@@ -108,12 +120,17 @@ async function initializeMaintenanceBanner(): Promise<void> {
 	const config = normalizeMaintenanceConfig(remoteValue);
 
 	if (!config?.enabled) {
+		// Only an explicit disable ends a banner run. A missing row or failed
+		// request also lands here and must not reset dismissals.
+		if (config?.enabled === false) {
+			clearDismissal();
+		}
 		hideMaintenanceBanner();
 		return;
 	}
 
 	currentSignature = getSignature(config);
-	if (config.dismissible !== false && isDismissed(currentSignature)) {
+	if (config.dismissible && isDismissed(currentSignature)) {
 		hideMaintenanceBanner();
 		return;
 	}

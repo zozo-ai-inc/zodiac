@@ -7,6 +7,7 @@ type BannerConfig = {
 	message: string;
 	style?: "normal" | "warning";
 	dismissible?: boolean;
+	id?: string;
 };
 
 // Type 3: the real banner component and DOM run. Only the remote
@@ -31,14 +32,10 @@ async function serveBanner(page: Page, initial: BannerConfig): Promise<{ set: (n
 }
 
 // The banner starts hidden, so a "still hidden" assertion is only meaningful
-// once the remote config has been fetched and applied.
+// once the component has applied the remote config, which it marks with data-state.
 async function loadWithBannerConfigApplied(page: Page, navigate: () => Promise<unknown>): Promise<void> {
-	const configLoaded = page.waitForResponse((response) =>
-		new URL(response.url()).pathname.endsWith("/feature_flags")
-	);
 	await navigate();
-	await (await configLoaded).finished();
-	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
+	await expect(page.locator("#maintenance-banner")).toHaveAttribute("data-state", /^(visible|hidden)$/);
 }
 
 async function mainContainerTop(page: Page): Promise<number> {
@@ -86,6 +83,34 @@ test("a changed maintenance banner reappears after an earlier one was dismissed"
 	await loadWithBannerConfigApplied(page, () => page.reload());
 
 	await expect(banner).toBeVisible();
+
+	await page.locator("#maintenance-banner-dismiss").click();
+	await expect(banner).toBeHidden();
+
+	remote.set({ enabled: true, message: "Cloud sync is currently unavailable.", style: "warning", id: "2" });
+	await loadWithBannerConfigApplied(page, () => page.reload());
+
+	await expect(banner).toBeVisible();
+});
+
+test("a maintenance banner that was turned off and on again reappears after an earlier dismissal", async ({ page }) => {
+	const remote = await serveBanner(page, { enabled: true, message: "Scheduled maintenance tonight." });
+	await loadWithBannerConfigApplied(page, () => page.goto("/"));
+
+	const banner = page.locator("#maintenance-banner");
+	await page.locator("#maintenance-banner-dismiss").click();
+	await expect(banner).toBeHidden();
+
+	remote.set({ enabled: false, message: "Scheduled maintenance tonight." });
+	await loadWithBannerConfigApplied(page, () => page.reload());
+
+	await expect(banner).toBeHidden();
+
+	remote.set({ enabled: true, message: "Scheduled maintenance tonight." });
+	await loadWithBannerConfigApplied(page, () => page.reload());
+
+	await expect(banner).toBeVisible();
+	await expect(banner).toContainText("Scheduled maintenance tonight.");
 });
 
 test("a non-dismissible maintenance banner has no close button and ignores a saved dismissal", async ({ page }) => {
