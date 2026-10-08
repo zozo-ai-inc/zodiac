@@ -163,7 +163,6 @@
 					<div class="navbar" data-target-id="sidebar-content">
 						<div class="navbar-tab">Chats</div>
 						<div class="navbar-tab">Personas</div>
-						<div class="navbar-tab">Settings</div>
 						<div class="navbar-tab-highlight"></div>
 					</div>
 				</div>
@@ -268,8 +267,269 @@
 						</div>
 						<div id="personalitiesDiv"></div>
 					</div>
+				</div>
 
-					<div class="sidebar-section hidden" id="settings-section">
+				<div class="sidebar-footer">
+					<button id="btn-login" class="logged-out-component btn btn-primary">Login</button>
+					<button type="button" id="btn-open-profile" class="sidebar-account logged-in-component hidden">
+						<img
+							class="user-avatar"
+							id="user-profile"
+							alt=""
+							src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+						/>
+						<span class="sidebar-account-label">Profile</span>
+					</button>
+					<div class="sidebar-footer-actions">
+						<button
+							type="button"
+							id="btn-about"
+							class="sidebar-footer-button"
+							aria-label="About"
+							aria-controls="about-menu"
+							aria-expanded="false"
+						>
+							<span class="material-symbols-outlined">info</span>
+						</button>
+						<div class="dropdown-menu about-menu" id="about-menu">
+							<a
+								class="about-menu-item"
+								href="https://github.com/zozo-ai-inc/zodiac"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<span class="material-symbols-outlined">code</span>
+								<span>Source Code</span>
+							</a>
+							<a class="about-menu-item" href="terms-of-service.html" target="_blank">
+								<span class="material-symbols-outlined">gavel</span>
+								<span>Terms of Service</span>
+							</a>
+							<a class="about-menu-item" href="privacy-policy.html" target="_blank">
+								<span class="material-symbols-outlined">shield</span>
+								<span>Privacy Policy</span>
+							</a>
+						</div>
+						<button
+							type="button"
+							id="btn-open-settings"
+							class="sidebar-footer-button"
+							aria-label="Settings"
+							aria-controls="settings-sidebar"
+							aria-expanded="false"
+						>
+							<span class="material-symbols-outlined">settings</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="mainContent">
+				<div class="header">
+					<button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">menu</button>
+					<div id="chat-title"></div>
+				</div>
+				<div id="scrollable-chat-container">
+					<div class="message-container"></div>
+				</div>
+				<div id="bottom-ui-container">
+					<!-- Round Control Panel for RPG group chats (above message input) -->
+					<div id="turn-control-panel" class="turn-control-panel hidden">
+						<button
+							type="button"
+							class="btn btn-textual material-symbols-outlined"
+							id="btn-rpg-settings"
+							aria-label="RPG group chat settings"
+						>
+							settings
+						</button>
+						<span class="turn-control-label" id="turn-control-label">Your Turn</span>
+						<button type="button" class="btn btn-primary hidden" id="btn-start-turn">
+							<span class="material-symbols-outlined">play_arrow</span>
+							<span id="start-round-text">Start Round</span>
+						</button>
+						<button type="button" class="btn btn-primary" id="btn-skip-turn">
+							<span class="material-symbols-outlined">skip_next</span>
+							Skip Turn
+						</button>
+					</div>
+					<div id="group-chat-typing-indicator" class="group-chat-typing-indicator hidden"></div>
+					<div
+						id="chat-loading-indicator"
+						class="chat-loading-indicator hidden"
+						aria-live="polite"
+						aria-busy="true"
+						aria-hidden="true"
+					>
+						<span class="loading-spinner" aria-hidden="true"></span>
+						<span>Loading chat...</span>
+					</div>
+					<div id="message-box">
+						<div
+							contenteditable
+							placeholder="Send a message to"
+							id="messageInput"
+							class="input-field"
+						></div>
+						<div id="attachment-preview" class="attachment-preview-container">
+							<input type="file" name="attachments" id="attachments" />
+						</div>
+						<div id="roleplay-composer" class="roleplay-composer hidden" aria-live="polite">
+							<div class="roleplay-composer__header">
+								<div
+									class="navbar roleplay-composer__tabs"
+									data-tabview="manual"
+									role="tablist"
+									aria-label="Roleplay composer sections"
+								>
+									<div
+										class="navbar-tab navbar-tab-active"
+										data-roleplay-tab="dialogue"
+										aria-selected="true"
+									>
+										Dialogue
+									</div>
+									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
+										Actions
+									</div>
+									<div class="navbar-tab-highlight"></div>
+								</div>
+								<button
+									type="button"
+									class="btn btn-textual roleplay-refresh"
+									id="btn-roleplay-refresh"
+									aria-label="Refresh suggestions"
+									title="Refresh suggestions"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+									<span
+										class="loading-spinner roleplay-refresh-spinner hidden"
+										aria-hidden="true"
+									></span>
+								</button>
+							</div>
+							<div class="roleplay-composer__selection-bar hidden">
+								<div id="roleplay-selected-actions" class="roleplay-selected-actions"></div>
+								<button
+									type="button"
+									class="btn btn-textual roleplay-clear-actions hidden"
+									id="btn-roleplay-clear-actions"
+								>
+									Clear
+								</button>
+							</div>
+							<div class="roleplay-panel" data-roleplay-panel="dialogue">
+								<div id="roleplay-suggestions" class="roleplay-suggestions"></div>
+							</div>
+							<div class="roleplay-panel hidden" data-roleplay-panel="actions">
+								<div id="roleplay-actions-root" class="roleplay-actions-root"></div>
+							</div>
+						</div>
+						<div id="message-box-buttons">
+							<div id="message-box-actions">
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-attach"
+									data-composer-action="Attach files"
+									aria-label="Attach files"
+								>
+									<span class="material-symbols-outlined composer-action-icon">attach_file</span>
+									<span class="composer-action-label">Attach files</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-internet"
+									data-composer-action="Web search"
+									aria-label="Toggle web search"
+								>
+									<span class="material-symbols-outlined composer-action-icon">language</span>
+									<span class="composer-action-label">Web search</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-roleplay"
+									data-composer-action="Roleplay"
+									aria-label="Toggle roleplay tools"
+								>
+									<span class="material-symbols-outlined composer-action-icon">pan_tool</span>
+									<span class="composer-action-label">Roleplay</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-image"
+									data-composer-action="Image generation"
+									aria-label="Toggle image generation"
+								>
+									<span class="material-symbols-outlined composer-action-icon">brush</span>
+									<span class="composer-action-label" id="image-generation-label"
+										>Image Generation</span
+									>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-edit"
+									data-composer-action="Image editing"
+									aria-label="Toggle image editing"
+								>
+									<span class="material-symbols-outlined composer-action-icon"
+										>imagesearch_roller</span
+									>
+									<span class="composer-action-label" id="image-editing-label">Image Editing</span>
+								</button>
+								<div id="composer-actions-overflow" class="composer-actions-overflow hidden">
+									<button
+										type="button"
+										class="btn-textual btn"
+										id="btn-composer-actions-overflow"
+										aria-label="More message actions"
+										aria-haspopup="menu"
+										aria-expanded="false"
+										aria-controls="composer-actions-menu"
+									>
+										<span class="material-symbols-outlined">more_horiz</span>
+									</button>
+									<div
+										id="composer-actions-menu"
+										class="dropdown-menu composer-actions-menu"
+										role="menu"
+									></div>
+								</div>
+							</div>
+							<div class="message-box-right">
+								<div id="image-credits-label" class="image-credits-label hidden">
+									<span class="image-credits-count">—</span>
+									<span class="image-credits-type">Image Credits</span>
+								</div>
+								<button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">
+									send
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<aside class="settings-sidebar" id="settings-sidebar" aria-label="Settings" tabindex="-1" inert>
+				<div class="sidebar-top-bar">
+					<div class="header" style="padding-block: 10px">
+						<h2 class="settings-sidebar-title">Settings</h2>
+						<button
+							type="button"
+							class="material-symbols-outlined btn-textual"
+							id="btn-close-settings"
+							aria-label="Close settings"
+						>
+							close
+						</button>
+					</div>
+				</div>
+				<div id="settings-sidebar-content">
+					<div class="sidebar-section" id="settings-section">
 						<div class="settings-nav-container">
 							<div id="settings-home" class="settings-home">
 								<div class="settings-list">
@@ -1108,241 +1368,7 @@
 						</div>
 					</div>
 				</div>
-
-				<div class="sidebar-footer">
-					<button id="btn-login" class="logged-out-component btn btn-primary">Login</button>
-					<button type="button" id="btn-open-profile" class="sidebar-account logged-in-component hidden">
-						<img
-							class="user-avatar"
-							id="user-profile"
-							alt=""
-							src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-						/>
-						<span class="sidebar-account-label">Profile</span>
-					</button>
-					<div class="sidebar-footer-actions">
-						<button
-							type="button"
-							id="btn-about"
-							class="sidebar-footer-button"
-							aria-label="About"
-							aria-controls="about-menu"
-							aria-expanded="false"
-						>
-							<span class="material-symbols-outlined">info</span>
-						</button>
-						<div class="dropdown-menu about-menu" id="about-menu">
-							<a
-								class="about-menu-item"
-								href="https://github.com/zozo-ai-inc/zodiac"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<span class="material-symbols-outlined">code</span>
-								<span>Source Code</span>
-							</a>
-							<a class="about-menu-item" href="terms-of-service.html" target="_blank">
-								<span class="material-symbols-outlined">gavel</span>
-								<span>Terms of Service</span>
-							</a>
-							<a class="about-menu-item" href="privacy-policy.html" target="_blank">
-								<span class="material-symbols-outlined">shield</span>
-								<span>Privacy Policy</span>
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div id="mainContent">
-				<div class="header">
-					<button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">menu</button>
-					<div id="chat-title"></div>
-				</div>
-				<div id="scrollable-chat-container">
-					<div class="message-container"></div>
-				</div>
-				<div id="bottom-ui-container">
-					<!-- Round Control Panel for RPG group chats (above message input) -->
-					<div id="turn-control-panel" class="turn-control-panel hidden">
-						<button
-							type="button"
-							class="btn btn-textual material-symbols-outlined"
-							id="btn-rpg-settings"
-							aria-label="RPG group chat settings"
-						>
-							settings
-						</button>
-						<span class="turn-control-label" id="turn-control-label">Your Turn</span>
-						<button type="button" class="btn btn-primary hidden" id="btn-start-turn">
-							<span class="material-symbols-outlined">play_arrow</span>
-							<span id="start-round-text">Start Round</span>
-						</button>
-						<button type="button" class="btn btn-primary" id="btn-skip-turn">
-							<span class="material-symbols-outlined">skip_next</span>
-							Skip Turn
-						</button>
-					</div>
-					<div id="group-chat-typing-indicator" class="group-chat-typing-indicator hidden"></div>
-					<div
-						id="chat-loading-indicator"
-						class="chat-loading-indicator hidden"
-						aria-live="polite"
-						aria-busy="true"
-						aria-hidden="true"
-					>
-						<span class="loading-spinner" aria-hidden="true"></span>
-						<span>Loading chat...</span>
-					</div>
-					<div id="message-box">
-						<div
-							contenteditable
-							placeholder="Send a message to"
-							id="messageInput"
-							class="input-field"
-						></div>
-						<div id="attachment-preview" class="attachment-preview-container">
-							<input type="file" name="attachments" id="attachments" />
-						</div>
-						<div id="roleplay-composer" class="roleplay-composer hidden" aria-live="polite">
-							<div class="roleplay-composer__header">
-								<div
-									class="navbar roleplay-composer__tabs"
-									data-tabview="manual"
-									role="tablist"
-									aria-label="Roleplay composer sections"
-								>
-									<div
-										class="navbar-tab navbar-tab-active"
-										data-roleplay-tab="dialogue"
-										aria-selected="true"
-									>
-										Dialogue
-									</div>
-									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
-										Actions
-									</div>
-									<div class="navbar-tab-highlight"></div>
-								</div>
-								<button
-									type="button"
-									class="btn btn-textual roleplay-refresh"
-									id="btn-roleplay-refresh"
-									aria-label="Refresh suggestions"
-									title="Refresh suggestions"
-								>
-									<span class="material-symbols-outlined" aria-hidden="true">refresh</span>
-									<span
-										class="loading-spinner roleplay-refresh-spinner hidden"
-										aria-hidden="true"
-									></span>
-								</button>
-							</div>
-							<div class="roleplay-composer__selection-bar hidden">
-								<div id="roleplay-selected-actions" class="roleplay-selected-actions"></div>
-								<button
-									type="button"
-									class="btn btn-textual roleplay-clear-actions hidden"
-									id="btn-roleplay-clear-actions"
-								>
-									Clear
-								</button>
-							</div>
-							<div class="roleplay-panel" data-roleplay-panel="dialogue">
-								<div id="roleplay-suggestions" class="roleplay-suggestions"></div>
-							</div>
-							<div class="roleplay-panel hidden" data-roleplay-panel="actions">
-								<div id="roleplay-actions-root" class="roleplay-actions-root"></div>
-							</div>
-						</div>
-						<div id="message-box-buttons">
-							<div id="message-box-actions">
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-attach"
-									data-composer-action="Attach files"
-									aria-label="Attach files"
-								>
-									<span class="material-symbols-outlined composer-action-icon">attach_file</span>
-									<span class="composer-action-label">Attach files</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-internet"
-									data-composer-action="Web search"
-									aria-label="Toggle web search"
-								>
-									<span class="material-symbols-outlined composer-action-icon">language</span>
-									<span class="composer-action-label">Web search</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-roleplay"
-									data-composer-action="Roleplay"
-									aria-label="Toggle roleplay tools"
-								>
-									<span class="material-symbols-outlined composer-action-icon">pan_tool</span>
-									<span class="composer-action-label">Roleplay</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-image"
-									data-composer-action="Image generation"
-									aria-label="Toggle image generation"
-								>
-									<span class="material-symbols-outlined composer-action-icon">brush</span>
-									<span class="composer-action-label" id="image-generation-label"
-										>Image Generation</span
-									>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-edit"
-									data-composer-action="Image editing"
-									aria-label="Toggle image editing"
-								>
-									<span class="material-symbols-outlined composer-action-icon"
-										>imagesearch_roller</span
-									>
-									<span class="composer-action-label" id="image-editing-label">Image Editing</span>
-								</button>
-								<div id="composer-actions-overflow" class="composer-actions-overflow hidden">
-									<button
-										type="button"
-										class="btn-textual btn"
-										id="btn-composer-actions-overflow"
-										aria-label="More message actions"
-										aria-haspopup="menu"
-										aria-expanded="false"
-										aria-controls="composer-actions-menu"
-									>
-										<span class="material-symbols-outlined">more_horiz</span>
-									</button>
-									<div
-										id="composer-actions-menu"
-										class="dropdown-menu composer-actions-menu"
-										role="menu"
-									></div>
-								</div>
-							</div>
-							<div class="message-box-right">
-								<div id="image-credits-label" class="image-credits-label hidden">
-									<span class="image-credits-count">—</span>
-									<span class="image-credits-type">Image Credits</span>
-								</div>
-								<button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">
-									send
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			</aside>
 		</div>
 
 		<!-- Image Credits Popover -->

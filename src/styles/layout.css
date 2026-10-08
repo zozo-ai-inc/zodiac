@@ -32,13 +32,16 @@ body.maintenance-banner-visible #main-container {
 	width: 100dvw;
 	height: var(--vvh, 100dvh);
 	min-height: var(--vvh, 100dvh);
+	/* Closed settings sits past the right edge; clip it so the page cannot be scrolled sideways to it. */
+	overflow-x: clip;
 }
 
 #chat-title {
 	font-size: 1.2rem;
 }
 
-.sidebar {
+.sidebar,
+.settings-sidebar {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
@@ -55,6 +58,31 @@ body.maintenance-banner-visible #main-container {
 	outline: none;
 	background-color: var(--sidebar-bg);
 	backdrop-filter: blur(32px);
+}
+
+/* Settings mirrors the sidebar on the right and stays off-screen until opened. */
+.settings-sidebar {
+	visibility: hidden;
+	transition:
+		margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		visibility 0s linear 0.3s;
+}
+
+.settings-sidebar--open {
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.settings-sidebar-title {
+	margin-right: auto;
+	font-size: 1.45rem;
+	font-weight: 800;
+	line-height: 1.75rem;
+}
+
+#btn-close-settings {
+	font-size: 1.75rem;
 }
 
 .sidebar-top-bar {
@@ -90,7 +118,8 @@ body.maintenance-banner-visible #main-container {
 
 /* Personality actions moved to btn-array */
 
-#sidebar-content {
+#sidebar-content,
+#settings-sidebar-content {
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
@@ -152,7 +181,8 @@ body.maintenance-banner-visible #main-container {
 }
 
 .sidebar-account:focus-visible,
-.sidebar-footer-button:focus-visible {
+.sidebar-footer-button:focus-visible,
+#btn-close-settings:focus-visible {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
@@ -237,23 +267,76 @@ body.maintenance-banner-visible #main-container {
 	}
 }
 
+/*
+ * Wide screens: settings sits in the row and pushes the chat, like the sidebar does. The closed margin
+ * cancels its width, left margin, and the row gap. 86rem is both sidebars, their margins and gaps, plus
+ * the 32rem minimum of #mainContent.
+ */
+@media (width > 86rem) {
+	.settings-sidebar {
+		margin-right: calc(-1 * (25rem + 0.75rem + 0.5rem));
+	}
+
+	.settings-sidebar--open {
+		margin-right: 0.75rem;
+	}
+}
+
+/* In between, there is no room to push the chat, so settings floats over its right edge. */
+@media (1032px < width <= 86rem) {
+	.settings-sidebar {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		transform: translateX(calc(100% + 0.75rem));
+	}
+
+	.settings-sidebar--open {
+		transform: none;
+	}
+
+	body.maintenance-banner-visible .settings-sidebar {
+		top: var(--maintenance-banner-height);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.settings-sidebar {
+		transition: none;
+	}
+}
+
 @media (max-width: 1032px) {
 	#main-container {
 		padding: 0;
 	}
 
-	.sidebar {
+	.sidebar,
+	.settings-sidebar {
 		top: 0;
 		height: calc(var(--vvh, 100dvh));
 		margin: 0;
 		width: calc(100dvw);
 		position: fixed;
 		border-radius: 0;
+	}
+
+	.sidebar {
 		display: none;
 		opacity: 0;
 	}
 
-	body.maintenance-banner-visible .sidebar {
+	.settings-sidebar {
+		right: 0;
+		transform: translateX(100%);
+	}
+
+	.settings-sidebar--open {
+		transform: none;
+	}
+
+	body.maintenance-banner-visible :is(.sidebar, .settings-sidebar) {
 		top: 0;
 		height: calc(var(--vvh, 100dvh));
 		padding-top: calc(1rem + var(--maintenance-banner-height));

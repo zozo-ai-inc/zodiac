@@ -25,6 +25,7 @@ import {
 	getPremiumMessageCharacterLimit,
 	truncateToCharacterLimit
 } from "../../utils/payloadLimits";
+import { dispatchAppEvent } from "../../events";
 
 interface AttachmentRemovedDetail {
 	signature: string;
@@ -1098,28 +1099,7 @@ rpgSettingsButton?.addEventListener(
 			const chat = await chatsService.getCurrentChat();
 			if (!chat?.groupChat) return;
 
-			// Ensure sidebar is visible
-			const sidebar = document.querySelector<HTMLElement>(".sidebar");
-			if (sidebar) {
-				sidebar.style.display = "flex";
-				helpers.showElement(sidebar, false);
-			}
-
-			// Switch to the Settings tab (3rd tab)
-			const navbar = document.querySelector<HTMLElement>('.navbar[data-target-id="sidebar-content"]');
-			const settingsTab = navbar?.querySelector<HTMLElement>(".navbar-tab:nth-child(3)");
-			settingsTab?.click();
-
-			// Open the Group chat Settings page
-			const settingsSection = document.querySelector<HTMLElement>("#settings-section");
-			const groupChatSettingsButton = settingsSection?.querySelector<HTMLElement>(
-				'[data-settings-target="groupchat"]'
-			);
-
-			// If we're already in settings home, clicking this will navigate to the groupchat page.
-			// If we're already inside another settings page, the click will still work because
-			// SettingsNavigation attaches handlers directly to the home list items.
-			groupChatSettingsButton?.click();
+			dispatchAppEvent("open-settings", { page: "groupchat" });
 		})()
 );
 

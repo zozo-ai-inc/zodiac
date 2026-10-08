@@ -36,7 +36,7 @@ for (const origin of ["https://localhost:4175", devServer]) {
 		await expect(page.locator("#domain-migration-sheet")).toBeHidden();
 		await expect(page.locator("#takeout-import-sheet")).toBeHidden();
 		await expect(page).toHaveURL(`${origin}/`);
-		await page.locator(".navbar-tab").filter({ hasText: "Settings" }).first().click();
+		await page.locator("#btn-open-settings").click();
 		await page.locator("#debug-section").getByRole("button", { name: "Test migration", exact: true }).click();
 		await expect(page.locator("#domain-migration-sheet")).toBeVisible();
 		await expect(page.locator("#btn-migration-continue")).toBeDisabled();

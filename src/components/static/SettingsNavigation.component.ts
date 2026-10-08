@@ -1,6 +1,7 @@
 import * as helpers from "../../utils/helpers";
+import { onAppEvent, type SettingsPage } from "../../events";
 
-type SettingsPageKey = "home" | "api" | "chat" | "groupchat" | "image" | "personalisation" | "data";
+type SettingsPageKey = "home" | SettingsPage;
 
 const SETTINGS_SECTION_SELECTOR = "#settings-section";
 const SETTINGS_HOME_ID = "settings-home";
@@ -101,6 +102,10 @@ export function initialize(): void {
 	const backButtons = settingsSection.querySelectorAll<HTMLButtonElement>(SETTINGS_BACK_BUTTON_SELECTOR);
 	backButtons.forEach((button) => {
 		button.addEventListener("click", () => navigateTo("home", settingsSection));
+	});
+
+	onAppEvent("open-settings", (event) => {
+		if (event.detail.page) navigateTo(event.detail.page, settingsSection);
 	});
 }
 
