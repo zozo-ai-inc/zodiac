@@ -258,8 +258,31 @@ body.maintenance-banner-visible #main-container {
 	display: none;
 }
 
+/* Both sidebars share a header height, whichever controls sit in it. */
+.sidebar-top-bar .header {
+	flex-wrap: wrap;
+	min-height: 3.5rem;
+}
+
+/* The tab switcher sits beside the title. Grid keeps its tabs equally wide at their content size. */
 .sidebar-top-bar .navbar {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+	margin-bottom: 0;
 	background-color: transparent;
+}
+
+.sidebar-top-bar .navbar-tab {
+	padding: 0.3rem 0.5rem;
+	font-size: 0.75rem;
+}
+
+/* Phones have no room beside the title, so the switcher takes its own full-width row. */
+@media (max-width: 26rem) {
+	.sidebar-top-bar .navbar {
+		flex: 1 0 100%;
+	}
 }
 
 @media (min-width: 1032px) {
