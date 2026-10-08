@@ -9,6 +9,8 @@ import deepseekIconUrl from "../../assets/model-family-icons/deepseek.svg?url";
 import googleIconUrl from "../../assets/model-family-icons/google.svg?url";
 import grokIconUrl from "../../assets/model-family-icons/grok.svg?url";
 import inceptionIconUrl from "../../assets/model-family-icons/inception.png?url";
+import kimiIconUrl from "../../assets/model-family-icons/kimi.svg?url";
+import mistralIconUrl from "../../assets/model-family-icons/mistral.svg?url";
 import openAiIconUrl from "../../assets/model-family-icons/openai.svg?url";
 import openRouterIconUrl from "../../assets/model-family-icons/openrouter.svg?url";
 import qwenIconUrl from "../../assets/model-family-icons/qwen.svg?url";
@@ -157,6 +159,18 @@ const FAMILIES: ModelFamily[] = [
 		label: "Mercury",
 		icon: { alt: "Inception", src: inceptionIconUrl, type: "image" },
 		test: (id) => id.includes("mercury") || id.startsWith("inception/")
+	},
+	{
+		key: "kimi",
+		label: "Kimi",
+		icon: { alt: "Kimi", src: kimiIconUrl, type: "mask" },
+		test: (id) => id.includes("kimi") || id.startsWith("moonshotai/")
+	},
+	{
+		key: "mistral",
+		label: "Mistral",
+		icon: { alt: "Mistral", src: mistralIconUrl, type: "image" },
+		test: (id) => id.includes("mistral") || id.startsWith("mistralai/")
 	}
 ];
 
