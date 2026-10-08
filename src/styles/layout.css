@@ -98,6 +98,97 @@ body.maintenance-banner-visible #main-container {
 	/* occupy remaining height in sidebar */
 }
 
+.sidebar-footer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.25rem;
+	padding-top: 0.625rem;
+	border-top: 1px solid var(--sidebar-chrome-border);
+}
+
+.sidebar-account {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.5rem;
+	min-width: 0;
+	padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+	border-radius: 999px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.sidebar-account-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sidebar-footer-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-left: auto;
+}
+
+.sidebar-footer-button {
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.sidebar-account:hover,
+.sidebar-footer-button:hover,
+.sidebar-footer-button[aria-expanded="true"] {
+	background-color: var(--dropdown-menu-item-hover-bg);
+}
+
+.sidebar-account:active,
+.sidebar-footer-button:active {
+	background-color: var(--dropdown-menu-item-active-bg);
+}
+
+.sidebar-account:focus-visible,
+.sidebar-footer-button:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.about-menu {
+	display: none;
+}
+
+.about-menu .about-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.3rem;
+	color: inherit;
+	font-size: 0.875rem;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color 0.1s ease;
+}
+
+.about-menu .about-menu-item:hover,
+.about-menu .about-menu-item:focus-visible {
+	background: var(--dropdown-menu-item-hover-bg);
+	outline: none;
+}
+
+.about-menu .about-menu-item:active {
+	background: var(--dropdown-menu-item-active-bg);
+}
+
+.about-menu .material-symbols-outlined {
+	font-size: 1.125rem;
+	opacity: 0.85;
+}
+
 #btn-show-sidebar {
 	display: none;
 	font-size: 1.75rem;
