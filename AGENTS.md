@@ -204,6 +204,14 @@ User preferences use `localStorage` with service-level get/set wrappers. See [sr
 - When a plan's allowance amounts change, preserve allowances already granted for the subscriber's current allowance window and apply the new amounts at the next allowance period unless the user explicitly requests an immediate change.
 - New subscriptions receive the current allowance configuration immediately. Subscription lifecycle changes such as cancellation or switching tiers continue to follow the active subscription state and are not deferred by this rule.
 
+### Bug Fix Workflow
+
+- Surface every bug through a failing test before implementing the fix. Write the test first, confirm it fails on the unfixed code because of the bug, then implement the fix and confirm the same test passes.
+- Every issue and regression gets a test. A fix without a test that would have caught the bug is not complete.
+- Do not reproduce a bug by manipulating a live browser instance, such as resizing a preview tab, running scripts in the page, or clicking through the app by hand. Reproduce it with a test instead.
+- The exception is when there is a concrete reason to prefer a visual, such as judging appearance, spacing, or alignment. State that reason when you use the browser this way.
+- Reproduction tests follow the rules in Test Scope And Failure Mapping below, including proposing the coverage and test layer to the user before writing the test.
+
 ### Test Scope And Failure Mapping
 
 - Before creating a new test or materially expanding an existing test, discuss the proposed coverage with the user and get approval. Explain which behavior the test will protect, which test layer it belongs to, and why the test is valuable before writing it.
