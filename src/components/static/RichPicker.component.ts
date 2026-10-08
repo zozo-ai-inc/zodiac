@@ -167,7 +167,7 @@ const OTHER_FAMILY: ModelFamily = {
 	test: () => true
 };
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-const MODEL_PICKER_GROUP_ORDER = ["Flash Lite", "Flash", "Pro", "Haiku", "Sonnet", "Opus"];
+const MODEL_PICKER_GROUP_ORDER = ["Flash Lite", "Flash", "Pro", "Haiku", "Sonnet", "Opus", "Fable"];
 
 // Which family page is currently shown, and whether we skipped the family list because only one exists.
 let activeFamily: string | null = null;
