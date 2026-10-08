@@ -1,9 +1,11 @@
 .maintenance-banner {
+	--maintenance-banner-dismiss-size: 2.25rem;
+	--maintenance-banner-dismiss-inset: 0.5rem;
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
-	min-height: var(--maintenance-banner-height);
+	min-height: var(--maintenance-banner-min-height);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -14,6 +16,44 @@
 	font-weight: 600;
 	line-height: 1.25;
 	white-space: normal;
+}
+
+.maintenance-banner-dismiss {
+	position: absolute;
+	top: 50%;
+	right: var(--maintenance-banner-dismiss-inset);
+	transform: translateY(-50%);
+	width: var(--maintenance-banner-dismiss-size);
+	height: var(--maintenance-banner-dismiss-size);
+	padding: 0;
+	background: transparent;
+	border: none;
+	border-radius: 0.5rem;
+	color: inherit;
+	cursor: pointer;
+	opacity: 0.7;
+	transition: opacity 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.maintenance-banner-dismiss:hover,
+.maintenance-banner-dismiss:focus-visible {
+	opacity: 1;
+}
+
+.maintenance-banner-dismiss:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: -2px;
+}
+
+.maintenance-banner-dismiss .material-symbols-outlined {
+	font-size: 1.1rem;
+}
+
+.maintenance-banner--dismissible {
+	padding-inline: calc(var(--maintenance-banner-dismiss-inset) + var(--maintenance-banner-dismiss-size) + 0.25rem);
 }
 
 .maintenance-banner--normal {

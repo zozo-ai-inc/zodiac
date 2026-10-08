@@ -6,17 +6,55 @@ interface MaintenanceBannerConfig {
 	enabled?: boolean;
 	message?: string;
 	style?: MaintenanceBannerStyle;
+	dismissible: boolean;
+	id?: string;
 }
+
+const DISMISSED_STORAGE_KEY = "maintenance_banner_dismissed";
 
 const maintenanceBannerElement = document.querySelector<HTMLDivElement>("#maintenance-banner");
 const maintenanceBannerTextElement = document.querySelector<HTMLSpanElement>("#maintenance-banner-text");
+const maintenanceBannerDismissElement = document.querySelector<HTMLButtonElement>("#maintenance-banner-dismiss");
 
-if (!maintenanceBannerElement || !maintenanceBannerTextElement) {
-	throw new Error("Missing DOM elements: #maintenance-banner or #maintenance-banner-text");
+if (!maintenanceBannerElement || !maintenanceBannerTextElement || !maintenanceBannerDismissElement) {
+	throw new Error(
+		"Missing DOM elements: #maintenance-banner, #maintenance-banner-text or #maintenance-banner-dismiss"
+	);
 }
 
 const maintenanceBanner = maintenanceBannerElement;
 const maintenanceBannerText = maintenanceBannerTextElement;
+const maintenanceBannerDismiss = maintenanceBannerDismissElement;
+
+let currentSignature = "";
+
+function getSignature(config: MaintenanceBannerConfig): string {
+	return JSON.stringify([config.id ?? "", config.style ?? "normal", config.message ?? ""]);
+}
+
+function isDismissed(signature: string): boolean {
+	try {
+		return localStorage.getItem(DISMISSED_STORAGE_KEY) === signature;
+	} catch {
+		return false;
+	}
+}
+
+function persistDismissal(signature: string): void {
+	try {
+		localStorage.setItem(DISMISSED_STORAGE_KEY, signature);
+	} catch {
+		// Storage unavailable; dismissal only lasts for this session.
+	}
+}
+
+function clearDismissal(): void {
+	try {
+		localStorage.removeItem(DISMISSED_STORAGE_KEY);
+	} catch {
+		// Storage unavailable; nothing was persisted.
+	}
+}
 
 function syncMaintenanceBannerHeight(): void {
 	const bannerHeight = `${maintenanceBanner.offsetHeight}px`;
@@ -33,7 +71,9 @@ function normalizeMaintenanceConfig(value: unknown): MaintenanceBannerConfig | n
 	}
 
 	const raw = value as Record<string, unknown>;
-	const normalized: MaintenanceBannerConfig = {};
+	const normalized: MaintenanceBannerConfig = {
+		dismissible: typeof raw.dismissible === "boolean" ? raw.dismissible : true
+	};
 
 	if (typeof raw.enabled === "boolean") {
 		normalized.enabled = raw.enabled;
@@ -47,11 +87,16 @@ function normalizeMaintenanceConfig(value: unknown): MaintenanceBannerConfig | n
 		normalized.style = raw.style;
 	}
 
+	if (typeof raw.id === "string" || typeof raw.id === "number") {
+		normalized.id = String(raw.id);
+	}
+
 	return normalized;
 }
 
 function hideMaintenanceBanner(): void {
 	maintenanceBanner.classList.add("hidden");
+	maintenanceBanner.dataset.state = "hidden";
 	document.body.classList.remove("maintenance-banner-visible");
 }
 
@@ -62,7 +107,10 @@ function showMaintenanceBanner(config: MaintenanceBannerConfig): void {
 	maintenanceBannerText.textContent = text;
 	maintenanceBanner.classList.toggle("maintenance-banner--warning", style === "warning");
 	maintenanceBanner.classList.toggle("maintenance-banner--normal", style === "normal");
+	maintenanceBannerDismiss.classList.toggle("hidden", !config.dismissible);
+	maintenanceBanner.classList.toggle("maintenance-banner--dismissible", config.dismissible);
 	maintenanceBanner.classList.remove("hidden");
+	maintenanceBanner.dataset.state = "visible";
 	syncMaintenanceBannerHeight();
 	document.body.classList.add("maintenance-banner-visible");
 }
@@ -72,12 +120,28 @@ async function initializeMaintenanceBanner(): Promise<void> {
 	const config = normalizeMaintenanceConfig(remoteValue);
 
 	if (!config?.enabled) {
+		// Only an explicit disable ends a banner run. A missing row or failed
+		// request also lands here and must not reset dismissals.
+		if (config?.enabled === false) {
+			clearDismissal();
+		}
+		hideMaintenanceBanner();
+		return;
+	}
+
+	currentSignature = getSignature(config);
+	if (config.dismissible && isDismissed(currentSignature)) {
 		hideMaintenanceBanner();
 		return;
 	}
 
 	showMaintenanceBanner(config);
 }
+
+maintenanceBannerDismiss.addEventListener("click", () => {
+	persistDismissal(currentSignature);
+	hideMaintenanceBanner();
+});
 
 window.addEventListener("resize", () => {
 	if (document.body.classList.contains("maintenance-banner-visible")) {
