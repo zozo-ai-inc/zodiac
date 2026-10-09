@@ -93,11 +93,15 @@ body.settings-open .settings-sidebar {
 	display: flex;
 	flex-direction: column;
 	gap: 0.25rem;
-	padding: 0.5rem;
-	padding-bottom: 0;
+	/*
+	 * With the sidebar's own padding and the negative margins, this leaves the row's right-hand control 0.625rem
+	 * from the top and right edges. That gap plus the control's 0.625rem radius equals the sidebar's 1.25rem
+	 * corner, so the two curves stay concentric.
+	 */
+	padding: 0.25rem 0.25rem 0 0.5rem;
 	margin-inline: -8px;
 	margin-top: -8px;
-	margin-bottom: 0.5rem;
+	margin-bottom: 0.75rem;
 	border-radius: 1rem;
 }
 
@@ -260,10 +264,11 @@ body.settings-open .settings-sidebar {
 	display: none;
 }
 
-/* Both sidebars share a header height, whichever controls sit in it. */
+/* Both sidebars share a header height, whichever controls sit in it: that of the tab switcher. */
 .sidebar-top-bar .header {
 	flex-wrap: wrap;
-	min-height: 3.5rem;
+	min-height: 2.125rem;
+	padding: 0;
 }
 
 /* The tab switcher sits at the right end of the title row. Grid keeps its tabs equally wide at their content size. */
@@ -273,12 +278,17 @@ body.settings-open .settings-sidebar {
 	grid-auto-columns: 1fr;
 	margin-bottom: 0;
 	margin-left: auto;
-	background-color: transparent;
+}
+
+/* The tab radius is the switcher's radius less its padding, so the active tab nests in its corner. */
+.sidebar-top-bar :is(.navbar-tab, .navbar-tab-highlight) {
+	border-radius: 0.4375rem;
 }
 
 .sidebar-top-bar .navbar-tab {
-	padding: 0.3rem 0.5rem;
+	padding: 0.3125rem 0.625rem;
 	font-size: 0.75rem;
+	line-height: 1.125rem;
 }
 
 /* Phones have no room beside the title, so the switcher takes its own full-width row. */
