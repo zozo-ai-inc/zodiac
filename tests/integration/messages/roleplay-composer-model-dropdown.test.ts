@@ -170,7 +170,7 @@ describe("roleplay suggestion model dropdown", () => {
 			"Grok 4.5",
 			"Grok 4.6",
 			"Grok 4.7",
-			"Kimi K3",
+			"Kimi K3 [MEGA]",
 			"Mistral Large 4",
 			"Qwen3.5 397B",
 			"Qwen3.5 Plus",

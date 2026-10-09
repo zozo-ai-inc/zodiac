@@ -258,7 +258,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -269,7 +269,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: true,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -280,7 +280,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -291,7 +291,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -302,7 +302,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -313,7 +313,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -324,7 +324,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -336,7 +336,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -348,7 +348,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -448,7 +448,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -460,7 +460,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -473,7 +473,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Sonnet",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -485,7 +485,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -498,7 +498,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -511,7 +511,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -524,7 +524,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -538,7 +538,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -551,7 +551,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Haiku",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -894,7 +894,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		id: "moonshotai/kimi-k3",
 		label: "Kimi K3",
 		provider: "openrouter",
-		mega: false,
+		mega: true,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		supportsTemperature: true,
@@ -963,6 +963,7 @@ export function getRoleplaySuggestionThinkingCap(model: string | null | undefine
 	return getChatModelDefinition(model)?.roleplaySuggestionThinkingCap;
 }
 
+// Temperature is always sent: the premium endpoint and OpenRouter drop it for models that do not accept it.
 export function modelSupportsTemperature(_model: string | null | undefined): boolean {
 	return true;
 }
