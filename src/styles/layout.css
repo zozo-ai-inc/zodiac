@@ -20,9 +20,11 @@ body.maintenance-banner-visible #main-container {
 	pointer-events: none;
 }
 
+/* The padding keeps the tap target at 1.75rem around the smaller icon. */
 #btn-hide-sidebar {
 	display: none;
-	font-size: 1.75rem;
+	padding: 0.25rem;
+	font-size: 1.25rem;
 }
 
 #main-container {
