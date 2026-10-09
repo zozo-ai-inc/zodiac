@@ -51,6 +51,8 @@ export interface ChatModelDefinition {
 	// ISO 8601 date-time with timezone (e.g. "2026-10-20T00:00:00Z"); from that moment on, the model is no longer offered.
 	// Keep in sync with PREMIUM_MODELS in zozo-edge's handle-pro-request-x.
 	deprecationDate?: string;
+	// Selected in place of this model for users who had it selected when it was deprecated.
+	replacementModel?: string;
 }
 
 export interface ChatModelAccess {
@@ -142,7 +144,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false,
-		deprecationDate: "2026-10-20T00:00:00Z"
+		deprecationDate: "2026-10-20T00:00:00Z",
+		replacementModel: ChatModel.FLASH_3_PREV
 	},
 	{
 		id: ChatModel.FLASH_2_5,
@@ -184,7 +187,9 @@ function openRouterGeminiVariant(localModelId: ChatModel, openRouterModelId: str
 		label: `${localModel.label} via OpenRouter`,
 		premiumLabel: localModel.label,
 		provider: "openrouter",
-		localOnly: undefined
+		localOnly: undefined,
+		replacementModel:
+			localModel.replacementModel && GEMINI_TO_OPENROUTER_CHAT_MODEL_IDS.get(localModel.replacementModel)
 	};
 }
 
@@ -1043,6 +1048,15 @@ export function getValidChatModel(model: string | null | undefined, access: Chat
 	const preferredModel = access.isPremiumEndpointPreferred ? getPremiumEndpointChatModel(model) : model;
 	if (preferredModel && availableModels.some((candidate) => candidate.id === preferredModel)) {
 		return preferredModel;
+	}
+
+	const preferredDefinition = getChatModelDefinition(preferredModel);
+	if (
+		preferredDefinition?.replacementModel &&
+		isChatModelDeprecated(preferredDefinition) &&
+		availableModels.some((candidate) => candidate.id === preferredDefinition.replacementModel)
+	) {
+		return preferredDefinition.replacementModel;
 	}
 
 	return availableModels[0]?.id ?? getDefaultChatModel(access);

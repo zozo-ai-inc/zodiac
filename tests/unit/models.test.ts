@@ -321,7 +321,7 @@ describe("chat model deprecation", () => {
 		);
 	});
 
-	it("replaces a saved model with an offered one once it is deprecated", () => {
+	it("replaces a saved model with the first offered one once it is deprecated", () => {
 		setNow("2026-10-08T23:59:59Z");
 		expect(getValidChatModel("qwen/qwen3.6-max-preview", premiumAccess)).toBe("qwen/qwen3.6-max-preview");
 
@@ -329,7 +329,37 @@ describe("chat model deprecation", () => {
 		const replacement = getValidChatModel("qwen/qwen3.6-max-preview", premiumAccess);
 
 		expect(replacement).not.toBe("qwen/qwen3.6-max-preview");
-		expect(getAccessibleChatModels(premiumAccess).map((model) => model.id)).toContain(replacement);
+		expect(replacement).toBe(getAccessibleChatModels(premiumAccess)[0].id);
+	});
+
+	it("replaces a saved Gemini 2.5 Pro with Gemini 3 Flash Preview once it is deprecated", () => {
+		setNow("2026-10-19T23:59:59Z");
+		expect(getValidChatModel("google/gemini-2.5-pro", premiumAccess)).toBe("google/gemini-2.5-pro");
+
+		setNow("2026-10-20T00:00:00Z");
+		// Premium endpoint, whether the saved id is the OpenRouter or the Gemini-key one.
+		expect(getValidChatModel("google/gemini-2.5-pro", premiumAccess)).toBe("google/gemini-3-flash-preview");
+		expect(getValidChatModel("gemini-2.5-pro", premiumAccess)).toBe("google/gemini-3-flash-preview");
+		// Own keys: each variant is replaced within its own provider.
+		expect(getValidChatModel("google/gemini-2.5-pro", fullAccess)).toBe("google/gemini-3-flash-preview");
+		expect(getValidChatModel("gemini-2.5-pro", fullAccess)).toBe("gemini-3-flash-preview");
+	});
+
+	it("falls back to the first offered model when the named replacement is not offered either", () => {
+		setNow("2026-10-20T00:00:00Z");
+		const openRouterOnly: ChatModelAccess = { hasGeminiAccess: false, hasOpenRouterAccess: true };
+
+		expect(getValidChatModel("gemini-2.5-pro", openRouterOnly)).toBe(getAccessibleChatModels(openRouterOnly)[0].id);
+	});
+
+	it("names only replacements that exist, share the provider and are not retiring themselves", () => {
+		for (const model of CHAT_MODELS.filter((candidate) => candidate.replacementModel)) {
+			const replacement = getChatModelDefinition(model.replacementModel);
+
+			expect(replacement, model.id).toBeDefined();
+			expect(replacement?.provider, model.id).toBe(model.provider);
+			expect(replacement?.deprecationDate, model.id).toBeUndefined();
+		}
 	});
 
 	it("replaces a saved roleplay suggestion model with an offered one once it is deprecated", () => {

@@ -74,3 +74,14 @@ test("moves a saved model to one that is still offered once it is retired", asyn
 	);
 	await expect(page.locator("#model-picker-trigger")).not.toContainText("Qwen3.6 Max Preview");
 });
+
+test("moves a saved Gemini 2.5 Pro to Gemini 3 Flash Preview once it is retired", async ({ page }) => {
+	await openApp(page, "2026-10-20T00:00:00Z", "google/gemini-2.5-pro");
+	await openChatSettings(page);
+
+	await expect(
+		page.locator("#model-picker-trigger"),
+		"retired Gemini 2.5 Pro was not replaced by Gemini 3 Flash Preview"
+	).toContainText("Gemini 3 Flash Preview");
+	await expect(page.locator("#selectedModel")).toHaveValue("google/gemini-3-flash-preview");
+});
