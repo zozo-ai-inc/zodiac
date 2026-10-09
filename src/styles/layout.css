@@ -291,8 +291,8 @@ body.settings-open .settings-sidebar {
 	line-height: 1.125rem;
 }
 
-/* Phones have no room beside the title, so the switcher takes its own full-width row. */
-@media (max-width: 26rem) {
+/* Below 24.25rem the title, version badge, and switcher no longer fit on one row, so the switcher takes its own. */
+@media (max-width: 24.25rem) {
 	.sidebar-top-bar .navbar {
 		flex: 1 0 100%;
 	}
