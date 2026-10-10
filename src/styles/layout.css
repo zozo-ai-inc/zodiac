@@ -179,6 +179,21 @@ body.settings-open .settings-sidebar {
 	cursor: pointer;
 }
 
+.sidebar-footer-button.has-update {
+	position: relative;
+}
+
+.sidebar-footer-button.has-update::after {
+	content: "";
+	position: absolute;
+	top: 0.375rem;
+	right: 0.375rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	background-color: var(--primary);
+}
+
 .sidebar-account:hover,
 .sidebar-footer-button:hover,
 .sidebar-footer-button[aria-expanded="true"] {
@@ -205,12 +220,14 @@ body.settings-open .settings-sidebar {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	width: 100%;
 	padding: 0.5rem 0.75rem;
 	border-radius: 0.3rem;
 	color: inherit;
 	font-size: 0.875rem;
 	text-decoration: none;
 	white-space: nowrap;
+	cursor: pointer;
 	transition: background-color 0.1s ease;
 }
 
@@ -227,6 +244,19 @@ body.settings-open .settings-sidebar {
 .about-menu .material-symbols-outlined {
 	font-size: 1.125rem;
 	opacity: 0.85;
+}
+
+.about-menu .about-menu-item.unread {
+	box-shadow:
+		0 0 0 1px var(--primary),
+		0 0 0.75rem color-mix(in srgb, var(--primary) 65%, transparent);
+}
+
+.about-menu .about-menu-version {
+	margin-left: auto;
+	padding-left: 0.75rem;
+	font-size: 0.75rem;
+	opacity: 0.6;
 }
 
 #btn-show-sidebar {

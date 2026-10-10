@@ -19,10 +19,11 @@ function openMenu(): void {
 		onClose: () => {
 			menuPortal = null;
 			aboutButton.setAttribute("aria-expanded", "false");
+			window.dispatchEvent(new CustomEvent("about-menu-closed"));
 		}
 	});
 	// The portal moves the menu to the end of <body>, out of the button's tab order.
-	aboutMenu.querySelector<HTMLAnchorElement>("a")?.focus({ preventScroll: true });
+	aboutMenu.querySelector<HTMLElement>(".about-menu-item")?.focus({ preventScroll: true });
 }
 
 aboutButton.addEventListener("click", () => {
