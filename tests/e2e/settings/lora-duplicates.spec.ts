@@ -42,7 +42,7 @@ async function stubLoraMetadata(page: Page): Promise<void> {
 }
 
 async function openImageSettings(page: Page): Promise<void> {
-	await page.locator(".navbar-tab").filter({ hasText: "Settings" }).first().click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="image"]').click();
 	await expect(page.locator("#lora-url-input")).toBeVisible();
 }

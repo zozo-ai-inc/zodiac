@@ -14,7 +14,3 @@
 .badge:hover {
 	background-color: var(--badge-hover-bg);
 }
-
-.badge-highlight {
-	animation: spin 1s ease infinite;
-}

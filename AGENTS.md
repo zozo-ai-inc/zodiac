@@ -161,6 +161,8 @@ window.addEventListener("generation-state-changed", (e) => {
 
 Key events: `auth-state-changed`, `generation-state-changed`, `chat-model-changed`, `subscription-updated`, `round-state-changed`
 
+To open the settings panel from another module, dispatch `open-settings` (optionally with a `page`) instead of clicking its DOM controls.
+
 ### Service Initialization
 
 Services export an `initialize()` function called from `main.ts` in dependency order. Avoid circular imports by using event-based communication.

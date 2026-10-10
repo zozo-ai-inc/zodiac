@@ -135,6 +135,13 @@ export interface ImagePremiumEndpointPreferenceChangedDetail {
 
 export type SettingsLoadedFromStorageDetail = Record<string, never>;
 
+export type SettingsPage = "api" | "chat" | "groupchat" | "image" | "personalisation" | "data";
+
+export interface OpenSettingsDetail {
+	/** Page to show once the panel is open. Omit to keep whichever page it last showed. */
+	page?: SettingsPage;
+}
+
 // --- Image Mode Events ---
 
 export interface ImageGenerationToggledDetail {
@@ -272,6 +279,7 @@ export const EventNames = {
 	IMAGE_PREMIUM_ENDPOINT_PREFERENCE_CHANGED: "image-premium-endpoint-preference-changed",
 	SETTINGS_LOADED_FROM_STORAGE: "settings-loaded-from-storage",
 	API_KEYS_CHANGED: "api-keys-changed",
+	OPEN_SETTINGS: "open-settings",
 
 	// Image Mode
 	IMAGE_GENERATION_TOGGLED: "image-generation-toggled",
@@ -350,6 +358,7 @@ export interface AppEventMap {
 	[EventNames.IMAGE_PREMIUM_ENDPOINT_PREFERENCE_CHANGED]: ImagePremiumEndpointPreferenceChangedDetail;
 	[EventNames.SETTINGS_LOADED_FROM_STORAGE]: SettingsLoadedFromStorageDetail;
 	[EventNames.API_KEYS_CHANGED]: ApiKeysChangedDetail;
+	[EventNames.OPEN_SETTINGS]: OpenSettingsDetail;
 
 	// Image Mode
 	[EventNames.IMAGE_GENERATION_TOGGLED]: ImageGenerationToggledDetail;

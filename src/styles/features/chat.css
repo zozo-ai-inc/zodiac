@@ -982,10 +982,6 @@ body.full-width-chat #message-box {
 	max-width: 100%;
 }
 
-#title-div {
-	margin-right: auto;
-}
-
 #btn-image,
 #btn-edit {
 	display: flex;

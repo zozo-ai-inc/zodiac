@@ -149,7 +149,7 @@ test("dedicated image models are available only in image selectors", async ({ pa
 	expect(chatModelIds).not.toContain("google/gemini-2.5-flash-image");
 	expect(chatModelIds).not.toContain("x-ai/grok-imagine-image-quality");
 
-	await page.locator(".navbar-tab").nth(2).click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="image"]').click();
 	await expect(page.locator("#selectedImageModel")).toBeVisible();
 	await expect(page.locator("#prefer-premium-image-endpoint-toggle")).toHaveClass(/hidden/);

@@ -1,4 +1,6 @@
+/* The scroller reaches into the panel's padding, so a scrollbar gets its gap without insetting the content. */
 #settings-section {
+	margin-right: -0.5rem;
 	padding-right: 0.5rem;
 }
 
@@ -341,36 +343,6 @@
 	margin-bottom: 0.75rem;
 }
 
-#gemin-pro-logo {
-	width: 1.75rem;
-	height: 1.75rem;
-}
-
-.credits {
-	margin-top: auto;
-	display: flex;
-	padding: 0.5rem 0.875rem;
-	margin-inline: -8px;
-	margin-bottom: -8px;
-	border-radius: 1rem;
-	font-size: 0.75rem;
-	color: #7c8a9c;
-	justify-content: space-between;
-	align-items: center;
-	gap: 0.75rem;
-	height: 3rem;
-}
-
-.credits a {
-	text-decoration: none;
-	opacity: 0.85;
-}
-
-.credits a:hover {
-	opacity: 1;
-	text-decoration: underline;
-}
-
 .generation-settings {
 	display: flex;
 	flex-direction: column;
@@ -488,12 +460,6 @@
 
 .uxtoggle {
 	justify-self: end;
-}
-
-@media (max-width: 1032px) {
-	#settings-section {
-		padding-right: 0;
-	}
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .api-key-valid {

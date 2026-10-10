@@ -5,7 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
 
 async function openDataManagement(page: Page): Promise<void> {
-	await page.locator(".navbar-tab").filter({ hasText: "Settings" }).first().click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="data"]').click();
 	await expect(page.locator('[data-settings-page="data"]')).toBeVisible();
 }

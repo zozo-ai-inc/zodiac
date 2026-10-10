@@ -20,7 +20,7 @@ async function openApp(page: Page, now: string, savedModel?: string): Promise<vo
 }
 
 async function openChatSettings(page: Page): Promise<void> {
-	await page.locator(".navbar-tab").nth(2).click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="chat"]').click();
 	await expect(page.locator("#model-picker-trigger")).toBeVisible();
 }

@@ -1,7 +1,7 @@
 import * as overlayService from "../../services/Overlay.service";
 import * as supabaseService from "../../services/Supabase.service";
 
-const openProfileButton = document.querySelector("#user-profile");
+const openProfileButton = document.querySelector("#btn-open-profile");
 if (!openProfileButton) {
 	console.error("Open profile button not found in the document");
 	throw new Error("Open profile button not found in the document");

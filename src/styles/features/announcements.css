@@ -67,18 +67,6 @@
 	border-bottom: 1px solid var(--warning-border);
 }
 
-#btn-whatsnew {
-	justify-self: center;
-}
-
-#btn-whatsnew:hover {
-	background-color: var(--badge-hover-bg);
-}
-
-#btn-whatsnew:active {
-	background-color: var(--badge-active-bg);
-}
-
 #whats-new {
 	display: flex;
 	flex-direction: column;

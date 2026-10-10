@@ -20,9 +20,11 @@ body.maintenance-banner-visible #main-container {
 	pointer-events: none;
 }
 
+/* The padding keeps the tap target at 1.75rem around the smaller icon. */
 #btn-hide-sidebar {
 	display: none;
-	font-size: 1.75rem;
+	padding: 0.25rem;
+	font-size: 1.25rem;
 }
 
 #main-container {
@@ -32,13 +34,18 @@ body.maintenance-banner-visible #main-container {
 	width: 100dvw;
 	height: var(--vvh, 100dvh);
 	min-height: var(--vvh, 100dvh);
+	/* A stowed sidebar sits past the edge; clip it so the page cannot be scrolled sideways to it. */
+	overflow-x: clip;
+	/* Cancels a sidebar's width, its inner margin, and the row gap, so the chat takes over its space. */
+	--sidebar-stowed-margin: calc(-1 * (25rem + 0.75rem + 0.5rem));
 }
 
 #chat-title {
 	font-size: 1.2rem;
 }
 
-.sidebar {
+.sidebar,
+.settings-sidebar {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
@@ -57,15 +64,46 @@ body.maintenance-banner-visible #main-container {
 	backdrop-filter: blur(32px);
 }
 
+/* Settings mirrors the sidebar on the right and stays off-screen until opened. */
+.settings-sidebar {
+	visibility: hidden;
+	transition:
+		margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		visibility 0s linear 0.3s;
+}
+
+body.settings-open .settings-sidebar {
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.settings-sidebar-title {
+	margin-right: auto;
+	font-size: 1.45rem;
+	font-weight: 800;
+	line-height: 1.75rem;
+}
+
+/* The padding keeps the tap target at 1.75rem around the smaller icon. */
+#btn-close-settings {
+	padding: 0.25rem;
+	font-size: 1.25rem;
+}
+
 .sidebar-top-bar {
 	display: flex;
 	flex-direction: column;
 	gap: 0.25rem;
-	padding: 0.5rem;
-	padding-bottom: 0;
+	/*
+	 * With the sidebar's own padding and the negative margins, this leaves the row's right-hand control 0.625rem
+	 * from the top and right edges. That gap plus the control's 0.625rem radius equals the sidebar's 1.25rem
+	 * corner, so the two curves stay concentric.
+	 */
+	padding: 0.25rem 0.25rem 0 0.5rem;
 	margin-inline: -8px;
 	margin-top: -8px;
-	margin-bottom: 0.5rem;
+	margin-bottom: 0.75rem;
 	border-radius: 1rem;
 }
 
@@ -90,12 +128,135 @@ body.maintenance-banner-visible #main-container {
 
 /* Personality actions moved to btn-array */
 
-#sidebar-content {
+#sidebar-content,
+#settings-sidebar-content {
 	min-height: 0;
 	display: flex;
 	flex-direction: column;
 	flex: 1 1 auto;
 	/* occupy remaining height in sidebar */
+}
+
+.sidebar-footer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.25rem;
+	padding-top: 0.625rem;
+	border-top: 1px solid var(--sidebar-chrome-border);
+}
+
+.sidebar-account {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.5rem;
+	min-width: 0;
+	padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+	border-radius: 999px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.sidebar-account-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sidebar-footer-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-left: auto;
+}
+
+.sidebar-footer-button {
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.sidebar-footer-button.has-update {
+	position: relative;
+}
+
+.sidebar-footer-button.has-update::after {
+	content: "";
+	position: absolute;
+	top: 0.375rem;
+	right: 0.375rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	background-color: var(--primary);
+}
+
+.sidebar-account:hover,
+.sidebar-footer-button:hover,
+.sidebar-footer-button[aria-expanded="true"] {
+	background-color: var(--dropdown-menu-item-hover-bg);
+}
+
+.sidebar-account:active,
+.sidebar-footer-button:active {
+	background-color: var(--dropdown-menu-item-active-bg);
+}
+
+.sidebar-account:focus-visible,
+.sidebar-footer-button:focus-visible,
+#btn-close-settings:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.about-menu {
+	display: none;
+}
+
+.about-menu .about-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.3rem;
+	color: inherit;
+	font-size: 0.875rem;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color 0.1s ease;
+}
+
+.about-menu .about-menu-item:hover,
+.about-menu .about-menu-item:focus-visible {
+	background: var(--dropdown-menu-item-hover-bg);
+	outline: none;
+}
+
+.about-menu .about-menu-item:active {
+	background: var(--dropdown-menu-item-active-bg);
+}
+
+.about-menu .material-symbols-outlined {
+	font-size: 1.125rem;
+	opacity: 0.85;
+}
+
+.about-menu .about-menu-item.unread {
+	box-shadow:
+		0 0 0 1px var(--primary),
+		0 0 0.75rem color-mix(in srgb, var(--primary) 65%, transparent);
+}
+
+.about-menu .about-menu-version {
+	margin-left: auto;
+	padding-left: 0.75rem;
+	font-size: 0.75rem;
+	opacity: 0.6;
 }
 
 #btn-show-sidebar {
@@ -135,8 +296,38 @@ body.maintenance-banner-visible #main-container {
 	display: none;
 }
 
+/* Both sidebars share a header height, whichever controls sit in it: that of the tab switcher. */
+.sidebar-top-bar .header {
+	flex-wrap: wrap;
+	min-height: 2.125rem;
+	padding: 0;
+}
+
+/* The tab switcher sits at the right end of the title row. Grid keeps its tabs equally wide at their content size. */
 .sidebar-top-bar .navbar {
-	background-color: transparent;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+	margin-bottom: 0;
+	margin-left: auto;
+}
+
+/* The tab radius is the switcher's radius less its padding, so the active tab nests in its corner. */
+.sidebar-top-bar :is(.navbar-tab, .navbar-tab-highlight) {
+	border-radius: 0.4375rem;
+}
+
+.sidebar-top-bar .navbar-tab {
+	padding: 0.3125rem 0.625rem;
+	font-size: 0.75rem;
+	line-height: 1.125rem;
+}
+
+/* Below 24.25rem the title, version badge, and switcher no longer fit on one row, so the switcher takes its own. */
+@media (max-width: 24.25rem) {
+	.sidebar-top-bar .navbar {
+		flex: 1 0 100%;
+	}
 }
 
 @media (min-width: 1032px) {
@@ -146,23 +337,72 @@ body.maintenance-banner-visible #main-container {
 	}
 }
 
+/* Desktop: settings sits in the row and pushes the chat, like the sidebar does. */
+@media (width > 1032px) {
+	.settings-sidebar {
+		margin-right: var(--sidebar-stowed-margin);
+	}
+
+	body.settings-open .settings-sidebar {
+		margin-right: 0.75rem;
+	}
+}
+
+/*
+ * Below 86rem (both sidebars with their margins and gaps, plus the 32rem minimum of #mainContent) the row
+ * cannot hold everything, so the sidebar gives way while settings is open.
+ */
+@media (1032px < width <= 86rem) {
+	.sidebar {
+		transition:
+			margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			visibility 0s linear;
+	}
+
+	body.settings-open .sidebar {
+		margin-left: var(--sidebar-stowed-margin);
+		visibility: hidden;
+		transition-delay: 0s, 0.3s;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sidebar,
+	.settings-sidebar {
+		transition: none;
+	}
+}
+
 @media (max-width: 1032px) {
 	#main-container {
 		padding: 0;
 	}
 
-	.sidebar {
+	.sidebar,
+	.settings-sidebar {
 		top: 0;
 		height: calc(var(--vvh, 100dvh));
 		margin: 0;
 		width: calc(100dvw);
 		position: fixed;
 		border-radius: 0;
+	}
+
+	.sidebar {
 		display: none;
 		opacity: 0;
 	}
 
-	body.maintenance-banner-visible .sidebar {
+	.settings-sidebar {
+		right: 0;
+		transform: translateX(100%);
+	}
+
+	body.settings-open .settings-sidebar {
+		transform: none;
+	}
+
+	body.maintenance-banner-visible :is(.sidebar, .settings-sidebar) {
 		top: 0;
 		height: calc(var(--vvh, 100dvh));
 		padding-top: calc(1rem + var(--maintenance-banner-height));

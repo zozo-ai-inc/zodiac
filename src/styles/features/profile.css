@@ -21,15 +21,6 @@
 	background-repeat: no-repeat;
 }
 
-#user-profile:hover {
-	cursor: pointer;
-	filter: brightness(0.9);
-}
-
-#user-profile:active {
-	filter: brightness(0.8);
-}
-
 #user-profile[src]:not([src=""]):not([src="undefined"]):not([src="null"]):not([src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="])
 {
 	background-image: none;

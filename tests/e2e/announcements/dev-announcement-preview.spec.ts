@@ -14,7 +14,7 @@ test("debug composer saves a one-time announcement for the next refresh", async 
 	await seedLocalSettings(page);
 	await page.goto("/?migration=empty");
 
-	await page.locator(".navbar-tab").nth(2).click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator("#btn-debug-announcement").click();
 
 	const form = page.locator("#form-debug-announcement");
