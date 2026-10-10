@@ -164,7 +164,7 @@ describe("roleplay suggestion model dropdown", () => {
 			"GLM 5.3",
 			"GLM 5.3 Flash",
 			"GLM 5.3 FlashX",
-			"GLM 5.3 Prime",
+			"GLM 5.3 Prime [MEGA]",
 			"Gemma 4 31B",
 			"Grok 4.3",
 			"Grok 4.5",
