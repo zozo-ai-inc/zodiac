@@ -690,7 +690,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		id: "z-ai/glm-5.3-prime",
 		label: "GLM 5.3 Prime",
 		provider: "openrouter",
-		mega: false,
+		mega: true,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
