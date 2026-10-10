@@ -254,6 +254,11 @@
 	color: inherit;
 }
 
+.model-picker-retiring {
+	background: var(--warning-bg);
+	color: var(--warning-fg);
+}
+
 .model-picker-chip__icon {
 	width: 0.7rem;
 	height: 0.7rem;
