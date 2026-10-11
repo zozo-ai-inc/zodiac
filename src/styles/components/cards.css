@@ -1,0 +1,8 @@
+.card {
+	box-sizing: border-box;
+	border-radius: 0.5rem;
+	text-align: center;
+	text-decoration: none;
+	padding: 1rem;
+	transition: background-color 0.25s ease-out;
+}

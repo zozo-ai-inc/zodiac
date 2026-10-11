@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as GroupChatService from "../../../src/services/GroupChat.service";
+import type * as PersonalityService from "../../../src/services/Personality.service";
 
 test("dynamic group chat does not crash when there is no user session (BYOK mode)", async ({ page }) => {
 	// The crash was happening because dynamic group chat tries to fetch the user profile.
@@ -20,8 +22,7 @@ test("dynamic group chat does not crash when there is no user session (BYOK mode
 	await page.goto("/");
 
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const personalityService = await importModule("/services/Personality.service.ts");
+		const personalityService = await window.importModule<any>("/services/Personality.service.ts");
 		await personalityService.add({
 			name: "Test Persona 1",
 			independence: 3 // Make sure it responds
@@ -37,9 +38,10 @@ test("dynamic group chat does not crash when there is no user session (BYOK mode
 
 	// Create a dynamic group chat programmatically to avoid complex UI interactions
 	const { chatId, pingedPersonaId } = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const groupChatService = await importModule("/services/GroupChat.service.ts");
-		const personalityService = await importModule("/services/Personality.service.ts");
+		const groupChatService = await window.importModule<typeof GroupChatService>("/services/GroupChat.service.ts");
+		const personalityService = await window.importModule<typeof PersonalityService>(
+			"/services/Personality.service.ts"
+		);
 
 		const personas = await personalityService.getAll();
 		// We need at least two participants

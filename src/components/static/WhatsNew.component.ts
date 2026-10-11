@@ -1,22 +1,30 @@
+import { onAppEvent } from "../../events";
 import * as overlayService from "../../services/Overlay.service";
 import { getVersion } from "../../utils/helpers";
 
 const whatsNewButton = document.querySelector("#btn-whatsnew")!;
+const aboutButtonElement = document.querySelector<HTMLButtonElement>("#btn-about");
+if (!aboutButtonElement) throw new Error("Missing DOM element: #btn-about");
+const aboutButton = aboutButtonElement;
 
-//setup version number on badge and header
-whatsNewButton.querySelector("#badge-version")!.textContent = `${getVersion()}`;
+//setup version number on the about menu entry and header
+whatsNewButton.querySelector("#whatsnew-version")!.textContent = `${getVersion()}`;
 document.querySelector("#header-version")!.textContent = `What's New in ${getVersion()}`;
 
 whatsNewButton.addEventListener("click", () => {
 	overlayService.showChangelog();
-	whatsNewButton.classList.remove("badge-highlight");
 });
-//if version changes, highlight the changelog btn
-const prevVersion = localStorage.getItem("version");
-if (prevVersion != getVersion()) {
-	localStorage.setItem("version", getVersion());
-	whatsNewButton.classList.add("badge-highlight");
-	setTimeout(() => {
-		whatsNewButton.classList.remove("badge-highlight");
-	}, 7000);
+//an unseen version marks the about btn and glows the changelog entry until the about menu is dismissed
+if (localStorage.getItem("version") != getVersion()) {
+	aboutButton.classList.add("has-update");
+	whatsNewButton.classList.add("unread");
+	onAppEvent(
+		"about-menu-closed",
+		() => {
+			localStorage.setItem("version", getVersion());
+			aboutButton.classList.remove("has-update");
+			whatsNewButton.classList.remove("unread");
+		},
+		{ once: true }
+	);
 }

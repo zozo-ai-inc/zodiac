@@ -1,5 +1,8 @@
 import type { Page } from "@playwright/test";
 
+import { installBrowserImport } from "./app";
+import type * as DbService from "../../../src/services/Db.service";
+
 export const oldOrigin = "https://zodiac.faetalize.dev";
 export const newOrigin = "https://chat.zozo.sh";
 const localServer = "https://127.0.0.1:4173";
@@ -35,6 +38,7 @@ export async function serveApp(
 	options: { syncEnabled?: boolean; failPreference?: boolean; server?: string } = {}
 ) {
 	const requests: string[] = [];
+	await installBrowserImport(page);
 	await page.route("https://**/*", async (route) => {
 		const url = new URL(route.request().url());
 		if (url.hostname.endsWith(".supabase.co")) {
@@ -119,8 +123,7 @@ export async function seed(
 					})
 				);
 			if (chat) {
-				const importModule = new Function("path", "return import(path)");
-				const { db } = await importModule("/services/Db.service.ts");
+				const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
 				await db.chats.put({
 					id: "migration-chat",
 					title: "My local story",

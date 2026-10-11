@@ -1,4 +1,4 @@
-/* Dark mode base styles (applies to all themes in dark mode) */
+/* Dark mode tokens, shared by every color palette. */
 [data-mode="dark"] {
 	color-scheme: dark;
 	--input-text-border: #b6b6b62f;
@@ -34,31 +34,7 @@
 	/* Navbar */
 	--navbar-bg: #00000054;
 
-	.message-text:focus-visible {
-		outline: 1px solid var(--focus-outline);
-	}
-
-	a {
-		color: var(--link-color);
-	}
-
-	.navbar {
-		background-color: var(--navbar-bg);
-	}
-
-	.tone-example-remove {
-		color: var(--tone-example-remove-fg);
-	}
-
-	.tone-example-remove:hover,
-	.tone-example-remove:focus-visible {
-		color: var(--tone-example-remove-hover-fg);
-	}
-
-	.toast {
-		box-shadow: var(--toast-shadow);
-	}
-
+	/* Preserve local toast colors independently of inherited palette tokens. */
 	.toast--normal {
 		--toast-normal-bg: rgba(21, 35, 49, 0.8);
 		--toast-normal-border: rgba(136, 172, 227, 0.32);
@@ -82,313 +58,169 @@
 		--toast-danger-action-bg-hover: rgba(255, 179, 189, 0.4);
 		--toast-danger-close-hover: rgba(255, 179, 189, 0.28);
 	}
+}
+/* Document palette defaults. Mode picker controls also carry data-mode, so these tokens must stay on the root. */
+:root[data-mode="dark"] {
+	/* Neutral Modal */
+	--modal-fg: var(--onboarding-title);
+	--modal-shadow: 0 8px 24px var(--onboarding-card-shadow);
 
-	.btn-toggled {
-		background: var(--button-toggled-bg) !important;
-	}
+	/* Theme mode controls */
+	--mode-button-bg: rgba(255, 255, 255, 0.05);
+	--mode-button-hover-bg: rgba(255, 255, 255, 0.1);
+	--mode-button-active-bg: rgba(255, 255, 255, 0.15);
 
-	.btn-textual {
-		color: var(--btn-textual-fg);
-		text-shadow: var(--btn-textual-shadow);
-	}
+	/* Shared palette defaults */
+	--code-block-bg: transparent;
+	--inline-code-border: #ffffff42;
+	--tone-example-remove-hover: rgba(255, 255, 255, 0.12);
+	--tone-example-remove-active: rgba(255, 255, 255, 0.18);
 
-	.btn-textual:hover {
-		text-shadow: var(--btn-textual-hover-shadow);
-	}
+	/* Warning colors */
+	--warning-bg: rgba(255, 176, 59, 0.15);
+	--warning-fg: #ffb03b;
+	--warning-border: rgba(255, 176, 59, 0.3);
+	--warning-icon: #ffb03b;
 
-	input[type="range"] {
-		accent-color: var(--lora-strength-slider);
-	}
+	/* Body */
+	--body-fg: #e4e4e4;
 
-	input::placeholder,
-	textarea::placeholder {
-		color: var(--input-placeholder);
-	}
+	/* Textual buttons */
+	--btn-textual-fg: #e4e4e4;
+	--btn-textual-shadow: 0 0 10px #000000, 0 0 5px #181818;
+	--btn-textual-hover-shadow: 0 0 10px #ffffff, 0 0 5px #dfdfdf;
 
-	/* LoRA metadata cards (dark) */
-	.card-lora {
-		background-color: var(--card-add-lora-bg);
-		border: 1px solid var(--card-lora-border);
-		box-shadow: var(--card-lora-shadow);
-	}
+	/* Tone example remove */
+	--tone-example-remove-hover-fg: #ffffff;
 
-	.lora-card-meta,
-	.lora-card-section-title {
-		color: var(--lora-card-meta-fg);
-	}
+	/* Toasts */
+	--toast-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+	--toast-warning-bg: rgba(92, 61, 12, 0.8);
+	--toast-warning-border: rgba(255, 214, 132, 0.45);
+	--toast-warning-action-bg: rgba(255, 214, 132, 0.28);
+	--toast-warning-action-bg-hover: rgba(255, 214, 132, 0.37);
+	--toast-warning-close-hover: rgba(255, 214, 132, 0.26);
+	--toast-danger-bg: rgba(94, 18, 22, 0.8);
+	--toast-danger-border: rgba(255, 179, 189, 0.45);
+	--toast-danger-action-bg: rgba(255, 179, 189, 0.3);
+	--toast-danger-action-bg-hover: rgba(255, 179, 189, 0.4);
+	--toast-danger-close-hover: rgba(255, 179, 189, 0.28);
 
-	.lora-card-toggle span,
-	.lora-strength-label,
-	.lora-strength-value {
-		color: var(--lora-card-toggle-fg);
-	}
+	/* Inputs */
+	--input-border: 1px solid #b6b6b62f;
+	--input-fg: #e4e4e4;
 
-	.lora-card-trigger {
-		background-color: var(--lora-card-trigger-bg);
-		border-color: var(--lora-card-trigger-border);
-		color: var(--lora-card-trigger-fg);
-	}
-
-	.lora-card-trigger:hover {
-		background-color: var(--lora-card-trigger-hover-bg);
-	}
-
-	.lora-card-trigger[data-copied="true"] {
-		background-color: var(--lora-card-trigger-copied-bg);
-		border-color: var(--lora-card-trigger-copied-border);
-		color: var(--lora-card-trigger-copied-fg);
-	}
-
-	.lora-card-empty {
-		color: var(--lora-card-empty-fg);
-	}
-
-	.lora-card-delete {
-		background-color: var(--lora-card-delete-bg);
-		border-color: var(--lora-card-delete-border);
-		color: var(--lora-card-delete-fg);
-	}
-
-	.lora-card-delete:hover {
-		background-color: var(--lora-card-delete-hover-bg);
-	}
-
-	.lora-card-delete:active {
-		transform: translateY(1px);
-	}
-
-	.lora-strength-slider {
-		accent-color: var(--lora-strength-slider);
-	}
-
-	/* Keep subscription badge background unchanged on hover */
-	#subscription-badge.badge-tier-free:hover {
-		background-color: var(--badge-tier-free-bg) !important;
-	}
-
-	#subscription-badge.badge-tier-pro:hover {
-		background-color: var(--badge-tier-pro-bg) !important;
-	}
-
-	#subscription-badge.badge-tier-max:hover {
-		background-color: var(--badge-tier-max-bg) !important;
-	}
+	/* LoRA cards */
+	--lora-card-trigger-copied-fg: #ffffff;
 
 	/* Subscription badge tiers */
-	.badge-tier-free {
-		background-color: var(--badge-tier-free-bg);
-		border-color: var(--badge-tier-free-border);
-		color: var(--badge-tier-free-fg);
-	}
+	--badge-tier-free-bg: #1e293b;
+	--badge-tier-free-border: #334155;
+	--badge-tier-free-fg: #cbd5e1;
+	--badge-tier-free-hover-bg: #273449;
+	--badge-tier-pro-bg: #0b2d4a;
+	--badge-tier-pro-border: #0ea5e9;
+	--badge-tier-pro-fg: #bae6fd;
+	--badge-tier-pro-hover-bg: #0f3a5f;
+	--badge-tier-pro-plus-bg: #4a2c0b;
+	--badge-tier-pro-plus-border: #d97706;
+	--badge-tier-pro-plus-fg: #fde68a;
+	--badge-tier-pro-plus-hover-bg: #5b3710;
+	--badge-tier-max-bg: #111827;
+	--badge-tier-max-border: #475569;
+	--badge-tier-max-fg: #e2e8f0;
+	--badge-tier-max-hover-bg: #1f2937;
 
-	.badge-tier-pro {
-		background-color: var(--badge-tier-pro-bg);
-		border-color: var(--badge-tier-pro-border);
-		color: var(--badge-tier-pro-fg);
-	}
+	/* Overlay */
+	--overlay-bg: #00000082;
 
-	.badge-tier-max {
-		background-color: var(--badge-tier-max-bg);
-		border-color: var(--badge-tier-max-border);
-		color: var(--badge-tier-max-fg);
-	}
+	/* Add tone example button */
+	--btn-add-tone-border: 1px solid #b6b6b62f;
 
-	.overlay {
-		background-color: var(--overlay-bg);
-	}
+	/* API key states */
+	--api-key-valid-border: 1px solid #137e3ab0;
+	--api-key-invalid-border: 1px solid #bf121cad;
+	--api-key-error-fg: #ff4a53;
 
-	/* Subscription card theming (dark) */
-	#subscription-status-row {
-		background-color: var(--subscription-status-card-bg);
-		border-color: var(--subscription-status-card-border);
-	}
+	/* Attachment container */
+	--attachment-container-outline: 1px solid #ffffff1c;
 
-	/* Info profile card (dark) */
-	#profile-info-card {
-		background-color: var(--profile-info-card-bg);
-		border-color: var(--profile-info-card-border);
-	}
+	/* Profile picture */
+	--profile-pfp-filter: invert(1);
+	--profile-pfp-loaded-filter: invert(0);
 
-	/* Account card (dark) */
-	#account-info-card {
-		background-color: var(--account-info-card-bg);
-		border-color: var(--account-info-card-border);
-	}
+	/* Toggle switches */
+	--toggle-bg: #3a3a3a;
+	--toggle-border: #505050;
+	--toggle-knob-bg: #e4e4e4;
+	--toggle-knob-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+	--toggle-checked-knob-bg: #ffffff;
+	--toggle-hover-bg: #454545;
+	--toggle-focus-shadow: 0 0 0 2px #8f9eb3;
+	--toggle-focus-border: #8f9eb3;
 
-	.subscription-card-header {
-		background-color: transparent;
-	}
+	/* Focus states */
+	--focus-border: 1px solid #8f9eb3;
+	--focus-outline: 1px solid #8f9eb3a6;
 
-	.subscription-card-body {
-		background-color: transparent;
-	}
+	/* Subscription cards */
+	--subscription-card-bg: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+	--subscription-card-border: #374151;
+	--subscription-card-fg: #e4e4e4;
+	--subscription-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+	--subscription-card-popular-border: #667eea;
+	--subscription-card-popular-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+	--subscription-card-popular-hover-shadow: 0 25px 70px rgba(102, 126, 234, 0.4);
+	--subscription-header-gradient: linear-gradient(135deg, #8b92ff 0%, #a78bfa 100%);
 
-	.subscription-card-footer {
-		background-color: transparent;
-	}
+	/* Tier badges */
+	--tier-badge-free-fg: #9ca3af;
+	--tier-badge-pro-gradient: linear-gradient(135deg, #8b92ff 0%, #a78bfa 100%);
+	--tier-badge-max-gradient: linear-gradient(135deg, #fb7185 0%, #f472b6 100%);
 
-	#messageInput {
-		background-color: var(--message-input-bg);
-	}
+	/* Mobile subscription cards */
+	--subscription-card-header-border: rgba(255, 255, 255, 0.1);
 
-	#btn-add-tone-example {
-		background-color: var(--btn-add-tone-bg);
-		color: var(--btn-add-tone-fg);
-	}
+	/* Chat actions dropdown */
+	--chat-actions-menu-border: 1px solid #ffffff18;
+	--chat-actions-menu-shadow: 0 6px 22px -4px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+	--chat-actions-item-hover-bg: #ffffff12;
+	--chat-actions-item-active-bg: #ffffff1e;
 
-	#btn-add-tone-example:hover {
-		background-color: var(--btn-add-tone-hover-bg);
-	}
+	/* Thinking section */
+	--thinking-bg: #000000;
 
-	.api-key-valid {
-		border: var(--api-key-valid-border);
-	}
+	/* Top-up buttons */
+	--top-up-btn-bg: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+	--top-up-btn-border: #374151;
+	--top-up-btn-fg: #e5e7eb;
+	--top-up-btn-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+	--top-up-btn-hover-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+	--top-up-btn-hover-bg: linear-gradient(145deg, #263244 0%, #141b23 100%);
+	--top-up-btn-hover-border: #465164;
+	--top-up-btn-active-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+	--top-up-btn-active-bg: linear-gradient(145deg, #1b2431 0%, #0f141a 100%);
+	--top-up-price-fg: #ffffff;
+	--top-up-credits-fg: #e8eef7;
+	--top-up-subtitle-fg: #a6b2c2;
 
-	.api-key-invalid {
-		border: var(--api-key-invalid-border);
-	}
-
-	.api-key-error {
-		color: var(--api-key-error-fg);
-	}
-
-	.card-add-personality {
-		background-color: var(--card-add-personality-bg);
-		border: 1px dashed var(--card-add-personality-border);
-	}
-
-	.card-add-personality:hover {
-		background-color: var(--card-add-personality-hover-bg);
-		border-color: var(--card-add-personality-hover-border);
-	}
-
-	.card-add-personality .add-icon {
-		color: var(--card-add-personality-icon-fg);
-	}
-
-	.attachment-container {
-		background-color: var(--attachment-container-bg);
-		outline: 1px solid var(--attachment-container-outline);
-	}
-
-	/* LoRA add card (dark) */
-	.card-add-lora {
-		background-color: var(--card-add-lora-bg);
-		border: 1px solid var(--card-add-lora-border);
-	}
-
-	#profile-pfp {
-		filter: var(--profile-pfp-filter);
-	}
-
-	#profile-pfp[src]:not([src=""]):not([src="undefined"]):not([src="null"]):not([src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="])
-	{
-		filter: var(--profile-pfp-loaded-filter);
-	}
-
-	/* Modern subscription cards dark theme */
-	.subscription-card {
-		background: var(--subscription-card-bg);
-		border-color: var(--subscription-card-border);
-		color: var(--subscription-card-fg);
-	}
-
-	.subscription-card:hover {
-		box-shadow: var(--subscription-card-shadow);
-	}
-
-	.subscription-card-popular {
-		border-color: var(--subscription-card-popular-border);
-		box-shadow: var(--subscription-card-popular-shadow);
-	}
-
-	.subscription-card-popular:hover {
-		box-shadow: var(--subscription-card-popular-hover-shadow);
-	}
-
-	.subscription-header h1 {
-		background: var(--subscription-header-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	.tier-badge-free {
-		color: var(--tier-badge-free-fg);
-	}
-
-	.tier-badge-pro {
-		background: var(--tier-badge-pro-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	.tier-badge-max {
-		background: var(--tier-badge-max-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	/* Mobile collapsible subscription cards */
-	@media (max-width: 1032px) {
-		.subscription-card-header {
-			border-bottom-color: var(--subscription-card-header-border);
-		}
-	}
-
-	.message-thinking pre {
-		background: var(--thinking-bg);
-	}
-
-	/* Top-up buttons (dark theme) */
-	#form-top-up-imagecredits .btn-array-vertical > button {
-		background: var(--top-up-btn-bg);
-		border-color: var(--top-up-btn-border);
-		color: var(--top-up-btn-fg);
-		box-shadow: var(--top-up-btn-shadow);
-	}
-
-	#form-top-up-imagecredits .btn-array-vertical > button:hover {
-		box-shadow: var(--top-up-btn-hover-shadow);
-		transform: translateY(-1px);
-		background: var(--top-up-btn-hover-bg);
-		border-color: var(--top-up-btn-hover-border);
-	}
-
-	#form-top-up-imagecredits .btn-array-vertical > button:active {
-		transform: translateY(0);
-		box-shadow: var(--top-up-btn-active-shadow);
-		background: var(--top-up-btn-active-bg);
-	}
-
-	#form-top-up-imagecredits .top-up-price {
-		color: var(--top-up-price-fg);
-	}
-
-	#form-top-up-imagecredits .top-up-credits {
-		color: var(--top-up-credits-fg);
-	}
-
-	#form-top-up-imagecredits .top-up-subtitle {
-		color: var(--top-up-subtitle-fg);
-	}
-
-	/* Mode selector buttons */
-	.mode-selector .mode-btn {
-		background: rgba(255, 255, 255, 0.05);
-		color: inherit;
-	}
-
-	.mode-selector .mode-btn:hover {
-		background: rgba(255, 255, 255, 0.1);
-		color: inherit;
-	}
-
-	.mode-selector .mode-btn.active {
-		border-color: currentColor;
-		background: rgba(255, 255, 255, 0.15);
-		color: inherit;
-	}
+	/* Onboarding */
+	--onboarding-card-shadow: rgba(0, 0, 0, 0.4);
+	--onboarding-list-positive-bg: rgba(72, 187, 120, 0.22);
+	--onboarding-list-positive-text: #9be7bb;
+	--onboarding-list-positive-icon: #81e6a9;
+	--onboarding-list-negative-bg: rgba(239, 68, 68, 0.22);
+	--onboarding-list-negative-text: #f8a4a4;
+	--onboarding-list-negative-icon: #f8a4a4;
+	--onboarding-recommended-badge-text: #ffffff;
+	--onboarding-status-success-bg: rgba(72, 187, 120, 0.2);
+	--onboarding-status-success-text: #81e6a9;
+	--onboarding-status-error-bg: rgba(239, 68, 68, 0.2);
+	--onboarding-status-error-text: #f8a4a4;
+	--onboarding-error-border: rgba(239, 68, 68, 0.4);
+	--onboarding-error-text: #f8a4a4;
+	--onboarding-btn-shadow: rgba(0, 0, 0, 0.3);
+	--onboarding-btn-secondary-bg: transparent;
+	--onboarding-success-icon-bg: rgba(72, 187, 120, 0.2);
+	--onboarding-success-icon-text: #81e6a9;
 }

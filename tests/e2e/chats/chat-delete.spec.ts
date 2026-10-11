@@ -1,6 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as ChatsService from "../../../src/services/Chats.service";
+import type * as DbService from "../../../src/services/Db.service";
 
 type SeedChat = {
 	id: string;
@@ -18,8 +20,7 @@ type BrowserDeleteState = {
 
 async function seedChats(page: Page, chats: SeedChat[]): Promise<void> {
 	await page.evaluate(async (chatsToSeed) => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const chatsService = await importModule("/services/Chats.service.ts");
+		const chatsService = await window.importModule<any>("/services/Chats.service.ts");
 
 		for (const chat of chatsToSeed) {
 			await chatsService.addChatRecord({
@@ -37,9 +38,8 @@ async function seedChats(page: Page, chats: SeedChat[]): Promise<void> {
 
 async function readDeleteState(page: Page): Promise<BrowserDeleteState> {
 	return await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const chatsService = await importModule("/services/Chats.service.ts");
-		const dbService = await importModule("/services/Db.service.ts");
+		const chatsService = await window.importModule<typeof ChatsService>("/services/Chats.service.ts");
+		const dbService = await window.importModule<typeof DbService>("/services/Db.service.ts");
 
 		const currentChat = await chatsService.getCurrentChat();
 		const persistedChats = await dbService.db.chats.toArray();

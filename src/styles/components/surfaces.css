@@ -1,0 +1,259 @@
+#form-add-personality,
+#form-create-group-chat,
+#form-password-reset,
+#form-password-reset-request,
+#form-email-update {
+	width: 32rem;
+	max-width: 95%;
+}
+
+#form-add-personality,
+#form-create-group-chat {
+	height: 32rem;
+}
+
+@media (max-width: 520px) {
+	#form-add-personality,
+	#form-create-group-chat {
+		width: 95%;
+		height: auto;
+	}
+}
+
+.overlay-content {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 1;
+	/* Allow vertical scrolling when content exceeds viewport */
+	overflow-y: auto;
+	overflow-x: hidden;
+	/* Ensure flex child can shrink for overflow */
+	min-height: 0;
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+.overlay-content > * {
+	max-width: 95%;
+	max-height: 100%;
+}
+
+.overlay-description {
+	margin: 0.5rem 0 0.5rem;
+	font-size: 0.9rem;
+	opacity: 0.75;
+}
+
+.overlay-actions {
+	display: flex;
+	gap: 0.75rem;
+	justify-content: flex-end;
+	margin-top: 1rem;
+}
+
+.surface-plane {
+	position: fixed;
+	inset: 0;
+	z-index: var(--layer-surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	pointer-events: none;
+	box-sizing: border-box;
+	background-color: transparent;
+	backdrop-filter: blur(0);
+	-webkit-backdrop-filter: blur(0);
+	transition:
+		background-color 0.16s ease,
+		backdrop-filter 0.16s ease,
+		-webkit-backdrop-filter 0.16s ease;
+}
+
+.surface-plane.surface-plane--active {
+	pointer-events: auto;
+}
+
+.surface-plane:has(.surface-plane__item.surface-open) {
+	pointer-events: auto;
+}
+
+.surface-plane.surface-plane--blurred {
+	background-color: rgb(0 0 0 / 12%);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.surface-plane:has(.adaptive-sheet.surface-open) {
+	background-color: rgb(0 0 0 / 12%);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.surface-plane__item {
+	pointer-events: auto;
+	opacity: 0;
+	transform: translateY(0.35rem) scale(0.985);
+	transition:
+		opacity 0.16s ease,
+		transform 0.18s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+	.surface-plane,
+	.surface-plane .surface-plane__item {
+		transition: none;
+	}
+}
+
+.surface-plane__item.surface-open {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+}
+
+.surface-plane__item.surface-closing {
+	pointer-events: none;
+}
+
+.surface-plane__item.surface-closing * {
+	pointer-events: none !important;
+}
+
+.adaptive-sheet {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	width: min(32rem, calc(100dvw - 2rem));
+	max-height: min(80dvh, 40rem);
+	/* Sheets clip their animated shell; overflowing sheet content needs an inner scroll container. */
+	overflow: hidden;
+	padding: 2rem;
+	border: var(--elevated-ui-outline);
+	border-radius: 1rem;
+	background: var(--sidebar-bg, var(--modal-bg, var(--body-bg)));
+	box-shadow: var(--elevated-ui-shadow);
+	box-sizing: border-box;
+	interpolate-size: allow-keywords;
+	transition:
+		height 0.18s ease,
+		max-height 0.18s ease,
+		opacity 0.16s ease,
+		transform 0.18s ease;
+}
+
+.adaptive-sheet__handle {
+	display: none;
+}
+
+.overlay {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	opacity: 0;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	backdrop-filter: blur(64px);
+	z-index: var(--layer-overlay);
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.backButton {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	border: none;
+	background-color: transparent;
+	font-size: 1.5rem;
+	font-weight: 600;
+	transition: all 0.2s;
+}
+
+#btn-hide-overlay {
+	padding: 2rem;
+}
+
+.overlay-actions-vertical {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.overlay-actions-vertical .btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.75rem 1rem;
+}
+
+.overlay-actions-vertical .btn .material-symbols-outlined {
+	font-size: 1.1rem;
+}
+
+.overlay-actions-vertical .btn-primary {
+	background: linear-gradient(135deg, #fbbf24, #f59e0b);
+	color: #1a1a1a;
+	border: none;
+}
+
+.overlay-actions-vertical .btn-primary:hover {
+	box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.overlay-actions-vertical .btn-secondary {
+	background: rgba(128, 128, 128, 0.15);
+	color: var(--text-primary);
+	border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.overlay-actions-vertical .btn-secondary:hover {
+	background: rgba(128, 128, 128, 0.25);
+}
+
+#dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: var(--layer-dialog);
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	width: 25rem;
+	max-width: 90%;
+	background-color: var(--dialog-bg);
+	box-shadow: var(--dialog-shadow);
+	border-radius: 1rem;
+	overflow: hidden;
+}
+
+#main-container:has(#dialog:not(.hidden))::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: var(--layer-overlay);
+	backdrop-filter: blur(24px);
+}
+
+#dialog-message {
+	flex-grow: 1;
+	padding: 2rem 2rem 0 2rem;
+	overflow-y: auto;
+	scrollbar-gutter: stable;
+}
+
+#dialog-buttons {
+	padding: 1.5rem;
+	background-color: #00000049;
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .overlay {
+	background-color: var(--overlay-bg);
+}
+
+[data-mode="light"] #dialog-message {
+	color: white;
+}

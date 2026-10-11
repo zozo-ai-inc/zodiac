@@ -7,6 +7,8 @@ export default defineConfig({
 		timeout: 5_000
 	},
 	fullyParallel: true,
+	// Matches the CI runner, so a many-core machine does not starve the tests into timeouts.
+	workers: 2,
 	use: {
 		baseURL: "https://127.0.0.1:4173",
 		ignoreHTTPSErrors: true,

@@ -1,6 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as SyncService from "../../../src/services/Sync.service";
 
 const SUPABASE_HOST = "hglcltvwunzynnzduauy.supabase.co";
 const TEST_USER_ID = "00000000-0000-4000-8000-000000000152";
@@ -167,8 +168,7 @@ async function seedSupabaseSession(page: Page): Promise<void> {
 
 async function enableCloudSync(page: Page): Promise<void> {
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const syncService = await importModule("/services/Sync.service.ts");
+		const syncService = await window.importModule<typeof SyncService>("/services/Sync.service.ts");
 		const enabled = await syncService.setupSync("playwright-sync-password");
 		if (!enabled) {
 			throw new Error("Failed to enable cloud sync for quota regression test");

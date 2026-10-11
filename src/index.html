@@ -1,28 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="blue" data-mode="dark">
 	<head>
 		<meta charset="UTF-8" />
+		<style>
+			html {
+				background-color: var(--body-bg, #12171d);
+			}
+		</style>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0 interactive-widget=resizes-content" />
 		<title>Zozo Chat</title>
-		<link
-			rel="shortcut icon"
-			href="https://upload.wikimedia.org/wikipedia/commons/f/f0/Google_Bard_logo.svg"
-			type="image/x-icon"
-		/>
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="stylesheet" href="./styles/main.css" />
-		<link rel="stylesheet" href="./styles/dark.css" />
-		<link rel="stylesheet" href="./styles/light.css" />
-		<!-- Theme-specific color palettes -->
-		<link rel="stylesheet" href="./styles/themes/blue-dark.css" />
-		<link rel="stylesheet" href="./styles/themes/blue-light.css" />
-		<link rel="stylesheet" href="./styles/themes/red-dark.css" />
-		<link rel="stylesheet" href="./styles/themes/red-light.css" />
-		<link rel="stylesheet" href="./styles/themes/green-dark.css" />
-		<link rel="stylesheet" href="./styles/themes/green-light.css" />
-		<link rel="stylesheet" href="./styles/themes/purple-dark.css" />
-		<link rel="stylesheet" href="./styles/themes/purple-light.css" />
-		<link rel="stylesheet" href="./styles/themes/monochrome-dark.css" />
-		<link rel="stylesheet" href="./styles/themes/monochrome-light.css" />
 		<!-- Highlight.js theme (dynamically updated by theme service) -->
 		<link
 			rel="stylesheet"
@@ -51,6 +41,14 @@
 			aria-live="polite"
 		>
 			<span id="maintenance-banner-text"></span>
+			<button
+				type="button"
+				id="maintenance-banner-dismiss"
+				class="maintenance-banner-dismiss hidden"
+				aria-label="Dismiss banner"
+			>
+				<span class="material-symbols-outlined">close</span>
+			</button>
 		</div>
 
 		<div id="main-container" aria-busy="true">
@@ -143,35 +141,30 @@
 
 			<div class="sidebar">
 				<div class="sidebar-top-bar">
-					<div class="header" style="padding-block: 10px">
-						<button class="material-symbols-outlined btn-textual" id="btn-hide-sidebar">
-							arrow_back_ios_new
+					<div class="header">
+						<button
+							type="button"
+							class="material-symbols-outlined btn-textual"
+							id="btn-hide-sidebar"
+							aria-label="Close sidebar"
+						>
+							close
 						</button>
-						<img
-							src="https://upload.wikimedia.org/wikipedia/commons/f/f0/Google_Bard_logo.svg"
-							id="gemin-pro-logo"
-						/>
 						<div id="title-div">
 							<div id="zodiac-branding">
-								<span style="line-height: 12px; margin-top: -3px; font-size: 1.45rem">Zozo Chat</span>
-								<button class="badge" id="btn-whatsnew">
-									<span id="badge-version"></span>
-								</button>
+								<!-- wordmark/zozo-chat.svg from the zozo-brand generator -->
+								<svg viewBox="0 0 4106.47 872.00" fill="currentColor" role="img" aria-label="Zozo Chat">
+									<path
+										d="M0 680C0 696.57 13.43 710 30 710L437 710C453.57 710 467 696.57 467 680L467 640.8C467 624.23 453.57 610.8 437 610.8L175.54 610.8C165 610.8 159.58 598.18 166.84 590.54L451.16 291.08C456.45 285.51 459.4 278.11 459.4 270.43L459.4 206C459.4 189.43 445.97 176 429.4 176L41.6 176C25.03 176 11.6 189.43 11.6 206L11.6 245.2C11.6 261.77 25.03 275.2 41.6 275.2L280.86 275.2C291.37 275.2 296.8 287.76 289.6 295.42L8.14 594.94C2.91 600.5 0 607.85 0 615.48L0 680ZM753.6 722C806.27 722 852.23 710.53 891.5 687.6C930.77 664.67 961.27 632.23 983 590.3C1004.73 548.37 1015.6 499.27 1015.6 443C1015.6 386.33 1004.73 337.2 983 295.6C961.27 254 930.77 221.67 891.5 198.6C852.23 175.53 806.27 164 753.6 164C700.93 164 654.87 175.53 615.4 198.6C575.93 221.67 545.33 254 523.6 295.6C501.87 337.2 491 386.33 491 443C491 499.27 501.87 548.37 523.6 590.3C545.33 632.23 575.93 664.67 615.4 687.6C654.87 710.53 700.93 722 753.6 722ZM753.6 618.4C712.4 618.4 680.4 602.97 657.6 572.1C634.8 541.23 623.4 498.2 623.4 443C623.4 388.07 634.8 345.1 657.6 314.1C680.4 283.1 712.4 267.6 753.6 267.6C794.8 267.6 826.7 283.1 849.3 314.1C871.9 345.1 883.2 388.07 883.2 443C883.2 498.2 871.9 541.23 849.3 572.1C826.7 602.97 794.8 618.4 753.6 618.4ZM1047 680C1047 696.57 1060.43 710 1077 710L1484 710C1500.57 710 1514 696.57 1514 680L1514 640.8C1514 624.23 1500.57 610.8 1484 610.8L1222.54 610.8C1212 610.8 1206.58 598.18 1213.84 590.54L1498.16 291.08C1503.45 285.51 1506.4 278.11 1506.4 270.43L1506.4 206C1506.4 189.43 1492.97 176 1476.4 176L1088.6 176C1072.03 176 1058.6 189.43 1058.6 206L1058.6 245.2C1058.6 261.77 1072.03 275.2 1088.6 275.2L1327.86 275.2C1338.37 275.2 1343.8 287.76 1336.6 295.42L1055.14 594.94C1049.91 600.5 1047 607.85 1047 615.48L1047 680ZM1800.6 722C1853.27 722 1899.23 710.53 1938.5 687.6C1977.77 664.67 2008.27 632.23 2030 590.3C2051.73 548.37 2062.6 499.27 2062.6 443C2062.6 386.33 2051.73 337.2 2030 295.6C2008.27 254 1977.77 221.67 1938.5 198.6C1899.23 175.53 1853.27 164 1800.6 164C1747.93 164 1701.87 175.53 1662.4 198.6C1622.93 221.67 1592.33 254 1570.6 295.6C1548.87 337.2 1538 386.33 1538 443C1538 499.27 1548.87 548.37 1570.6 590.3C1592.33 632.23 1622.93 664.67 1662.4 687.6C1701.87 710.53 1747.93 722 1800.6 722ZM1800.6 618.4C1759.4 618.4 1727.4 602.97 1704.6 572.1C1681.8 541.23 1670.4 498.2 1670.4 443C1670.4 388.07 1681.8 345.1 1704.6 314.1C1727.4 283.1 1759.4 267.6 1800.6 267.6C1841.8 267.6 1873.7 283.1 1896.3 314.1C1918.9 345.1 1930.2 388.07 1930.2 443C1930.2 498.2 1918.9 541.23 1896.3 572.1C1873.7 602.97 1841.8 618.4 1800.6 618.4ZM2765.3 562.64C2770.29 545.7 2757.32 529.22 2739.7 527.95L2730.66 527.29C2715.19 526.18 2701.78 537.02 2697.37 551.88C2688.29 582.42 2673.16 606.62 2651.97 624.5C2624.97 647.28 2591.24 658.67 2550.8 658.67C2498.8 658.67 2457.86 639.61 2427.97 601.5C2398.08 563.39 2383.13 511.22 2383.13 445C2383.13 378.78 2398.08 326.61 2427.97 288.5C2457.86 250.39 2498.8 231.33 2550.8 231.33C2591.24 231.33 2624.63 242 2650.97 263.33C2671.34 279.84 2686.23 301.73 2695.63 329.02C2700.54 343.27 2713.61 353.58 2728.65 352.57L2738.2 351.93C2755.99 350.73 2769.09 334 2763.78 316.98C2756.35 293.18 2745.91 271.86 2732.47 253C2713.13 225.89 2688.13 204.94 2657.47 190.17C2626.8 175.39 2591.24 168 2550.8 168C2501.24 168 2458.8 179.89 2423.47 203.67C2388.13 227.44 2361.02 260.11 2342.13 301.67C2323.24 343.22 2313.8 391 2313.8 445C2313.8 499 2323.24 546.89 2342.13 588.67C2361.02 630.44 2388.13 663.11 2423.47 686.67C2458.8 710.22 2501.24 722 2550.8 722C2591.24 722 2626.91 713.94 2657.8 697.83C2688.69 681.72 2713.91 659.33 2733.47 630.67C2747.3 610.38 2757.91 587.71 2765.3 562.64ZM2845.47 680C2845.47 696.57 2858.9 710 2875.47 710L2881.47 710C2898.04 710 2911.47 696.57 2911.47 680L2911.47 393.67C2911.47 341.67 2925.24 300.94 2952.8 271.5C2980.36 242.06 3017.47 227.33 3064.13 227.33C3107.47 227.33 3139.08 241.61 3158.97 270.17C3178.86 298.72 3188.8 339.67 3188.8 393L3188.8 680C3188.8 696.57 3202.23 710 3218.8 710L3224.8 710C3241.37 710 3254.8 696.57 3254.8 680L3254.8 369C3254.8 330.33 3248.19 295.83 3234.97 265.5C3221.74 235.17 3202.08 211.33 3175.97 194C3149.86 176.67 3117.47 168 3078.8 168C3049.47 168 3022.47 172.94 2997.8 182.83C2979.44 190.19 2963.36 200.41 2949.56 213.49C2935.73 226.61 2911.47 220.73 2911.47 201.67L2911.47 30C2911.47 13.43 2898.04 0 2881.47 0L2875.47 0C2858.9 0 2845.47 13.43 2845.47 30L2845.47 680ZM3668.17 658.81C3679.19 647.51 3699.21 652.6 3699.65 668.37L3699.99 680.83C3700.44 697.07 3713.74 710 3729.98 710L3730.13 710C3746.7 710 3760.13 696.57 3760.13 680L3760.13 384C3760.13 314.67 3742.69 261.33 3707.8 224C3672.91 186.67 3622.58 168 3556.8 168C3497.69 168 3449.52 183.22 3412.3 213.67C3383.25 237.42 3362.56 267.54 3350.23 304.02C3344.55 320.81 3357.45 337.59 3375.11 339.02L3386.02 339.9C3401.02 341.1 3414.18 330.97 3419.49 316.88C3428.36 293.29 3441.8 274.33 3459.8 260C3483.8 240.89 3516.13 231.33 3556.8 231.33C3602.8 231.33 3637.19 243.78 3659.97 268.67C3681.29 291.97 3692.63 327.53 3693.99 375.37C3694.16 381.14 3690.01 386.1 3684.34 387.16L3497.8 422C3443.58 432 3402.52 449.72 3374.63 475.17C3346.74 500.61 3332.8 535.11 3332.8 578.67C3332.8 623.11 3348.8 658.11 3380.8 683.67C3412.8 709.22 3455.47 722 3508.8 722C3540.58 722 3570.36 716.33 3598.13 705C3625.77 693.73 3649.11 678.33 3668.17 658.81ZM3679.92 446.34C3687.3 444.95 3694.13 450.62 3694.13 458.13L3694.13 496.67C3694.13 528 3686.74 556.22 3671.97 581.33C3657.19 606.44 3636.41 626.28 3609.63 640.83C3582.86 655.39 3551.24 662.67 3514.8 662.67C3479.47 662.67 3451.86 654.83 3431.97 639.17C3412.08 623.5 3402.13 601.33 3402.13 572.67C3402.13 547.33 3410.86 527 3428.3 511.67C3445.74 496.33 3473.47 485.11 3511.47 478L3679.92 446.34ZM4077.13 710C4093.33 710 4106.47 696.87 4106.47 680.67C4106.47 664.47 4093.33 651.33 4077.13 651.33L4037.13 651.33C4014.47 651.33 3997.52 646.33 3986.3 636.33C3975.08 626.33 3969.47 608.89 3969.47 584L3969.47 250.67C3969.47 244.04 3974.84 238.67 3981.47 238.67L4077.13 238.67C4093.33 238.67 4106.47 225.53 4106.47 209.33C4106.47 193.13 4093.33 180 4077.13 180L3981.47 180C3974.84 180 3969.47 174.63 3969.47 168L3969.47 86C3969.47 69.43 3956.04 56 3939.47 56L3933.47 56C3916.9 56 3903.47 69.43 3903.47 86L3903.47 168C3903.47 174.63 3898.09 180 3891.47 180L3849.8 180C3833.6 180 3820.47 193.13 3820.47 209.33C3820.47 225.53 3833.6 238.67 3849.8 238.67L3891.47 238.67C3898.09 238.67 3903.47 244.04 3903.47 250.67L3903.47 586C3903.47 628 3913.91 659.17 3934.8 679.5C3955.69 699.83 3987.8 710 4031.13 710L4077.13 710Z"
+									/>
+								</svg>
 							</div>
 						</div>
-
-						<button id="btn-login" class="logged-out-component btn btn-primary">Login</button>
-						<img
-							class="user-avatar logged-in-component hidden"
-							id="user-profile"
-							src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-						/>
-					</div>
-					<div class="navbar" data-target-id="sidebar-content">
-						<div class="navbar-tab">Chats</div>
-						<div class="navbar-tab">Personas</div>
-						<div class="navbar-tab">Settings</div>
-						<div class="navbar-tab-highlight"></div>
+						<div class="navbar" data-target-id="sidebar-content">
+							<div class="navbar-tab">Chats</div>
+							<div class="navbar-tab">Personas</div>
+							<div class="navbar-tab-highlight"></div>
+						</div>
 					</div>
 				</div>
 				<div id="sidebar-content">
@@ -275,8 +268,283 @@
 						</div>
 						<div id="personalitiesDiv"></div>
 					</div>
+				</div>
 
-					<div class="sidebar-section hidden" id="settings-section">
+				<div class="sidebar-footer">
+					<button id="btn-login" class="logged-out-component btn btn-primary">Login</button>
+					<button type="button" id="btn-open-profile" class="sidebar-account logged-in-component hidden">
+						<img
+							class="user-avatar"
+							id="user-profile"
+							alt=""
+							src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+						/>
+						<span class="sidebar-account-label">Profile</span>
+					</button>
+					<div class="sidebar-footer-actions">
+						<button
+							type="button"
+							id="btn-about"
+							class="sidebar-footer-button"
+							aria-label="About"
+							aria-haspopup="menu"
+							aria-controls="about-menu"
+							aria-expanded="false"
+						>
+							<span class="material-symbols-outlined">info</span>
+						</button>
+						<div class="dropdown-menu about-menu" id="about-menu" role="menu" tabindex="-1">
+							<button type="button" class="dropdown-menu-item about-menu-item" id="btn-whatsnew">
+								<span class="material-symbols-outlined" aria-hidden="true">new_releases</span>
+								<span>What's New</span>
+								<span class="about-menu-version" id="whatsnew-version"></span>
+							</button>
+							<a
+								class="dropdown-menu-item about-menu-item"
+								href="https://github.com/zozo-ai-inc/zodiac"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<span class="material-symbols-outlined" aria-hidden="true">code</span>
+								<span>Source Code</span>
+							</a>
+							<a class="dropdown-menu-item about-menu-item" href="terms-of-service.html" target="_blank">
+								<span class="material-symbols-outlined" aria-hidden="true">gavel</span>
+								<span>Terms of Service</span>
+							</a>
+							<a class="dropdown-menu-item about-menu-item" href="privacy-policy.html" target="_blank">
+								<span class="material-symbols-outlined" aria-hidden="true">shield</span>
+								<span>Privacy Policy</span>
+							</a>
+						</div>
+						<button
+							type="button"
+							id="btn-open-settings"
+							class="sidebar-footer-button"
+							aria-label="Settings"
+							aria-controls="settings-sidebar"
+							aria-expanded="false"
+						>
+							<span class="material-symbols-outlined">settings</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="mainContent">
+				<div class="header">
+					<button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">menu</button>
+					<div id="chat-title"></div>
+				</div>
+				<div id="scrollable-chat-container">
+					<div class="message-container"></div>
+				</div>
+				<div id="bottom-ui-container">
+					<!-- Round Control Panel for RPG group chats (above message input) -->
+					<div id="turn-control-panel" class="turn-control-panel hidden">
+						<button
+							type="button"
+							class="btn btn-textual material-symbols-outlined"
+							id="btn-rpg-settings"
+							aria-label="RPG group chat settings"
+						>
+							settings
+						</button>
+						<span class="turn-control-label" id="turn-control-label">Your Turn</span>
+						<button type="button" class="btn btn-primary hidden" id="btn-start-turn">
+							<span class="material-symbols-outlined">play_arrow</span>
+							<span id="start-round-text">Start Round</span>
+						</button>
+						<button type="button" class="btn btn-primary" id="btn-skip-turn">
+							<span class="material-symbols-outlined">skip_next</span>
+							Skip Turn
+						</button>
+					</div>
+					<div id="group-chat-typing-indicator" class="group-chat-typing-indicator hidden"></div>
+					<div
+						id="chat-loading-indicator"
+						class="chat-loading-indicator hidden"
+						aria-live="polite"
+						aria-busy="true"
+						aria-hidden="true"
+					>
+						<span class="loading-spinner" aria-hidden="true"></span>
+						<span>Loading chat...</span>
+					</div>
+					<div id="message-box">
+						<div
+							contenteditable
+							placeholder="Send a message to"
+							id="messageInput"
+							class="input-field"
+						></div>
+						<div id="attachment-preview" class="attachment-preview-container">
+							<input type="file" name="attachments" id="attachments" />
+						</div>
+						<div id="roleplay-composer" class="roleplay-composer hidden" aria-live="polite">
+							<div class="roleplay-composer__header">
+								<div
+									class="navbar roleplay-composer__tabs"
+									data-tabview="manual"
+									role="tablist"
+									aria-label="Roleplay composer sections"
+								>
+									<div
+										class="navbar-tab navbar-tab-active"
+										data-roleplay-tab="dialogue"
+										aria-selected="true"
+									>
+										Dialogue
+									</div>
+									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
+										Actions
+									</div>
+									<div class="navbar-tab-highlight"></div>
+								</div>
+								<button
+									type="button"
+									class="btn btn-textual roleplay-refresh"
+									id="btn-roleplay-refresh"
+									aria-label="Refresh suggestions"
+									title="Refresh suggestions"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+									<span
+										class="loading-spinner roleplay-refresh-spinner hidden"
+										aria-hidden="true"
+									></span>
+								</button>
+							</div>
+							<div class="roleplay-composer__selection-bar hidden">
+								<div id="roleplay-selected-actions" class="roleplay-selected-actions"></div>
+								<button
+									type="button"
+									class="btn btn-textual roleplay-clear-actions hidden"
+									id="btn-roleplay-clear-actions"
+								>
+									Clear
+								</button>
+							</div>
+							<div class="roleplay-panel" data-roleplay-panel="dialogue">
+								<div id="roleplay-suggestions" class="roleplay-suggestions"></div>
+							</div>
+							<div class="roleplay-panel hidden" data-roleplay-panel="actions">
+								<div id="roleplay-actions-root" class="roleplay-actions-root"></div>
+							</div>
+						</div>
+						<div id="message-box-buttons">
+							<div id="message-box-actions">
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-attach"
+									data-composer-action="Attach files"
+									aria-label="Attach files"
+								>
+									<span class="material-symbols-outlined composer-action-icon">attach_file</span>
+									<span class="composer-action-label">Attach files</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-internet"
+									data-composer-action="Web search"
+									aria-label="Toggle web search"
+								>
+									<span class="material-symbols-outlined composer-action-icon">language</span>
+									<span class="composer-action-label">Web search</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-roleplay"
+									data-composer-action="Roleplay"
+									aria-label="Toggle roleplay tools"
+								>
+									<span class="material-symbols-outlined composer-action-icon">pan_tool</span>
+									<span class="composer-action-label">Roleplay</span>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-image"
+									data-composer-action="Image generation"
+									aria-label="Toggle image generation"
+								>
+									<span class="material-symbols-outlined composer-action-icon">brush</span>
+									<span class="composer-action-label" id="image-generation-label"
+										>Image Generation</span
+									>
+								</button>
+								<button
+									type="button"
+									class="btn-textual btn composer-action"
+									id="btn-edit"
+									data-composer-action="Image editing"
+									aria-label="Toggle image editing"
+								>
+									<span class="material-symbols-outlined composer-action-icon"
+										>imagesearch_roller</span
+									>
+									<span class="composer-action-label" id="image-editing-label">Image Editing</span>
+								</button>
+								<div id="composer-actions-overflow" class="composer-actions-overflow hidden">
+									<button
+										type="button"
+										class="btn-textual btn"
+										id="btn-composer-actions-overflow"
+										aria-label="More message actions"
+										aria-haspopup="menu"
+										aria-expanded="false"
+										aria-controls="composer-actions-menu"
+									>
+										<span class="material-symbols-outlined">more_horiz</span>
+									</button>
+									<div
+										id="composer-actions-menu"
+										class="dropdown-menu composer-actions-menu"
+										role="menu"
+									></div>
+								</div>
+							</div>
+							<div class="message-box-right">
+								<div id="image-credits-label" class="image-credits-label hidden">
+									<span class="image-credits-count">—</span>
+									<span class="image-credits-type">Image Credits</span>
+								</div>
+								<button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">
+									send
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<aside class="settings-sidebar" id="settings-sidebar" aria-label="Settings" tabindex="-1" inert>
+				<div class="sidebar-top-bar">
+					<div class="header">
+						<button
+							type="button"
+							class="settings-page-back btn-textual hidden"
+							id="btn-settings-back"
+							aria-label="Back to settings"
+						>
+							<span class="material-symbols-outlined">arrow_back</span>
+						</button>
+						<h2 class="settings-sidebar-title" id="settings-sidebar-title">Settings</h2>
+						<button
+							type="button"
+							class="material-symbols-outlined btn-textual"
+							id="btn-close-settings"
+							aria-label="Close settings"
+						>
+							close
+						</button>
+					</div>
+				</div>
+				<div id="settings-sidebar-content">
+					<div class="sidebar-section" id="settings-section">
 						<div class="settings-nav-container">
 							<div id="settings-home" class="settings-home">
 								<div class="settings-list">
@@ -355,13 +623,7 @@
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="api">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">API Keys</h3>
-								</div>
+							<div class="settings-page" data-settings-page="api" data-settings-title="API Keys">
 								<div class="settings-page-content">
 									<div class="api-key-group">
 										<label class="setting-label" for="apiKeyInput">Gemini</label>
@@ -427,13 +689,7 @@
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="chat">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">Chat Settings</h3>
-								</div>
+							<div class="settings-page" data-settings-page="chat" data-settings-title="Chat Settings">
 								<div class="settings-page-content">
 									<div class="generation-settings">
 										<div>
@@ -558,13 +814,11 @@
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="groupchat">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">Group chat Settings</h3>
-								</div>
+							<div
+								class="settings-page"
+								data-settings-page="groupchat"
+								data-settings-title="Group chat Settings"
+							>
 								<div class="settings-page-content">
 									<h4>Dynamic group chats</h4>
 									<div class="settings-ux-group">
@@ -618,13 +872,7 @@
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="image">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">Image Settings</h3>
-								</div>
+							<div class="settings-page" data-settings-page="image" data-settings-title="Image Settings">
 								<div class="settings-page-content">
 									<div class="generation-settings">
 										<div>
@@ -691,13 +939,11 @@
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="personalisation">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">Personalisation</h3>
-								</div>
+							<div
+								class="settings-page"
+								data-settings-page="personalisation"
+								data-settings-title="Personalisation"
+							>
 								<div class="settings-page-content">
 									<div class="ui-settings">
 										<div class="ui-setting">
@@ -940,20 +1186,14 @@
 
 									<div class="settings-personalisation-note">
 										<p>
-											For more advanced personalisation, open the Profile panel from the overlay
-											to edit your preferred name and system prompt.
+											For more advanced personalisation, open your Profile from the bottom of the
+											sidebar to edit your preferred name and system prompt.
 										</p>
 									</div>
 								</div>
 							</div>
 
-							<div class="settings-page" data-settings-page="data">
-								<div class="settings-page-header">
-									<button class="settings-page-back btn-textual" type="button" data-settings-back>
-										<span class="material-symbols-outlined">arrow_back</span>
-									</button>
-									<h3 class="settings-page-title">Data Management</h3>
-								</div>
+							<div class="settings-page" data-settings-page="data" data-settings-title="Data Management">
 								<div class="settings-page-content">
 									<!-- Cloud Sync Section (Pro/Max only) -->
 									<div id="cloud-sync-section" class="hidden">
@@ -1115,203 +1355,7 @@
 						</div>
 					</div>
 				</div>
-
-				<div class="credits">
-					<a href="https://github.com/zozo-ai-inc/zodiac">Source Code</a>
-					<a href="terms-of-service.html">Terms of Service</a>
-					<a href="privacy-policy.html">Privacy Policy</a>
-				</div>
-			</div>
-
-			<div id="mainContent">
-				<div class="header">
-					<button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">menu</button>
-					<div id="chat-title"></div>
-				</div>
-				<div id="scrollable-chat-container">
-					<div class="message-container"></div>
-				</div>
-				<div id="bottom-ui-container">
-					<!-- Round Control Panel for RPG group chats (above message input) -->
-					<div id="turn-control-panel" class="turn-control-panel hidden">
-						<button
-							type="button"
-							class="btn btn-textual material-symbols-outlined"
-							id="btn-rpg-settings"
-							aria-label="RPG group chat settings"
-						>
-							settings
-						</button>
-						<span class="turn-control-label" id="turn-control-label">Your Turn</span>
-						<button type="button" class="btn btn-primary hidden" id="btn-start-turn">
-							<span class="material-symbols-outlined">play_arrow</span>
-							<span id="start-round-text">Start Round</span>
-						</button>
-						<button type="button" class="btn btn-primary" id="btn-skip-turn">
-							<span class="material-symbols-outlined">skip_next</span>
-							Skip Turn
-						</button>
-					</div>
-					<div id="group-chat-typing-indicator" class="group-chat-typing-indicator hidden"></div>
-					<div
-						id="chat-loading-indicator"
-						class="chat-loading-indicator hidden"
-						aria-live="polite"
-						aria-busy="true"
-						aria-hidden="true"
-					>
-						<span class="loading-spinner" aria-hidden="true"></span>
-						<span>Loading chat...</span>
-					</div>
-					<div id="message-box">
-						<div
-							contenteditable
-							placeholder="Send a message to"
-							id="messageInput"
-							class="input-field"
-						></div>
-						<div id="attachment-preview" class="attachment-preview-container">
-							<input type="file" name="attachments" id="attachments" />
-						</div>
-						<div id="roleplay-composer" class="roleplay-composer hidden" aria-live="polite">
-							<div class="roleplay-composer__header">
-								<div
-									class="navbar roleplay-composer__tabs"
-									data-tabview="manual"
-									role="tablist"
-									aria-label="Roleplay composer sections"
-								>
-									<div
-										class="navbar-tab navbar-tab-active"
-										data-roleplay-tab="dialogue"
-										aria-selected="true"
-									>
-										Dialogue
-									</div>
-									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
-										Actions
-									</div>
-									<div class="navbar-tab-highlight"></div>
-								</div>
-								<button
-									type="button"
-									class="btn btn-textual roleplay-refresh"
-									id="btn-roleplay-refresh"
-									aria-label="Refresh suggestions"
-									title="Refresh suggestions"
-								>
-									<span class="material-symbols-outlined" aria-hidden="true">refresh</span>
-									<span
-										class="loading-spinner roleplay-refresh-spinner hidden"
-										aria-hidden="true"
-									></span>
-								</button>
-							</div>
-							<div class="roleplay-composer__selection-bar hidden">
-								<div id="roleplay-selected-actions" class="roleplay-selected-actions"></div>
-								<button
-									type="button"
-									class="btn btn-textual roleplay-clear-actions hidden"
-									id="btn-roleplay-clear-actions"
-								>
-									Clear
-								</button>
-							</div>
-							<div class="roleplay-panel" data-roleplay-panel="dialogue">
-								<div id="roleplay-suggestions" class="roleplay-suggestions"></div>
-							</div>
-							<div class="roleplay-panel hidden" data-roleplay-panel="actions">
-								<div id="roleplay-actions-root" class="roleplay-actions-root"></div>
-							</div>
-						</div>
-						<div id="message-box-buttons">
-							<div id="message-box-actions">
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-attach"
-									data-composer-action="Attach files"
-									aria-label="Attach files"
-								>
-									<span class="material-symbols-outlined composer-action-icon">attach_file</span>
-									<span class="composer-action-label">Attach files</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-internet"
-									data-composer-action="Web search"
-									aria-label="Toggle web search"
-								>
-									<span class="material-symbols-outlined composer-action-icon">language</span>
-									<span class="composer-action-label">Web search</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-roleplay"
-									data-composer-action="Roleplay"
-									aria-label="Toggle roleplay tools"
-								>
-									<span class="material-symbols-outlined composer-action-icon">pan_tool</span>
-									<span class="composer-action-label">Roleplay</span>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-image"
-									data-composer-action="Image generation"
-									aria-label="Toggle image generation"
-								>
-									<span class="material-symbols-outlined composer-action-icon">brush</span>
-									<span class="composer-action-label" id="image-generation-label"
-										>Image Generation</span
-									>
-								</button>
-								<button
-									type="button"
-									class="btn-textual btn composer-action"
-									id="btn-edit"
-									data-composer-action="Image editing"
-									aria-label="Toggle image editing"
-								>
-									<span class="material-symbols-outlined composer-action-icon"
-										>imagesearch_roller</span
-									>
-									<span class="composer-action-label" id="image-editing-label">Image Editing</span>
-								</button>
-								<div id="composer-actions-overflow" class="composer-actions-overflow hidden">
-									<button
-										type="button"
-										class="btn-textual btn"
-										id="btn-composer-actions-overflow"
-										aria-label="More message actions"
-										aria-haspopup="menu"
-										aria-expanded="false"
-										aria-controls="composer-actions-menu"
-									>
-										<span class="material-symbols-outlined">more_horiz</span>
-									</button>
-									<div
-										id="composer-actions-menu"
-										class="dropdown-menu composer-actions-menu"
-										role="menu"
-									></div>
-								</div>
-							</div>
-							<div class="message-box-right">
-								<div id="image-credits-label" class="image-credits-label hidden">
-									<span class="image-credits-count">—</span>
-									<span class="image-credits-type">Image Credits</span>
-								</div>
-								<button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">
-									send
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			</aside>
 		</div>
 
 		<!-- Image Credits Popover -->
@@ -1645,8 +1689,18 @@
 				<div id="whats-new" class="hidden">
 					<h1 id="header-version">What's New in</h1>
 					<ul id="changelog">
-						<li><b>Max Plan:</b> Available for a limited time. Unlimited Everything, forever</li>
-						<li><b>Reliability fixes:</b> LoRA system fixes, and main message composer improvements</li>
+						<li>
+							<b>New look:</b> Redesigned sidebar, Settings in its own panel, and fresh Zozo Chat branding
+						</li>
+						<li>
+							<b>33 new models:</b> Claude Opus 5.5, Fable 5.1, GPT-6, Gemini 3.8 Flash, Kimi K3, and more
+						</li>
+						<li><b>Model retirement notices:</b> See ahead of time when an older model is going away</li>
+						<li>
+							<b>Data takeout:</b> Export your data, all of it or just the parts you pick, and restore it
+							later
+						</li>
+						<li><b>Polish:</b> Dismissible announcement banner, and no more theme flash on startup</li>
 					</ul>
 				</div>
 
@@ -3644,7 +3698,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 				<div id="model-picker-family-list" class="settings-list" aria-label="Model families"></div>
 			</div>
 			<div id="model-picker-family-detail" class="model-picker-view hidden">
-				<div class="settings-page-header">
+				<div class="model-picker-detail-header">
 					<button
 						id="model-picker-back"
 						class="settings-page-back btn-textual"
@@ -3653,7 +3707,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 					>
 						<span class="material-symbols-outlined">arrow_back</span>
 					</button>
-					<h3 id="model-picker-family-title" class="settings-page-title">Models</h3>
+					<h3 id="model-picker-family-title" class="model-picker-detail-title">Models</h3>
 					<button
 						id="model-picker-mega-toggle"
 						class="model-picker-mega-toggle"

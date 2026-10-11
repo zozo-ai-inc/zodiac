@@ -1,11 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as PersonalityService from "../../../src/services/Personality.service";
 
 async function addRoleplayPersona(page: Page): Promise<void> {
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const personalityService = await importModule("/services/Personality.service.ts");
+		const personalityService = await window.importModule<typeof PersonalityService>(
+			"/services/Personality.service.ts"
+		);
 
 		await personalityService.add(
 			{

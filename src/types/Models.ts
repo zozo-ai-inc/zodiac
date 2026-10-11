@@ -48,6 +48,11 @@ export interface ChatModelDefinition {
 	consumesImageCredits?: boolean;
 	roleplayModeSuggester?: boolean;
 	roleplaySuggestionThinkingCap?: number;
+	// ISO 8601 date-time with timezone (e.g. "2026-10-20T00:00:00Z"); from that moment on, the model is no longer offered.
+	// Keep in sync with PREMIUM_MODELS in zozo-edge's handle-pro-request-x.
+	deprecationDate?: string;
+	// Selected in place of this model for users who had it selected when it was deprecated.
+	replacementModel?: string;
 }
 
 export interface ChatModelAccess {
@@ -138,7 +143,9 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z",
+		replacementModel: ChatModel.FLASH_3_PREV
 	},
 	{
 		id: ChatModel.FLASH_2_5,
@@ -151,7 +158,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z"
 	},
 	{
 		id: ChatModel.FLASH_LITE_2_5,
@@ -164,7 +172,8 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-20T00:00:00Z"
 	}
 ];
 
@@ -178,7 +187,9 @@ function openRouterGeminiVariant(localModelId: ChatModel, openRouterModelId: str
 		label: `${localModel.label} via OpenRouter`,
 		premiumLabel: localModel.label,
 		provider: "openrouter",
-		localOnly: undefined
+		localOnly: undefined,
+		replacementModel:
+			localModel.replacementModel && GEMINI_TO_OPENROUTER_CHAT_MODEL_IDS.get(localModel.replacementModel)
 	};
 }
 
@@ -191,12 +202,68 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 	openRouterGeminiVariant(ChatModel.PRO, "google/gemini-3.1-pro-preview"),
 	openRouterGeminiVariant(ChatModel.PRO_2_5, "google/gemini-2.5-pro"),
 	{
+		id: "google/gemini-3.5-flash-lite",
+		label: "Gemini 3.5 Flash Lite",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash Lite",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "google/gemini-3.6-flash",
+		label: "Gemini 3.6 Flash",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "google/gemini-3.7-flash",
+		label: "Gemini 3.7 Flash",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "google/gemini-3.8-flash",
+		label: "Gemini 3.8 Flash",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
 		id: "openai/gpt-5.4",
 		label: "GPT-5.4",
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -207,7 +274,86 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: true,
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-5.6-luna",
+		label: "GPT-5.6 Luna",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-5.6-sol",
+		label: "GPT-5.6 Sol",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-5.6-terra",
+		label: "GPT-5.6 Terra",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-6-luna",
+		label: "GPT-6 Luna",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-6-sol",
+		label: "GPT-6 Sol",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-6-astra",
+		label: "GPT-6 Astra",
+		provider: "openrouter",
+		mega: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: true,
+		supportsImageOutput: false
+	},
+	{
+		id: "openai/gpt-6.1-sol",
+		label: "GPT-6.1 Sol",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
 		supportsImageOutput: false
@@ -248,7 +394,8 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-08T00:00:00Z"
 	},
 	{
 		id: "openai/gpt-4o",
@@ -306,7 +453,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -318,7 +465,98 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
-		supportsTemperature: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-sonnet-5",
+		label: "Claude Sonnet 5",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Sonnet",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-opus-5",
+		label: "Claude Opus 5",
+		provider: "openrouter",
+		mega: true,
+		modelPickerGroup: "Opus",
+		supportsThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-fable-5",
+		label: "Claude Fable 5",
+		provider: "openrouter",
+		mega: true,
+		modelPickerGroup: "Fable",
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-fable-5.1",
+		label: "Claude Fable 5.1",
+		provider: "openrouter",
+		mega: true,
+		modelPickerGroup: "Fable",
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-opus-5.5",
+		label: "Claude Opus 5.5",
+		provider: "openrouter",
+		mega: true,
+		modelPickerGroup: "Opus",
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-sonnet-5.5",
+		label: "Claude Sonnet 5.5",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Sonnet",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: false,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "anthropic/claude-haiku-5.5",
+		label: "Claude Haiku 5.5",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Haiku",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
@@ -345,6 +583,19 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "deepseek/deepseek-v4.1-flash",
+		label: "DeepSeek V4.1 Flash",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
 		supportsFileInput: false,
 		supportsImageOutput: false
 	},
@@ -397,8 +648,71 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsImageOutput: false
 	},
 	{
+		id: "z-ai/glm-5.3",
+		label: "GLM 5.3",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "z-ai/glm-5.3-flash",
+		label: "GLM 5.3 Flash",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "z-ai/glm-5.3-flashx",
+		label: "GLM 5.3 FlashX",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "z-ai/glm-5.3-prime",
+		label: "GLM 5.3 Prime",
+		provider: "openrouter",
+		mega: true,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
 		id: "inception/mercury-2",
 		label: "Mercury 2",
+		provider: "openrouter",
+		mega: false,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "inception/mercury-2.5",
+		label: "Mercury 2.5",
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
@@ -453,7 +767,8 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
-		supportsImageOutput: false
+		supportsImageOutput: false,
+		deprecationDate: "2026-10-09T00:00:00Z"
 	},
 	{
 		id: "qwen/qwen3.7-plus",
@@ -480,8 +795,121 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsImageOutput: false
 	},
 	{
+		id: "qwen/qwen3.7-flash",
+		label: "Qwen3.7 Flash",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "qwen/qwen3.8-flash",
+		label: "Qwen3.8 Flash",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "qwen/qwen3.8-max-0902",
+		label: "Qwen3.8 Max",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "qwen/qwen3.8-max-prime",
+		label: "Qwen3.8 Max Prime",
+		provider: "openrouter",
+		mega: true,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
 		id: "x-ai/grok-4.3",
 		label: "Grok 4.3",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "x-ai/grok-4.5",
+		label: "Grok 4.5",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "x-ai/grok-4.6",
+		label: "Grok 4.6",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "x-ai/grok-4.7",
+		label: "Grok 4.7",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "moonshotai/kimi-k3",
+		label: "Kimi K3",
+		provider: "openrouter",
+		mega: true,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "mistralai/mistral-large-4-0",
+		label: "Mistral Large 4",
 		provider: "openrouter",
 		mega: false,
 		roleplayModeSuggester: true,
@@ -540,13 +968,20 @@ export function getRoleplaySuggestionThinkingCap(model: string | null | undefine
 	return getChatModelDefinition(model)?.roleplaySuggestionThinkingCap;
 }
 
+// Temperature is always sent: the premium endpoint and OpenRouter drop it for models that do not accept it.
 export function modelSupportsTemperature(_model: string | null | undefined): boolean {
 	return true;
 }
 
+export function isChatModelDeprecated(model: Pick<ChatModelDefinition, "deprecationDate">): boolean {
+	if (!model.deprecationDate) return false;
+	const deprecatedAt = Date.parse(model.deprecationDate);
+	return Number.isFinite(deprecatedAt) && Date.now() >= deprecatedAt;
+}
+
 export function getAccessibleChatModels(access: ChatModelAccess): ChatModelDefinition[] {
 	return CHAT_MODELS.filter((model) => {
-		if (UI_DISABLED_CHAT_MODELS.has(model.id)) {
+		if (UI_DISABLED_CHAT_MODELS.has(model.id) || isChatModelDeprecated(model)) {
 			return false;
 		}
 
@@ -613,6 +1048,15 @@ export function getValidChatModel(model: string | null | undefined, access: Chat
 	const preferredModel = access.isPremiumEndpointPreferred ? getPremiumEndpointChatModel(model) : model;
 	if (preferredModel && availableModels.some((candidate) => candidate.id === preferredModel)) {
 		return preferredModel;
+	}
+
+	const preferredDefinition = getChatModelDefinition(preferredModel);
+	if (
+		preferredDefinition?.replacementModel &&
+		isChatModelDeprecated(preferredDefinition) &&
+		availableModels.some((candidate) => candidate.id === preferredDefinition.replacementModel)
+	) {
+		return preferredDefinition.replacementModel;
 	}
 
 	return availableModels[0]?.id ?? getDefaultChatModel(access);

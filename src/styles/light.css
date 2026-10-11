@@ -1,4 +1,4 @@
-/* Light mode base styles (applies to all themes in light mode) */
+/* Light mode tokens, shared by every color palette. */
 [data-mode="light"] {
 	--card-personality-fg: #e4e4e4;
 
@@ -41,49 +41,7 @@
 
 	--turn-control-outline: 1px solid rgba(0, 0, 0, 0.13);
 
-	.message-text:focus-visible {
-		outline: 1px solid var(--focus-outline);
-	}
-
-	a {
-		color: var(--link-color);
-	}
-
-	.navbar {
-		background-color: var(--navbar-bg);
-	}
-
-	.navbar-tab-highlight {
-		box-shadow:
-			0 1px 4px rgba(0, 0, 0, 0.1),
-			0 0 0 1px rgba(0, 0, 0, 0.04);
-	}
-
-	.btn-textual {
-		color: var(--btn-textual-fg);
-	}
-
-	.btn-toggled {
-		background: var(--button-toggled-bg) !important;
-	}
-
-	.btn-textual:hover {
-		text-shadow: var(--btn-textual-hover-shadow);
-	}
-
-	.tone-example-remove {
-		color: var(--tone-example-remove-fg);
-	}
-
-	.tone-example-remove:hover,
-	.tone-example-remove:focus-visible {
-		color: var(--tone-example-remove-hover-fg);
-	}
-
-	.toast {
-		box-shadow: var(--toast-shadow);
-	}
-
+	/* Preserve local toast colors independently of inherited palette tokens. */
 	.toast--normal {
 		--toast-normal-bg: rgba(184, 213, 252, 0.8);
 		--toast-normal-border: rgba(58, 110, 170, 0.22);
@@ -107,320 +65,168 @@
 		--toast-danger-action-bg-hover: rgba(230, 95, 114, 0.3);
 		--toast-danger-close-hover: rgba(230, 95, 114, 0.18);
 	}
+}
+/* Document palette defaults. Mode picker controls also carry data-mode, so these tokens must stay on the root. */
+:root[data-mode="light"] {
+	/* Neutral Modal */
+	--modal-bg: #ffffff;
+	--modal-fg: var(--onboarding-title);
+	--modal-shadow: 0 8px 24px var(--onboarding-card-shadow);
 
-	input[type="range"] {
-		accent-color: var(--lora-strength-slider);
-	}
+	/* Theme mode controls */
+	--mode-button-bg: rgba(0, 0, 0, 0.05);
+	--mode-button-hover-bg: rgba(0, 0, 0, 0.1);
+	--mode-button-active-bg: rgba(0, 0, 0, 0.15);
 
-	input::placeholder,
-	textarea::placeholder {
-		color: var(--input-placeholder);
-	}
+	/* Shared palette defaults */
+	--code-block-bg: transparent;
+	--inline-code-border: #00000029;
 
-	/* LoRA metadata cards (light) */
-	.card-lora {
-		background-color: var(--card-add-lora-bg);
-		border: 1px solid var(--card-lora-border);
-	}
+	/* Warning colors */
+	--warning-bg: rgba(255, 140, 0, 0.12);
+	--warning-fg: #d97700;
+	--warning-border: rgba(255, 140, 0, 0.25);
+	--warning-icon: #ff8c00;
 
-	.lora-card-meta,
-	.lora-card-section-title {
-		color: var(--lora-card-meta-fg);
-	}
+	/* Textual buttons */
+	--btn-textual-fg: #0a0a0a;
+	--btn-textual-shadow: none;
+	--btn-textual-hover-shadow: 0 0 10px #000000;
 
-	.lora-card-toggle span,
-	.lora-strength-label,
-	.lora-strength-value {
-		color: var(--lora-card-toggle-fg);
-	}
+	/* Toasts */
+	--toast-warning-bg: rgba(250, 238, 183, 0.8);
+	--toast-danger-bg: rgba(255, 185, 198, 0.8);
 
-	.lora-card-trigger {
-		background-color: var(--lora-card-trigger-bg);
-		border-color: var(--lora-card-trigger-border);
-		color: var(--lora-card-trigger-fg);
-	}
-
-	.lora-card-trigger:hover {
-		background-color: var(--lora-card-trigger-hover-bg);
-	}
-
-	.lora-card-trigger[data-copied="true"] {
-		background-color: var(--lora-card-trigger-copied-bg);
-		border-color: var(--lora-card-trigger-copied-border);
-		color: var(--lora-card-trigger-copied-fg);
-	}
-
-	.lora-card-empty {
-		color: var(--lora-card-empty-fg);
-	}
-
-	.lora-card-delete {
-		background-color: var(--lora-card-delete-bg);
-		border-color: var(--lora-card-delete-border);
-		color: var(--lora-card-delete-fg);
-	}
-
-	.lora-card-delete:hover {
-		background-color: var(--lora-card-delete-hover-bg);
-	}
-
-	.lora-card-delete:active {
-		transform: translateY(1px);
-	}
-
-	.lora-strength-slider {
-		accent-color: var(--lora-strength-slider);
-	}
-
-	/* Keep subscription badge background unchanged on hover */
-	#subscription-badge.badge-tier-free:hover {
-		background-color: var(--badge-tier-free-bg) !important;
-	}
-
-	#subscription-badge.badge-tier-pro:hover {
-		background-color: var(--badge-tier-pro-bg) !important;
-	}
-
-	#subscription-badge.badge-tier-max:hover {
-		background-color: var(--badge-tier-max-bg) !important;
-	}
+	/* Inputs */
+	--input-border: 1px solid #54545428;
+	--input-fg: #0a0a0a;
 
 	/* Subscription badge tiers */
-	.badge-tier-free {
-		background-color: var(--badge-tier-free-bg);
-		border-color: var(--badge-tier-free-border);
-		color: var(--badge-tier-free-fg);
-	}
+	--badge-tier-free-bg: #e2e8f0;
+	--badge-tier-free-border: rgba(100, 116, 139, 0.35);
+	--badge-tier-free-fg: #475569;
+	--badge-tier-free-hover-bg: #d8e1ec;
+	--badge-tier-pro-bg: #dbeafe;
+	--badge-tier-pro-border: #93c5fd;
+	--badge-tier-pro-fg: #1d4ed8;
+	--badge-tier-pro-hover-bg: #bfdbfe;
+	--badge-tier-pro-plus-bg: #fef3c7;
+	--badge-tier-pro-plus-border: #f59e0b;
+	--badge-tier-pro-plus-fg: #92400e;
+	--badge-tier-pro-plus-hover-bg: #fde68a;
+	--badge-tier-max-bg: #e2e8f0;
+	--badge-tier-max-border: #64748b;
+	--badge-tier-max-fg: #0f172a;
+	--badge-tier-max-hover-bg: #cbd5e1;
 
-	.badge-tier-pro {
-		background-color: var(--badge-tier-pro-bg);
-		border-color: var(--badge-tier-pro-border);
-		color: var(--badge-tier-pro-fg);
-	}
+	/* Current chat radio */
+	--input-radio-checked-fg: inherit;
 
-	.badge-tier-max {
-		background-color: var(--badge-tier-max-bg);
-		border-color: var(--badge-tier-max-border);
-		color: var(--badge-tier-max-fg);
-	}
+	/* Overlay */
+	--overlay-bg: #ffffff82;
 
-	.overlay {
-		background-color: var(--overlay-bg);
-	}
+	/* Message input */
+	--message-input-bg: inherit;
+	--message-input-focus-border: 1px solid #8f9eb3;
 
-	#message-box {
-		outline: var(--elevated-ui-outline);
-	}
+	/* Add tone example button */
+	--btn-add-tone-bg: inherit;
+	--btn-add-tone-border: inherit;
+	--btn-add-tone-fg: inherit;
+	--btn-add-tone-hover-bg: inherit;
 
-	/* Subscription card theming (light) */
-	#subscription-status-row {
-		background-color: var(--subscription-status-card-bg);
-		border-color: var(--subscription-status-card-border);
-	}
+	/* API key states */
+	--api-key-valid-border: 1px solid #0be43ab0;
+	--api-key-invalid-border: 1px solid #ff4a53da;
+	--api-key-error-fg: #bf121c;
 
-	/* Info profile card (light) */
-	#profile-info-card {
-		background-color: var(--profile-info-card-bg);
-		border-color: var(--profile-info-card-border);
-	}
+	/* Attachment container */
+	--attachment-container-outline: 1px solid #00000030;
 
-	/* Account card (light) */
-	#account-info-card {
-		background-color: var(--account-info-card-bg);
-		border-color: var(--account-info-card-border);
-	}
+	/* Profile picture */
+	--profile-pfp-filter: invert(1);
+	--profile-pfp-loaded-filter: invert(0);
 
-	.subscription-card-header {
-		background-color: transparent;
-	}
+	/* Toggle switches */
+	--toggle-bg: #c2c2c2;
+	--toggle-border: #a8a8a8;
+	--toggle-knob-bg: #ffffff;
+	--toggle-knob-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	--toggle-checked-knob-bg: #ffffff;
+	--toggle-hover-bg: #b8b8b8;
+	--toggle-focus-shadow: 0 0 0 2px #8f9eb3;
+	--toggle-focus-border: #8f9eb3;
 
-	.subscription-card-body {
-		background-color: transparent;
-	}
+	/* Focus states */
+	--focus-border: 1px solid #8f9eb3;
+	--focus-outline: 1px solid #8f9eb3a6;
 
-	.subscription-card-footer {
-		background-color: transparent;
-	}
+	/* Subscription cards */
+	--subscription-card-bg: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+	--subscription-card-border: #e5e7eb;
+	--subscription-card-fg: #111827;
+	--subscription-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+	--subscription-card-popular-border: #667eea;
+	--subscription-card-popular-shadow: 0 15px 50px rgba(102, 126, 234, 0.2);
+	--subscription-card-popular-hover-shadow: 0 25px 70px rgba(102, 126, 234, 0.3);
+	--subscription-header-gradient: inherit;
 
-	:has(> #messageInput:focus-visible) {
-		border: 1px solid var(--focus-border);
-	}
+	/* Tier badges */
+	--tier-badge-free-fg: inherit;
+	--tier-badge-pro-gradient: inherit;
+	--tier-badge-max-gradient: inherit;
+	--tier-description-fg: #6b7280;
+	--price-period-fg: #6b7280;
 
-	.api-key-valid {
-		border: var(--api-key-valid-border);
-	}
+	/* Mobile subscription cards */
+	--subscription-card-header-border: rgba(0, 0, 0, 0.08);
 
-	.api-key-invalid {
-		border: var(--api-key-invalid-border);
-	}
+	/* Chat actions dropdown */
+	--chat-actions-button-fg: #0a0a0a;
+	--chat-actions-button-open-shadow: 0 0 4px #ffffffaa;
+	--chat-actions-menu-bg: rgba(255, 255, 255, 0.95);
+	--chat-actions-menu-border: 1px solid rgba(0, 0, 0, 0.1);
+	--chat-actions-menu-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.25), 0 2px 6px -1px rgba(0, 0, 0, 0.15);
+	--chat-actions-item-hover-bg: rgba(0, 0, 0, 0.07);
+	--chat-actions-item-active-bg: rgba(0, 0, 0, 0.12);
 
-	.api-key-error {
-		color: var(--api-key-error-fg);
-	}
+	/* Thinking section */
+	--thinking-bg: #ffffffcc;
 
-	.card-add-personality {
-		background-color: var(--card-add-personality-bg);
-		border: 1px dashed var(--card-add-personality-border);
-	}
+	/* Code blocks */
+	--hljs-bg: #ffffff66;
 
-	.card-add-personality:hover {
-		background-color: var(--card-add-personality-hover-bg);
-		border-color: var(--card-add-personality-hover-border);
-	}
+	/* Top-up buttons */
+	--top-up-btn-bg: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+	--top-up-btn-border: #e5e7eb;
+	--top-up-btn-fg: #1f2937;
+	--top-up-btn-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+	--top-up-btn-hover-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+	--top-up-btn-hover-bg: linear-gradient(145deg, #ffffff 0%, #eef2f7 100%);
+	--top-up-btn-hover-border: #d1d5db;
+	--top-up-btn-active-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+	--top-up-btn-active-bg: linear-gradient(145deg, #f9fafb 0%, #eef2f7 100%);
+	--top-up-price-fg: #111827;
+	--top-up-credits-fg: #111827;
+	--top-up-subtitle-fg: #6b7280;
 
-	.card-add-personality .add-icon {
-		color: var(--card-add-personality-icon-fg);
-	}
-
-	.attachment-container {
-		background-color: var(--attachment-container-bg);
-		outline: 1px solid var(--attachment-container-outline);
-	}
-
-	/* LoRA add card (light) */
-	.card-add-lora {
-		background-color: var(--card-add-lora-bg);
-		border: 1px solid var(--card-add-lora-border);
-	}
-
-	#dialog-message {
-		color: white;
-	}
-
-	#user-profile {
-		filter: var(--profile-pfp-filter);
-	}
-
-	#user-profile[src]:not([src=""]):not([src="undefined"]):not([src="null"]):not([src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="])
-	{
-		filter: var(--profile-pfp-loaded-filter);
-	}
-
-	/* Modern subscription cards light theme */
-	.subscription-card {
-		background: var(--subscription-card-bg);
-		border-color: var(--subscription-card-border);
-		color: var(--subscription-card-fg);
-	}
-
-	.subscription-card:hover {
-		box-shadow: var(--subscription-card-shadow);
-	}
-
-	.subscription-card-popular {
-		border-color: var(--subscription-card-popular-border);
-		box-shadow: var(--subscription-card-popular-shadow);
-	}
-
-	.subscription-card-popular:hover {
-		box-shadow: var(--subscription-card-popular-hover-shadow);
-	}
-
-	.tier-description {
-		color: var(--subscription-card-fg);
-	}
-
-	.price-period {
-		color: var(--subscription-card-fg);
-	}
-
-	/* Mobile collapsible subscription cards */
-	@media (max-width: 1032px) {
-		.subscription-card-header {
-			border-bottom-color: var(--subscription-card-header-border);
-		}
-	}
-
-	.message-thinking pre {
-		background: var(--thinking-bg);
-	}
-
-	/* Top-up buttons (light theme) */
-	#form-top-up-imagecredits .btn-array-vertical > button {
-		background: var(--top-up-btn-bg);
-		border-color: var(--top-up-btn-border);
-		color: var(--top-up-btn-fg);
-		box-shadow: var(--top-up-btn-shadow);
-	}
-
-	#form-top-up-imagecredits .btn-array-vertical > button:hover {
-		box-shadow: var(--top-up-btn-hover-shadow);
-		transform: translateY(-1px);
-		background: var(--top-up-btn-hover-bg);
-		border-color: var(--top-up-btn-hover-border);
-	}
-
-	#form-top-up-imagecredits .btn-array-vertical > button:active {
-		transform: translateY(0);
-		box-shadow: var(--top-up-btn-active-shadow);
-		background: var(--top-up-btn-active-bg);
-	}
-
-	#form-top-up-imagecredits .top-up-price {
-		color: var(--top-up-price-fg);
-	}
-
-	#form-top-up-imagecredits .top-up-credits {
-		color: var(--top-up-credits-fg);
-	}
-
-	#form-top-up-imagecredits .top-up-subtitle {
-		color: var(--top-up-subtitle-fg);
-	}
-
-	/* Mode selector buttons */
-	.mode-selector .mode-btn {
-		background: rgba(0, 0, 0, 0.05);
-		border-color: rgba(0, 0, 0, 0.1);
-		color: inherit;
-	}
-
-	.mode-selector .mode-btn:hover {
-		background: rgba(0, 0, 0, 0.1);
-		color: inherit;
-	}
-
-	.mode-selector .mode-btn.active {
-		border-color: currentColor;
-		background: rgba(0, 0, 0, 0.15);
-		color: inherit;
-	}
-
-	.hljs {
-		background: #ffffff66 !important;
-		/* Light background for code blocks */
-	}
-
-	.settings-list-item:hover,
-	.settings-list-item:focus-visible {
-		background-color: var(--card-hover-bg, rgba(59, 59, 59, 0.027));
-		border-color: var(--card-border-hover, rgba(22, 22, 22, 0.089));
-	}
-
-	/* Marketplace Banner - Light Mode */
-	.marketplace-banner {
-		background: linear-gradient(135deg, rgba(242, 199, 91, 0.25) 0%, rgba(212, 168, 67, 0.15) 100%);
-		border-color: rgba(180, 140, 40, 0.35);
-	}
-
-	.marketplace-banner:hover {
-		background: linear-gradient(135deg, rgba(242, 199, 91, 0.35) 0%, rgba(212, 168, 67, 0.25) 100%);
-		border-color: rgba(180, 140, 40, 0.5);
-	}
-
-	.marketplace-banner-title {
-		color: #9a7b1e;
-	}
-
-	.marketplace-banner-subtitle {
-		color: #5a4a20;
-	}
-
-	.marketplace-banner-arrow {
-		color: #7a6520;
-	}
-
-	.marketplace-banner-dismiss {
-		color: #5a4a20;
-	}
+	/* Onboarding */
+	--onboarding-card-bg: rgba(255, 255, 255, 0.9);
+	--onboarding-list-positive-bg: rgba(34, 197, 94, 0.18);
+	--onboarding-list-positive-text: #166534;
+	--onboarding-list-positive-icon: #15803d;
+	--onboarding-list-negative-bg: rgba(239, 68, 68, 0.15);
+	--onboarding-list-negative-text: #991b1b;
+	--onboarding-list-negative-icon: #dc2626;
+	--onboarding-recommended-badge-text: #ffffff;
+	--onboarding-input-bg: rgba(255, 255, 255, 0.9);
+	--onboarding-status-success-bg: rgba(34, 197, 94, 0.15);
+	--onboarding-status-success-text: #166534;
+	--onboarding-status-error-bg: rgba(239, 68, 68, 0.15);
+	--onboarding-status-error-text: #991b1b;
+	--onboarding-error-border: rgba(239, 68, 68, 0.3);
+	--onboarding-error-text: #991b1b;
+	--onboarding-btn-secondary-bg: transparent;
+	--onboarding-success-icon-bg: rgba(34, 197, 94, 0.15);
+	--onboarding-success-icon-text: #16a34a;
 }

@@ -55,6 +55,8 @@ npm run sync-db-types  # Sync Supabase types to src/types/database.types.ts
 - Open a pull request from the prepared release branch into `main` with the `skip-changelog` label, then stop for the user to review and manually merge or close it.
 - After the user merges the release pull request, open a second pull request from `main` into `production`, then stop for the user to review and manually merge or close it.
 - Cloudflare deploys after the user merges the pull request into `production`. No release backmerge is needed because release preparation entered `main` before promotion.
+- Each promotion adds a merge commit that exists only on `production`, so `git rev-list main..production` normally lists the latest promotion merge. This is expected and carries no code difference.
+- The `production` branch protection intentionally has "Require branches to be up to date before merging" turned off (the `verify` check and the pull request requirement stay on). With it on, the source branch `main` would have to contain every `production` merge commit, which forces an empty "synchronize production history" pull request into `main` before each promotion. Do not turn it back on or add such sync pull requests.
 
 ### Pull request release classification
 
@@ -159,6 +161,8 @@ window.addEventListener("generation-state-changed", (e) => {
 
 Key events: `auth-state-changed`, `generation-state-changed`, `chat-model-changed`, `subscription-updated`, `round-state-changed`
 
+To open the settings panel from another module, dispatch `open-settings` (optionally with a `page`) instead of clicking its DOM controls.
+
 ### Service Initialization
 
 Services export an `initialize()` function called from `main.ts` in dependency order. Avoid circular imports by using event-based communication.
@@ -201,6 +205,14 @@ User preferences use `localStorage` with service-level get/set wrappers. See [sr
 
 - When a plan's allowance amounts change, preserve allowances already granted for the subscriber's current allowance window and apply the new amounts at the next allowance period unless the user explicitly requests an immediate change.
 - New subscriptions receive the current allowance configuration immediately. Subscription lifecycle changes such as cancellation or switching tiers continue to follow the active subscription state and are not deferred by this rule.
+
+### Bug Fix Workflow
+
+- Surface every bug through a failing test before implementing the fix. Write the test first, confirm it fails on the unfixed code because of the bug, then implement the fix and confirm the same test passes.
+- Every issue and regression gets a test. A fix without a test that would have caught the bug is not complete.
+- Do not reproduce a bug by manipulating a live browser instance, such as resizing a preview tab, running scripts in the page, or clicking through the app by hand. Reproduce it with a test instead.
+- The exception is when there is a concrete reason to prefer a visual, such as judging appearance, spacing, or alignment. State that reason when you use the browser this way.
+- Reproduction tests follow the rules in Test Scope And Failure Mapping below, including proposing the coverage and test layer to the user before writing the test.
 
 ### Test Scope And Failure Mapping
 
@@ -248,7 +260,9 @@ User preferences use `localStorage` with service-level get/set wrappers. See [sr
 
 ### Styling
 
-- **Custom CSS** - Hand-written styles in `src/styles/main.css`, `src/styles/dark.css`, `src/styles/light.css`
+- **Custom CSS** - `src/styles/main.css` is the single app stylesheet entry point. Shared styles live in `base.css`, `tokens.css`, `layout.css`, and `components/`; feature styles live in `features/`. See [src/styles/README.md](src/styles/README.md) for ownership and cascade conventions.
+- **Responsive styles** - Keep states, media queries, and feature animations beside the owning component or feature. Preserve import order and selector specificity when moving rules.
+- **Mode defaults** - `src/styles/dark.css` and `src/styles/light.css` supply mode tokens; components consume those variables in their own files.
 - **Tailwind base reset** - `@import "tailwindcss"` in main.css for normalization only (no utility classes used)
 - **Dynamic theming** - CSS custom properties in `src/styles/themes/{color}-{mode}.css` (e.g., `blue-dark.css`)
 - **No utility classes** - HTML uses semantic class names, not Tailwind utilities

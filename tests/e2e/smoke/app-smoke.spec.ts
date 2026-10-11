@@ -1,11 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as DbService from "../../../src/services/Db.service";
 
 async function countPersonasByName(page: Page, name: string): Promise<number> {
 	return await page.evaluate(async (personaName) => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const dbService = await importModule("/services/Db.service.ts");
+		const dbService = await window.importModule<typeof DbService>("/services/Db.service.ts");
 		const personas = await dbService.db.personalities.toArray();
 		return personas.filter((persona: { name?: string }) => persona.name === personaName).length;
 	}, name);
@@ -149,7 +149,7 @@ test("dedicated image models are available only in image selectors", async ({ pa
 	expect(chatModelIds).not.toContain("google/gemini-2.5-flash-image");
 	expect(chatModelIds).not.toContain("x-ai/grok-imagine-image-quality");
 
-	await page.locator(".navbar-tab").nth(2).click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="image"]').click();
 	await expect(page.locator("#selectedImageModel")).toBeVisible();
 	await expect(page.locator("#prefer-premium-image-endpoint-toggle")).toHaveClass(/hidden/);

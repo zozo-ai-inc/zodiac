@@ -3,17 +3,18 @@ import { readFile } from "node:fs/promises";
 import { expect, test, type Page } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as DbService from "../../../src/services/Db.service";
+import type * as Takeout from "../../../src/utils/takeout";
 
 async function openDataManagement(page: Page): Promise<void> {
-	await page.locator(".navbar-tab").filter({ hasText: "Settings" }).first().click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="data"]').click();
 	await expect(page.locator('[data-settings-page="data"]')).toBeVisible();
 }
 
 async function seedTakeoutRecords(page: Page): Promise<void> {
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
 		await db.personalities.put({
 			id: "persona-takeout",
 			name: "Takeout Persona",
@@ -84,8 +85,7 @@ test("exports one selective takeout and restores its logical IDs through the ada
 	await page.locator("#btn-takeout-export-close").click();
 
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
 		await db.chats.clear();
 		await db.personalities.clear();
 		localStorage.removeItem("pinnedChatIds");
@@ -103,8 +103,7 @@ test("exports one selective takeout and restores its logical IDs through the ada
 	await expect(page.locator("#takeout-import-status")).toContainText("Imported 1 chat and 1 persona");
 
 	const restored = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
 		const chats = await db.chats.toArray();
 		const personas = await db.personalities.toArray();
 		return {
@@ -131,8 +130,7 @@ test("restoring conflicts as copies remaps the imported chat to the copied perso
 	await page.goto("/");
 
 	const takeout = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { createTakeoutDocument } = await importModule("/utils/takeout.ts");
+		const { createTakeoutDocument } = await window.importModule<typeof Takeout>("/utils/takeout.ts");
 		return await createTakeoutDocument({
 			source: "local",
 			categories: ["chats", "personas"],
@@ -175,8 +173,7 @@ test("restoring conflicts as copies remaps the imported chat to the copied perso
 	});
 
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
 		await db.personalities.put({
 			id: "persona-conflict",
 			name: "Existing Persona",
@@ -226,8 +223,7 @@ test("restoring conflicts as copies remaps the imported chat to the copied perso
 	await expect(page.locator("#takeout-import-status")).toContainText("Imported 1 chat and 1 persona");
 
 	const records = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<any>("/services/Db.service.ts");
 		return {
 			chats: await db.chats.toArray(),
 			personas: await db.personalities.toArray()
@@ -250,8 +246,7 @@ test("importing a takeout containing an API key keeps the danger confirmation ac
 	await page.goto("/");
 
 	const takeout = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { createTakeoutDocument } = await importModule("/utils/takeout.ts");
+		const { createTakeoutDocument } = await window.importModule<typeof Takeout>("/utils/takeout.ts");
 		return await createTakeoutDocument({
 			source: "local",
 			categories: ["apiKeys"],

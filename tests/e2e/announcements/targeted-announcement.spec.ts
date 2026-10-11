@@ -31,7 +31,7 @@ test("a deferred announcement appears when an ordinary import sheet closes", asy
 	await seed(page, { origin: newOrigin, signedIn: true, settings: { onboardingCompleted: "true" } });
 	await page.goto(newOrigin);
 	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
-	await page.locator(".navbar-tab").filter({ hasText: "Settings" }).first().click();
+	await page.locator("#btn-open-settings").click();
 	await page.locator('[data-settings-target="data"]').click();
 	await page.locator("#btn-import-data").click();
 	await expect(page.locator("#takeout-import-sheet")).toBeVisible();

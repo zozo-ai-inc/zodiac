@@ -1,6 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 import { seedLocalSettings, stubExternalTraffic } from "../helpers/app";
+import type * as AppEvents from "../../../src/events/index";
 
 const SUPABASE_HOST = "hglcltvwunzynnzduauy.supabase.co";
 const TEST_USER_ID = "00000000-0000-4000-8000-0000000005728";
@@ -132,8 +133,7 @@ async function dispatchAuthenticatedState(
 	const { priceId = PRO_MONTHLY_PRICE_ID, imageCredits = 7 } = options;
 	await page.evaluate(
 		async ({ userId, priceId, imageCredits }) => {
-			const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-			const { dispatchAppEvent } = await importModule("/events/index.ts");
+			const { dispatchAppEvent } = await window.importModule<any>("/events/index.ts");
 			dispatchAppEvent("auth-state-changed", {
 				loggedIn: true,
 				subscription: {
@@ -181,8 +181,7 @@ async function openMegaComposer(page: Page, width: number): Promise<void> {
 		"Use Image Credits"
 	);
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path);") as (path: string) => Promise<any>;
-		const { dispatchAppEvent } = await importModule("/events/index.ts");
+		const { dispatchAppEvent } = await window.importModule<typeof AppEvents>("/events/index.ts");
 		dispatchAppEvent("chat-model-changed", { model: "openai/gpt-5.5" });
 	});
 	await expect(badge).toBeVisible();

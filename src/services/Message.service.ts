@@ -722,20 +722,6 @@ function hasLocalApiKeyForModel(model: string, settings: ReturnType<typeof setti
 	return getLocalApiKeyForModel(model, settings).length > 0;
 }
 
-function openApiKeySettings(): void {
-	const sidebar = document.querySelector<HTMLDivElement>(".sidebar");
-	if (sidebar && window.innerWidth <= 1032) {
-		sidebar.style.display = "flex";
-		helpers.showElement(sidebar, false);
-	}
-
-	document.querySelector<HTMLDivElement>(".navbar-tab:nth-child(3)")?.click();
-
-	window.setTimeout(() => {
-		document.querySelector<HTMLButtonElement>('[data-settings-target="api"]')?.click();
-	}, 100);
-}
-
 async function finalizeResponseElement(args: {
 	chatId: string;
 	messageIndex: number;
@@ -1781,7 +1767,7 @@ async function performEarlyValidation(msg: string, options: SendOptions = {}): P
 						{
 							label: "Open API Settings",
 							onClick(dismiss) {
-								openApiKeySettings();
+								dispatchAppEvent("open-settings", { page: "api" });
 								dismiss();
 							}
 						}

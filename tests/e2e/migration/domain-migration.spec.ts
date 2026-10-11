@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { oldOrigin, newOrigin, observeMigrationBeforeRedirect, serveApp, seed } from "../helpers/migration";
+import type * as DbService from "../../../src/services/Db.service";
+import type * as SyncService from "../../../src/services/Sync.service";
 
 test("confirmation can continue with an export to Import or without an export to the normal app", async ({ page }) => {
 	await serveApp(page);
@@ -115,9 +117,8 @@ test("migration import respects Cloud Sync already enabled on the destination ac
 	await page.locator("#btn-takeout-import").click();
 	await expect(page.locator("#takeout-import-status")).toContainText("Set up or unlock Cloud Sync");
 	const destination = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path)");
-		const { db } = await importModule("/services/Db.service.ts");
-		const sync = await importModule("/services/Sync.service.ts");
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
+		const sync = await window.importModule<typeof SyncService>("/services/Sync.service.ts");
 		return { syncEnabled: sync.isOnlineSyncEnabled(), localChats: await db.chats.count() };
 	});
 	expect(destination).toEqual({ syncEnabled: true, localChats: 0 });
@@ -293,8 +294,7 @@ test("export failure and cancellation do not reset confirmation or change source
 	await page.locator("#btn-takeout-export-close").click();
 	await expect(page.locator("#btn-migration-continue")).toBeEnabled();
 	const record = await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path)");
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<any>("/services/Db.service.ts");
 		return await db.chats.get("migration-chat");
 	});
 	expect(record.content[0].parts[0].text).toBe("Keep this story");
@@ -304,8 +304,7 @@ test("an unresolved media item fails export but leaves confirmation available", 
 	await serveApp(page);
 	await seed(page, { chat: true });
 	await page.evaluate(async () => {
-		const importModule = new Function("path", "return import(path)");
-		const { db } = await importModule("/services/Db.service.ts");
+		const { db } = await window.importModule<any>("/services/Db.service.ts");
 		const chat = await db.chats.get("migration-chat");
 		chat.content[0].generatedImages = [
 			{ base64: "", mimeType: "image/png", _blobRef: { blobId: "unavailable-media" } }

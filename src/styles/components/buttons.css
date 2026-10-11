@@ -1,0 +1,247 @@
+button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+	font-size: 1rem;
+	font-weight: normal;
+	transition: background-color 0.2s;
+}
+
+button:focus {
+	outline: none;
+}
+
+/* Base styled button class - opt-in for default button appearance */
+.btn {
+	cursor: pointer;
+	transition:
+		background-color 0.15s ease,
+		transform 0.1s ease,
+		box-shadow 0.15s ease;
+	border: none;
+	padding: 0.45rem 0.625rem;
+	border-radius: 0.5rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+}
+
+.btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn:active:not(:disabled) {
+	transform: scale(0.97);
+}
+
+.btn-primary {
+	background-color: var(--primary);
+	color: var(--button-fg);
+}
+
+.btn-primary:hover {
+	background-color: var(--primary-hover);
+}
+
+.btn-primary:active {
+	background-color: var(--primary-active);
+}
+
+.btn-link {
+	background: transparent;
+	border: none;
+	padding: 0;
+	color: var(--primary);
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 0.85rem;
+	font-weight: 500;
+}
+
+.btn-link:hover {
+	color: var(--primary-hover);
+}
+
+.btn-secondary {
+	background-color: var(--input-bg);
+	color: var(--text-primary);
+	border: 1px solid var(--input-text-border);
+}
+
+.btn-secondary:hover {
+	background-color: color-mix(in srgb, var(--input-bg) 82%, var(--primary) 18%);
+	border-color: var(--input-text-border-focus);
+}
+
+.btn-secondary:active {
+	background-color: color-mix(in srgb, var(--input-bg) 70%, var(--primary) 30%);
+}
+
+.btn-danger {
+	background-color: #bf1a1a;
+	color: rgb(243, 227, 227);
+}
+
+.btn-danger:hover {
+	background-color: #940505;
+}
+
+.btn-danger:active {
+	background-color: #680303;
+}
+
+.btn-neutral {
+	background-color: #d3d3d3;
+	color: #000000;
+}
+
+.btn-neutral:hover {
+	background-color: #b0b0b0;
+}
+
+.btn-neutral:active {
+	background-color: #8c8c8c;
+}
+
+.btn-textual {
+	background: transparent !important;
+	margin: 0;
+	padding: 0;
+	border: none;
+	transition: all 0.2s;
+	cursor: pointer;
+	font-size: inherit;
+	font-weight: inherit;
+	text-transform: uppercase;
+}
+
+/* Split Button Component */
+.split-button {
+	display: inline-flex;
+	position: relative;
+	align-items: stretch;
+}
+
+.split-button__main {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: 1px solid rgba(255, 255, 255, 0.2);
+	flex: 1;
+}
+
+.split-button__toggle {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	padding: 0 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0.5rem;
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+
+.split-button__toggle .material-symbols-outlined {
+	font-size: 1.25rem;
+	line-height: 1;
+	transition: transform 0.2s ease;
+}
+
+.split-button.open .split-button__toggle .material-symbols-outlined {
+	transform: rotate(180deg);
+}
+
+.split-button__menu {
+	position: absolute;
+	top: calc(100% + var(--menu-spawn-top-offset));
+	right: 0;
+	left: 0;
+	display: flex;
+	visibility: hidden;
+	opacity: 0;
+	transition:
+		opacity 0.12s ease,
+		transform 0.12s ease,
+		visibility 0.12s linear;
+}
+
+.split-button.open > .split-button__menu {
+	visibility: visible;
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.split-button__menu-item {
+	justify-content: flex-start;
+	background: transparent;
+	border: none;
+	text-align: left;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.3rem;
+	font: inherit;
+	cursor: pointer;
+	color: inherit;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	white-space: nowrap;
+	transition: background 0.1s ease;
+}
+
+.split-button__menu-item:hover:not(:disabled),
+.split-button__menu-item:focus-visible:not(:disabled) {
+	background: var(--dropdown-menu-item-hover-bg);
+}
+
+.split-button__menu-item:active:not(:disabled) {
+	background: var(--dropdown-menu-item-active-bg);
+}
+
+.split-button__menu-item:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn-array {
+	display: flex;
+	flex-direction: row;
+	justify-content: stretch;
+	gap: 0.375rem;
+	width: 100%;
+}
+
+.btn-array > :is(button, a, .btn, .split-button) {
+	flex: 1;
+}
+
+.btn-array-vertical {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.btn-array-vertical > * {
+	flex-grow: 1;
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .btn-toggled {
+	background: var(--button-toggled-bg) !important;
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .btn-textual {
+	color: var(--btn-textual-fg);
+}
+
+[data-mode="dark"] .btn-textual {
+	text-shadow: var(--btn-textual-shadow);
+}
+
+:is([data-mode="dark"], [data-mode="light"]) .btn-textual:hover {
+	text-shadow: var(--btn-textual-hover-shadow);
+}
