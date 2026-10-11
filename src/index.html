@@ -372,6 +372,31 @@
 						<span>Loading chat...</span>
 					</div>
 					<div id="message-box">
+						<div id="update-notice" class="update-notice hidden" role="status" aria-live="polite">
+							<span class="material-symbols-outlined update-notice-icon" aria-hidden="true"
+								>new_releases</span
+							>
+							<div class="update-notice-text">
+								<strong id="update-notice-title">A new version of Zodiac is available</strong>
+								<span id="update-notice-description">Refresh to keep chatting.</span>
+							</div>
+							<div class="update-notice-actions">
+								<button type="button" class="btn btn-textual hidden" id="btn-update-dismiss">
+									Dismiss
+								</button>
+								<a
+									class="btn btn-primary hidden"
+									id="link-update-release"
+									target="_blank"
+									rel="noopener noreferrer"
+									>View release</a
+								>
+								<button type="button" class="btn btn-primary" id="btn-update-refresh">
+									<span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+									Refresh
+								</button>
+							</div>
+						</div>
 						<div
 							contenteditable
 							placeholder="Send a message to"
