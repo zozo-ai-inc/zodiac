@@ -371,20 +371,6 @@ function showWithClass(element: HTMLElement | null) {
 	element.classList.remove("hidden");
 }
 
-export function getClientScrollbarWidth(): number {
-	// Create a temporary div container and append it into the body
-	const container = document.createElement("div");
-	// Append the element into the body
-	document.body.appendChild(container);
-	// Force scrollbar on the element
-	container.style.overflow = "scroll";
-	container.style.position = "absolute";
-	container.style.top = "-9999px";
-	const scrollbarWidth = container.offsetWidth - container.clientWidth;
-	document.body.removeChild(container);
-	return scrollbarWidth;
-}
-
 export function getValidEnumValue<T extends Record<string, string>>(
 	value: string | null,
 	enumObj: T,

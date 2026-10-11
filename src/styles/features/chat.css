@@ -28,7 +28,6 @@ body.full-width-chat .message-container {
 }
 
 #scrollable-chat-container {
-	scrollbar-gutter: stable;
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	scroll-behavior: auto;
