@@ -104,11 +104,11 @@ function presentPendingUpdate(): void {
 
 	const isRelease = pendingUpdate.kind === "release";
 	if (pendingUpdate.kind === "release") {
-		title.textContent = `Zodiac ${pendingUpdate.version} is available`;
+		title.textContent = `Zozo Chat ${pendingUpdate.version} is available`;
 		description.textContent = `You're running ${APP_VERSION}. Update your installation to get the latest changes.`;
 		releaseLink.href = pendingUpdate.url;
 	} else {
-		title.textContent = "A new version of Zodiac is available";
+		title.textContent = "A new version of Zozo Chat is available";
 		description.textContent = "Refresh to keep chatting.";
 	}
 	refreshButton.classList.toggle("hidden", isRelease);
