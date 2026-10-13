@@ -13,7 +13,6 @@ vi.mock("../../../src/services/Message.service", () => ({
 }));
 
 vi.mock("../../../src/utils/helpers", () => ({
-	getClientScrollbarWidth: vi.fn(() => 0),
 	getEncoded: vi.fn((html: string) => html),
 	showElement: vi.fn(),
 	messageContainerScrollToBottom: vi.fn()
