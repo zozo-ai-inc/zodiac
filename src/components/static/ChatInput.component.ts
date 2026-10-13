@@ -63,9 +63,17 @@ if (
 	throw new Error("Chat input component is not properly initialized.");
 }
 
-const scrollbarWidth = helpers.getClientScrollbarWidth();
-if (scrollbarWidth > 0) {
-	document.documentElement.style.setProperty("--scroll-bar-width", `${scrollbarWidth}px`);
+// The composer only steps aside for the chat scrollbar while one is actually showing.
+const chatScrollContainer = document.querySelector<HTMLDivElement>("#scrollable-chat-container");
+const chatMessageContainer = chatScrollContainer?.querySelector<HTMLDivElement>(".message-container");
+if (chatScrollContainer && chatMessageContainer) {
+	const chatScrollbarResizeObserver = new ResizeObserver(() => {
+		const scrollbarWidth = chatScrollContainer.offsetWidth - chatScrollContainer.clientWidth;
+		document.documentElement.style.setProperty("--scroll-bar-width", `${scrollbarWidth}px`);
+	});
+	chatScrollbarResizeObserver.observe(chatScrollContainer);
+	// Its width follows the scroll container's content box, so it changes when the scrollbar appears.
+	chatScrollbarResizeObserver.observe(chatMessageContainer);
 }
 
 attachmentPreview.setAttribute("aria-live", "polite");
