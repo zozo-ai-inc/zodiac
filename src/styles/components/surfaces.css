@@ -190,6 +190,11 @@
 	transition: all 0.2s;
 }
 
+.overlay.overlay--closing,
+#dialog.dialog--closing {
+	pointer-events: none;
+}
+
 /* The overlay's close control sits top-right, like the sidebar's and settings'. */
 .overlay > .header {
 	justify-content: flex-end;

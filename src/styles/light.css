@@ -44,15 +44,7 @@
 
 	--turn-control-outline: 1px solid rgba(0, 0, 0, 0.13);
 
-	/* Preserve local toast colors independently of inherited palette tokens. */
-	.toast--normal {
-		--toast-normal-bg: rgba(184, 213, 252, 0.8);
-		--toast-normal-border: rgba(58, 110, 170, 0.22);
-		--toast-normal-action-bg: rgba(76, 124, 190, 0.14);
-		--toast-normal-action-bg-hover: rgba(76, 124, 190, 0.22);
-		--toast-normal-close-hover: rgba(76, 124, 190, 0.12);
-	}
-
+	/* Normal toasts take their colours from the palette; warning and danger read the same everywhere. */
 	.toast--warning {
 		--toast-warning-bg: rgba(250, 238, 183, 0.8);
 		--toast-warning-border: rgba(212, 170, 63, 0.35);

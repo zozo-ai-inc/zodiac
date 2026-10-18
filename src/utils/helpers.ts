@@ -5,18 +5,34 @@ import { APP_VERSION } from "../constants/App";
 
 // Description: This file contains helper functions that are used throughout the application.
 
+// One pending show or hide per element; a newer call replaces it, so a late timer cannot undo the latest intent.
+const visibilityTimers = new WeakMap<HTMLElement, number>();
+
+export function cancelVisibilityChange(element: HTMLElement): void {
+	const pending = visibilityTimers.get(element);
+	if (pending !== undefined) window.clearTimeout(pending);
+	visibilityTimers.delete(element);
+}
+
+function scheduleVisibilityChange(element: HTMLElement, change: () => void, delay: number): void {
+	cancelVisibilityChange(element);
+	visibilityTimers.set(
+		element,
+		window.setTimeout(() => {
+			visibilityTimers.delete(element);
+			change();
+		}, delay)
+	);
+}
+
 export function hideElement(element: HTMLElement, nowait?: boolean) {
 	if (!element) {
 		return;
 	}
+	cancelVisibilityChange(element);
 	element.style.transition = "opacity 0.2s";
 	element.style.opacity = "0";
-	setTimeout(
-		function () {
-			hideWithClass(element);
-		},
-		nowait ? 0 : 200
-	);
+	scheduleVisibilityChange(element, () => hideWithClass(element), nowait ? 0 : 200);
 }
 
 export function showElement(element: HTMLElement, wait: boolean) {
@@ -27,16 +43,20 @@ export function showElement(element: HTMLElement, wait: boolean) {
 	if (wait) {
 		timeToWait = 200;
 	}
-	setTimeout(function () {
-		showWithClass(element);
-		element.style.transition = "opacity 0.2s";
-		element.style.opacity = "0"; //required as certain elements arent opacity 0 despite being hidden
-		requestAnimationFrame(function () {
+	scheduleVisibilityChange(
+		element,
+		function () {
+			showWithClass(element);
+			element.style.transition = "opacity 0.2s";
+			element.style.opacity = "0"; //required as certain elements arent opacity 0 despite being hidden
 			requestAnimationFrame(function () {
-				element.style.opacity = "1";
+				requestAnimationFrame(function () {
+					element.style.opacity = "1";
+				});
 			});
-		});
-	}, timeToWait);
+		},
+		timeToWait
+	);
 }
 
 export function darkenCard(element: HTMLElement) {
@@ -335,6 +355,7 @@ export async function confirmDialog(
 	}
 
 	const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+	dialog.classList.remove("dialog--closing");
 	dialog.classList.toggle("dialog--danger", Boolean(options.danger));
 	btnDialogOk.classList.remove("btn-danger", "btn-primary");
 	btnDialogOk.classList.add(options.danger ? "btn-danger" : "btn-primary");
@@ -349,7 +370,11 @@ export async function confirmDialog(
 	return new Promise((resolve) => {
 		const settle = (confirmed: boolean) => {
 			window.removeEventListener("keydown", handleKeydown, true);
-			hideElement(dialog, true);
+			btnDialogOk.onclick = null;
+			btnDialogCancel.onclick = null;
+			// Fade out like it faded in; while it fades, clicks pass through to the app.
+			dialog.classList.add("dialog--closing");
+			hideElement(dialog);
 			if (previousFocus && document.contains(previousFocus)) previousFocus.focus({ preventScroll: true });
 			resolve(confirmed);
 		};

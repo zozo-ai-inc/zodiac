@@ -308,6 +308,7 @@
 	color: inherit;
 	opacity: 0.6;
 	font-size: 1rem;
+	cursor: pointer;
 	transition:
 		background-color 0.15s ease,
 		color 0.15s ease,
@@ -317,6 +318,11 @@
 .roleplay-category-control:hover {
 	background: color-mix(in srgb, var(--button-bg) 16%, transparent);
 	opacity: 1;
+}
+
+.roleplay-category-control--danger:hover {
+	background: color-mix(in srgb, var(--danger) 14%, transparent);
+	color: var(--danger);
 }
 
 .roleplay-action-chip__icon--danger:hover {

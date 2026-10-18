@@ -59,14 +59,20 @@ test("keyboard users can open a chat from the sidebar list", async ({ page }) =>
 	expect(currentChatId).toBe("chat-0");
 });
 
-test("keyboard users can open the add-persona dialog", async ({ page }) => {
+test("keyboard users can start a new persona from the + menu", async ({ page }) => {
 	await openApp(page);
 	await page.locator(".sidebar").getByText("Personas", { exact: true }).click();
 
-	const addPersona = page.getByRole("button", { name: "Add persona" });
+	const addPersona = page.locator("#btn-persona-add");
+	await expect(addPersona).toBeVisible();
 	await addPersona.focus();
-	await expect(addPersona, "the add-persona card should accept keyboard focus").toBeFocused();
+	await expect(addPersona, "the + button should accept keyboard focus").toBeFocused();
+	await page.keyboard.press("Enter");
+	await expect(
+		page.getByRole("menuitem", { name: "Create persona" }),
+		"Enter should open the menu with focus inside"
+	).toBeFocused();
 	await page.keyboard.press("Enter");
 
-	await expect(page.locator("#modal-add-persona")).toBeVisible();
+	await expect(page.locator("#form-add-personality")).toBeVisible();
 });

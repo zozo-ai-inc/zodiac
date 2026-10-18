@@ -109,12 +109,12 @@ clearAllDataButton.addEventListener(
 		})()
 );
 
-window.addEventListener("resize", () => {
-	//show sidebar if window is resized to desktop size
-	if (window.innerWidth > 1032) {
-		//to prevent running showElement more than necessary
-		if ((sidebar as HTMLElement)?.style.opacity == "0" && sidebar) {
-			helpers.showElement(sidebar, false);
-		}
-	}
+// The mobile open/close leaves inline display, opacity and transition behind, and may have a fade still pending.
+// Crossing the breakpoint hands the sidebar back to the stylesheet: always shown on desktop, closed on mobile.
+mobileLayoutQuery.addEventListener("change", () => {
+	helpers.cancelVisibilityChange(sidebar);
+	sidebar.classList.remove("hidden");
+	sidebar.style.removeProperty("display");
+	sidebar.style.removeProperty("opacity");
+	sidebar.style.removeProperty("transition");
 });

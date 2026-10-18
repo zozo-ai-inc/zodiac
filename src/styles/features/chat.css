@@ -46,7 +46,7 @@ body.full-width-chat .message-container {
 	padding: 0.4rem 0.85rem;
 	border-radius: var(--radius-pill);
 	outline: var(--turn-control-outline, var(--elevated-ui-outline));
-	background: var(--turn-control-bg, var(--message-box-bg, var(--card-bg, rgba(0, 0, 0, 0.05))));
+	background: var(--message-box-bg);
 	box-shadow: var(--elevated-ui-shadow);
 	backdrop-filter: blur(12px);
 	width: fit-content;
@@ -76,7 +76,7 @@ body.full-width-chat .message-container {
 	margin: 0 0.1rem;
 	border-radius: var(--radius-pill);
 	background: color-mix(in srgb, var(--primary) 18%, transparent);
-	color: var(--accent-fg, inherit);
+	color: inherit;
 	font-weight: 650;
 	line-height: 1.25;
 	cursor: default;
@@ -99,7 +99,7 @@ body.full-width-chat .message-container {
 	margin: 0 0.1rem;
 	border-radius: var(--radius-pill);
 	background: color-mix(in srgb, var(--primary) 22%, transparent);
-	color: var(--accent-fg, inherit);
+	color: inherit;
 	font-weight: 650;
 	line-height: 1.25;
 	user-select: none;
@@ -715,6 +715,12 @@ body.full-width-chat #message-box {
 	pointer-events: none;
 }
 
+/* Out of turn in an RPG round the composer ignores typing, so it should look it. */
+#messageInput.disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
 #message-box-buttons button.generating {
 	color: var(--danger);
 }
@@ -735,7 +741,7 @@ body.full-width-chat #message-box {
 	line-height: 1.2;
 	padding: 0.25rem 0.6rem;
 	border-radius: var(--radius-pill);
-	border: 1px solid var(--badge-border);
+	border: var(--badge-border);
 	background: var(--badge-bg);
 	color: var(--badge-fg);
 	display: inline-flex;
@@ -1344,7 +1350,7 @@ input[name="currentChat"][value="none"] {
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .message-text:focus-visible {
-	outline: 1px solid var(--focus-outline);
+	outline: var(--focus-outline);
 }
 
 [data-mode="dark"] #messageInput {
@@ -1353,7 +1359,7 @@ input[name="currentChat"][value="none"] {
 
 :is([data-mode="dark"], [data-mode="light"]) .attachment-container {
 	background-color: var(--attachment-container-bg);
-	outline: 1px solid var(--attachment-container-outline);
+	outline: var(--attachment-container-outline);
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .message-thinking pre {
@@ -1365,7 +1371,7 @@ input[name="currentChat"][value="none"] {
 }
 
 [data-mode="light"] :has(> #messageInput:focus-visible) {
-	border: 1px solid var(--focus-border);
+	border: var(--focus-border);
 }
 
 [data-mode="light"] .hljs {

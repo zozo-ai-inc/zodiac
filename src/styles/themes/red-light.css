@@ -10,9 +10,9 @@
 	--tone-example-remove-hover: rgba(97, 27, 17, 0.12);
 	--tone-example-remove-active: rgba(97, 27, 17, 0.18);
 
-	--primary: #d16060;
-	--primary-hover: #c55656;
-	--primary-active: #b44949;
+	--primary: #c53939;
+	--primary-hover: #ad3b3b;
+	--primary-active: #903a3a;
 
 	/* Body */
 	--body-bg: #fff0f0;
@@ -31,15 +31,15 @@
 	--navbar-tab-highlight-bg: #fdb1ae;
 
 	/* Buttons */
-	--button-bg: #d16060;
+	--button-bg: #c53939;
 	--button-fg: #ffebeb;
-	--button-hover-bg: #c55656;
-	--button-active-bg: #b44949;
+	--button-hover-bg: #ad3b3b;
+	--button-active-bg: #903a3a;
 	--button-toggled-bg: #eba0bcb0;
 
 	/* Tone example remove */
 	--tone-example-remove-fg: #7a2348;
-	--tone-example-remove-hover-fg: #132c4d;
+	--tone-example-remove-hover-fg: #4d1313;
 
 	/* Toasts */
 	--toast-fg: #0b1221;
@@ -159,14 +159,14 @@
 	--onboarding-input-border: rgba(190, 90, 76, 0.3);
 	--onboarding-input-border-focus: #be4c4c;
 	--onboarding-input-focus-shadow: rgba(190, 90, 76, 0.15);
-	--onboarding-input-placeholder: rgba(45, 74, 110, 0.4);
+	--onboarding-input-placeholder: rgba(110, 45, 45, 0.4);
 	--onboarding-status-loading-bg: rgba(190, 90, 76, 0.12);
 	--onboarding-status-loading-text: #8c2f5a;
 	--onboarding-error-bg: rgba(254, 226, 226, 0.8);
 	--onboarding-accent: #be4c4c;
-	--onboarding-btn-primary-bg: #be4c4c;
+	--onboarding-btn-primary-bg: #c53939;
 	--onboarding-btn-primary-text: #f8edf1;
-	--onboarding-btn-primary-hover: #a1473c;
+	--onboarding-btn-primary-hover: #ad3b3b;
 	--onboarding-btn-shadow: rgba(78, 32, 22, 0.2);
 	--onboarding-btn-secondary-text: #6e2d4a;
 	--onboarding-btn-secondary-border: rgba(190, 90, 76, 0.35);

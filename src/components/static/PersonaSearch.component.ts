@@ -35,7 +35,7 @@ function performSearch(): void {
 	if (searchTerm === "") {
 		personaSearchEmpty?.classList.add("hidden");
 		personalityCards.forEach((card) => {
-			helpers.showElement(card, true);
+			card.classList.remove("hidden");
 		});
 		return;
 	}
@@ -43,10 +43,6 @@ function performSearch(): void {
 	const cardsWithScores: Array<{ element: HTMLElement; score: number }> = [];
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality") {
-			return;
-		}
-
 		const personalityName = card.querySelector(".personality-title")?.textContent;
 		if (!personalityName) {
 			return;
@@ -63,10 +59,10 @@ function performSearch(): void {
 	personaSearchEmpty?.classList.toggle("hidden", matchingCards.size > 0);
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality" || matchingCards.has(card)) {
-			helpers.showElement(card, true);
+		if (matchingCards.has(card)) {
+			card.classList.remove("hidden");
 		} else {
-			helpers.hideElement(card);
+			card.classList.add("hidden");
 		}
 	});
 }

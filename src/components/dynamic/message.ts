@@ -470,7 +470,9 @@ export const messageElement = async (message: Message, index: number): Promise<H
 					.querySelector<HTMLElement>(".message-grounding-rendered-content")!
 					.attachShadow({ mode: "open" });
 				shadow.innerHTML = message.groundingContent;
-				shadow.querySelector<HTMLDivElement>(".carousel")!.style.scrollbarWidth = "unset";
+				// Search suggestion markup does not always include a carousel.
+				const carousel = shadow.querySelector<HTMLDivElement>(".carousel");
+				if (carousel) carousel.style.scrollbarWidth = "unset";
 			}
 		}
 	}
@@ -1020,15 +1022,19 @@ function setupGeneratedImageInteractions(root: HTMLElement) {
                 </div>`;
 			document.body.appendChild(overlay);
 
-			const remove = () => overlay.remove();
+			const escListener = (ev: KeyboardEvent) => {
+				if (ev.key === "Escape") remove();
+			};
+			// Fade out before leaving the page, matching the fade in.
+			const remove = () => {
+				document.removeEventListener("keydown", escListener);
+				if (overlay.classList.contains("lightbox--closing")) return;
+				overlay.classList.add("lightbox--closing");
+				window.setTimeout(() => overlay.remove(), 200);
+			};
 			overlay.querySelector(".lightbox-backdrop")?.addEventListener("click", remove);
 			overlay.querySelector(".lightbox-close")?.addEventListener("click", remove);
-			document.addEventListener("keydown", function escListener(ev) {
-				if (ev.key === "Escape") {
-					remove();
-					document.removeEventListener("keydown", escListener);
-				}
-			});
+			document.addEventListener("keydown", escListener);
 		};
 
 		expandBtn?.addEventListener("click", (e) => {

@@ -272,7 +272,8 @@
 .cloud-sync-quota-bar {
 	width: 100%;
 	height: 6px;
-	background-color: #ffffff15;
+	/* Follows the text colour, so the empty track shows on light and dark cards alike. */
+	background-color: color-mix(in srgb, currentColor 12%, transparent);
 	border-radius: 3px;
 	overflow: hidden;
 }

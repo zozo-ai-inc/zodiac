@@ -177,9 +177,24 @@ export function resetOverlayItems() {
 	}
 }
 
+// Matches the 200ms fade in hideElement, plus a frame of slack.
+const OVERLAY_FADE_MS = 220;
+
 export function closeOverlay() {
+	// The fading backdrop still covers the app, so let clicks through while it goes.
+	overlay.classList.add("overlay--closing");
 	hideElement(overlay);
-	resetOverlayItems();
+	// Reset once the fade has finished, so the content fades out with the backdrop instead of blinking out first.
+	window.setTimeout(() => {
+		overlay.classList.remove("overlay--closing");
+		// Something may have reopened the overlay during the fade; leave that content alone.
+		if (!overlay.classList.contains("hidden")) return;
+		resetOverlayItems();
+		// Forms nested inside an overlay item (login and register sit in one tab view) are not reset with the
+		// items, so typed credentials and error banners would greet the next visitor.
+		overlay.querySelectorAll("form").forEach((form) => form.reset());
+		overlay.querySelectorAll<HTMLElement>(".error-message").forEach((message) => message.classList.add("hidden"));
+	}, OVERLAY_FADE_MS);
 }
 
 export function show(elementId: string) {
