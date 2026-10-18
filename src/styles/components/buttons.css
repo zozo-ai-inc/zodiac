@@ -73,15 +73,16 @@ button:focus-visible {
 	color: var(--primary-hover);
 }
 
+/* A faint outline of its own, so it doesn't read as a text field beside the inputs. */
 .btn-secondary {
 	background-color: var(--input-bg);
 	color: var(--body-fg);
-	border: 1px solid var(--input-text-border);
+	border: 1px solid color-mix(in srgb, currentColor 7%, transparent);
 }
 
 .btn-secondary:hover {
 	background-color: color-mix(in srgb, var(--input-bg) 82%, var(--primary) 18%);
-	border-color: var(--input-text-border-focus);
+	border-color: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .btn-secondary:active {
