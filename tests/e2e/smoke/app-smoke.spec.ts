@@ -99,6 +99,8 @@ test("user attaches a file by drag and drop", async ({ page }) => {
 	await stubExternalTraffic(page, []);
 	await seedLocalSettings(page);
 	await page.goto("/");
+	// The drop handler is attached by app code; a synthetic drop before start-up finishes would be lost.
+	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
 
 	await dispatchAttachmentDrop(page, [
 		{
