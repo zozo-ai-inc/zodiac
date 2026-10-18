@@ -642,7 +642,9 @@ function insertChatEntry(chat: DbChat, position: "append" | "prepend" = "prepend
 	actionsButton.classList.add("btn-textual", "material-symbols-outlined", "chat-actions-button");
 	actionsButton.setAttribute("aria-haspopup", "true");
 	actionsButton.setAttribute("aria-expanded", "false");
+	actionsButton.type = "button";
 	actionsButton.setAttribute("title", "Chat actions");
+	actionsButton.setAttribute("aria-label", "Chat actions");
 	actionsButton.textContent = "more_vert"; // material icon for vertical ellipsis
 
 	const menu = document.createElement("div");

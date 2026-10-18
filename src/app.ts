@@ -22,7 +22,6 @@ export async function initializeApp(options: { deferOnboarding?: boolean } = {})
 	await chatsService.initialize();
 	await personalityService.initialize();
 	personalityService.initSyncModalHandlers();
-	personalityService.initAddPersonaModalHandlers();
 
 	// Initialize cloud sync (attaches Dexie hooks + online/offline listeners)
 	syncService.initialize();

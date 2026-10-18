@@ -301,17 +301,14 @@ async function commitImport(resolution: TakeoutConflictResolution): Promise<void
 	setImportBusy(true);
 	try {
 		if (pendingInspection.categories.includes("apiKeys") && !sensitiveImportConfirmed) {
-			await closeSurfaceAndWait(importSheet);
 			const confirmed = await confirmDialogDanger(
 				"This takeout contains readable BYOK API keys. Import them only if you trust the file and will keep the source secure."
 			);
 			if (!confirmed) {
 				importStatus.textContent = "API-key import canceled. No data was changed.";
-				surfaceService.show(importSheet.id);
 				return;
 			}
 			sensitiveImportConfirmed = true;
-			surfaceService.show(importSheet.id);
 		}
 		const result = await takeoutService.commitTakeoutImport(pendingInspection, resolution, {
 			onProgress: (progress) => updateProgress(importStatus, progress)

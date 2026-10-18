@@ -144,7 +144,7 @@
 
 .targeted-announcement-content p {
 	margin: 0;
-	color: var(--text-secondary);
+	color: var(--body-fg-muted);
 	line-height: 1.6;
 	white-space: pre-line;
 }
@@ -213,6 +213,8 @@
 	gap: 0.75rem;
 	flex: 1;
 	min-width: 0;
+	color: inherit;
+	text-decoration: none;
 }
 
 .marketplace-banner-icon {
@@ -251,26 +253,12 @@
 }
 
 .marketplace-banner-dismiss {
-	position: absolute;
-	top: 0.25rem;
-	right: 0.25rem;
-	padding: 0.25rem;
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	opacity: 0.4;
-	transition: opacity 0.2s ease;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	opacity: 0.6;
 }
 
-.marketplace-banner-dismiss:hover {
-	opacity: 0.8;
-}
-
-.marketplace-banner-dismiss .material-symbols-outlined {
-	font-size: 1rem;
+.marketplace-banner-dismiss:hover,
+.marketplace-banner-dismiss:focus-visible {
+	opacity: 1;
 }
 
 [data-mode="light"] .marketplace-banner {

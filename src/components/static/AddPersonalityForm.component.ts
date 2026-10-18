@@ -162,9 +162,6 @@ formEl.querySelectorAll<HTMLInputElement>("input").forEach((input) => {
 		if (e.key === "Enter") {
 			e.preventDefault(); // Prevent form submission on Enter key
 		}
-		if (e.key === "Escape") {
-			overlayService.closeOverlay(); // Close the overlay on Escape key
-		}
 	});
 });
 

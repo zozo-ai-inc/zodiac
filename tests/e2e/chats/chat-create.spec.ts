@@ -88,7 +88,7 @@ test("creates a new chat from the cleared composer state and switches selection 
 	await seedLocalSettings(page);
 	await page.goto("/");
 
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 	await createExistingChat(page);
 
 	const existingChatLabel = page.locator("label[for='chatexisting-chat']");
@@ -98,7 +98,8 @@ test("creates a new chat from the cleared composer state and switches selection 
 	await expect(page.locator("#chat-title")).toHaveText("Existing Chat");
 	await expect(page.locator(".message")).toContainText(["Old message"]);
 
-	await page.locator("#btn-new-chat").click();
+	await page.locator("#btn-chat-add").click();
+	await page.getByRole("menuitem", { name: "New chat", exact: true }).click();
 
 	await expect(page.locator("input[name='currentChat']:checked")).toHaveCount(0);
 	await expect(page.locator("#chat-title")).toHaveText("");

@@ -573,7 +573,7 @@ function createRoleplayIconButton(args: {
 function appendCustomCategoryControls(wrapper: HTMLDivElement, category: CustomActionCategoryId): void {
 	const editButton = document.createElement("button");
 	editButton.type = "button";
-	editButton.className = "btn-textual material-symbols-outlined roleplay-category-control";
+	editButton.className = "material-symbols-outlined roleplay-category-control";
 	editButton.textContent = "edit";
 	editButton.title = `Rename ${getCategoryLabel(category)}`;
 	editButton.setAttribute("aria-label", editButton.title);
@@ -581,8 +581,7 @@ function appendCustomCategoryControls(wrapper: HTMLDivElement, category: CustomA
 
 	const deleteButton = document.createElement("button");
 	deleteButton.type = "button";
-	deleteButton.className =
-		"btn-textual material-symbols-outlined roleplay-category-control roleplay-category-control--danger";
+	deleteButton.className = "material-symbols-outlined roleplay-category-control roleplay-category-control--danger";
 	deleteButton.textContent = "delete";
 	deleteButton.title = `Delete ${getCategoryLabel(category)}`;
 	deleteButton.setAttribute("aria-label", deleteButton.title);

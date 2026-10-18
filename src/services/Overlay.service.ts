@@ -8,6 +8,16 @@ import { dispatchElementEvent, createEmptyEvent } from "../events";
 const overlay = document.querySelector<HTMLElement>(".overlay")!;
 const overlayItems = overlay.querySelector<HTMLElement>(".overlay-content")!.children;
 const personalityForm = document.querySelector<HTMLElement>("#form-add-personality")!;
+const hideOverlayButton = document.querySelector<HTMLButtonElement>("#btn-hide-overlay")!;
+
+// Escape does what the back button does, and only while the current flow shows it.
+document.addEventListener("keydown", (event) => {
+	if (event.key !== "Escape" || event.defaultPrevented || overlay.classList.contains("hidden")) return;
+	if (document.querySelector("#surface-plane > .surface-plane__item:not(.hidden)")) return;
+	if (hideOverlayButton.getClientRects().length === 0) return;
+	event.preventDefault();
+	hideOverlayButton.click();
+});
 
 function formatMessageDebugInfo(debugInfo?: MessageDebugInfo): string {
 	if (!debugInfo) {
@@ -167,9 +177,24 @@ export function resetOverlayItems() {
 	}
 }
 
+// Matches the 200ms fade in hideElement, plus a frame of slack.
+const OVERLAY_FADE_MS = 220;
+
 export function closeOverlay() {
+	// The fading backdrop still covers the app, so let clicks through while it goes.
+	overlay.classList.add("overlay--closing");
 	hideElement(overlay);
-	resetOverlayItems();
+	// Reset once the fade has finished, so the content fades out with the backdrop instead of blinking out first.
+	window.setTimeout(() => {
+		overlay.classList.remove("overlay--closing");
+		// Something may have reopened the overlay during the fade; leave that content alone.
+		if (!overlay.classList.contains("hidden")) return;
+		resetOverlayItems();
+		// Forms nested inside an overlay item (login and register sit in one tab view) are not reset with the
+		// items, so typed credentials and error banners would greet the next visitor.
+		overlay.querySelectorAll("form").forEach((form) => form.reset());
+		overlay.querySelectorAll<HTMLElement>(".error-message").forEach((message) => message.classList.add("hidden"));
+	}, OVERLAY_FADE_MS);
 }
 
 export function show(elementId: string) {

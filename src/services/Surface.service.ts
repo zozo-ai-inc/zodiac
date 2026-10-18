@@ -57,7 +57,7 @@ function refreshSurfacePlaneState(): void {
 				!(child instanceof HTMLElement) ||
 				child === surfacePlane ||
 				child.inert ||
-				child.matches("script, style")
+				child.matches("script, style, [data-above-surfaces]")
 			)
 				continue;
 			child.inert = true;

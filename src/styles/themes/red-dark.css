@@ -64,10 +64,10 @@
 	--lora-card-trigger-copied-bg: #a13b6c;
 	--lora-card-trigger-copied-border: #ce5b8f;
 	--lora-card-empty-fg: #d89aaa;
-	--lora-card-delete-bg: rgba(37, 58, 92, 0.6);
-	--lora-card-delete-border: rgba(58, 97, 150, 0.55);
+	--lora-card-delete-bg: rgba(92, 39, 37, 0.6);
+	--lora-card-delete-border: rgba(150, 61, 58, 0.55);
 	--lora-card-delete-fg: #ffd1ec;
-	--lora-card-delete-hover-bg: rgba(40, 82, 135, 0.7);
+	--lora-card-delete-hover-bg: rgba(135, 43, 40, 0.7);
 	--lora-strength-slider: #ffab7c;
 
 	/* Badges */
@@ -146,7 +146,7 @@
 	--onboarding-badge-bg: rgba(172, 109, 94, 0.3);
 	--onboarding-badge-text: #f2c5d7;
 	--onboarding-recommended-border: rgba(227, 136, 133, 0.5);
-	--onboarding-recommended-badge: linear-gradient(135deg, #c8625f 0%, #4a7ba7 100%);
+	--onboarding-recommended-badge: linear-gradient(135deg, #c8625f 0%, #a74d4a 100%);
 	--onboarding-hook-bg: rgba(200, 95, 95, 0.15);
 	--onboarding-hook-text: #eda8c9;
 	--onboarding-bullet: #d17fa8;
@@ -164,7 +164,7 @@
 	--onboarding-status-loading-text: #eda8c9;
 	--onboarding-error-bg: rgba(127, 29, 29, 0.3);
 	--onboarding-accent: #d17fa8;
-	--onboarding-btn-primary-bg: #c8625f;
+	--onboarding-btn-primary-bg: #eb8885;
 	--onboarding-btn-primary-text: #690b24;
 	--onboarding-btn-primary-hover: #ac5752;
 	--onboarding-btn-secondary-text: #e6d1d9;
