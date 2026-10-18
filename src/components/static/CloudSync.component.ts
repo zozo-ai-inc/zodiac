@@ -518,13 +518,24 @@ btnSyncNow?.addEventListener(
 			btnSyncNow!.disabled = true;
 			btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Syncing…';
 
-			await syncService.pushAll();
-			await chatsService.initialize();
-			await personalityService.reloadFromDb();
+			let chatsRefreshed = false;
+			try {
+				await syncService.pushAll();
+				chatsRefreshed = await chatsService.initialize();
+				await personalityService.reloadFromDb();
+			} finally {
+				// Never leave the button stuck on "Syncing…" after a failure.
+				btnSyncNow!.disabled = false;
+				btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync Now';
+			}
 
-			btnSyncNow!.disabled = false;
-			btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync Now';
-
+			if (!chatsRefreshed) {
+				danger({
+					title: "Sync incomplete",
+					text: "Couldn't load your chats from the cloud. Your chat list was left as it was."
+				});
+				return;
+			}
 			info({ title: "Sync complete", text: "All data has been synchronized." });
 		})()
 );

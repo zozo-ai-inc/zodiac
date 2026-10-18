@@ -165,3 +165,8 @@ onAppEvent("auth-state-changed", () => {
 onAppEvent("subscription-updated", () => {
 	void refreshSubscriptionButtonLabels();
 });
+
+// Back from checkout can restore this page from the back/forward cache still showing "Redirecting...".
+window.addEventListener("pageshow", (event) => {
+	if (event.persisted) setButtonsLoadingState(false);
+});

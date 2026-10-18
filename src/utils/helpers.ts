@@ -364,8 +364,10 @@ export async function confirmDialog(
 	dialogMessage.textContent = message;
 
 	showElement(dialog, false);
-	// Cancel is the safe default for a keyboard user who presses Enter straight away.
-	requestAnimationFrame(() => btnDialogCancel.focus({ preventScroll: true }));
+	// Cancel is the safe default for a keyboard user who presses Enter straight away. showElement reveals the
+	// dialog in a 0ms timer; queueing the focus as a timer too guarantees it runs after the dialog is displayed
+	// (an animation frame alone can fire first under load and focus nothing).
+	window.setTimeout(() => btnDialogCancel.focus({ preventScroll: true }), 0);
 
 	return new Promise((resolve) => {
 		const settle = (confirmed: boolean) => {

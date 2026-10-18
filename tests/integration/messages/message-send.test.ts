@@ -13,6 +13,9 @@ import { MockDataTransfer, makeEmptyFileList } from "../../helpers/files";
 
 type MockOpenRouterResult = {
 	text: string;
+	/** Runs while the reply is in flight, before it resolves or fails. */
+	whileInFlight?: () => void | Promise<void>;
+	error?: Error;
 	thinking?: string;
 	finishReason?: string;
 	image?: { mimeType: string; base64: string };
@@ -148,6 +151,10 @@ vi.mock("../../../src/services/OpenRouter.service", () => ({
 			const next = testState.openRouterResults.shift();
 			if (!next) {
 				throw new Error("No queued OpenRouter response available for test");
+			}
+			await next.whileInFlight?.();
+			if (next.error) {
+				throw next.error;
 			}
 
 			if (next.thinking && args.onThinking) {
@@ -1431,5 +1438,77 @@ describe("Message send lifecycle", () => {
 		const roundOneSkipNotices = Array.from(roundOneBlock?.querySelectorAll<HTMLElement>(".skip-notice") ?? []);
 		expect(roundOneSkipNotices).toHaveLength(1);
 		expect(roundOneSkipNotices[0]?.textContent).toContain("RPG Alpha skipped their turn: Alpha steps back.");
+	});
+	it.each([
+		["the reply fails", { error: new Error("network dropped") }],
+		["the reply succeeds", {}]
+	])("ends generation when the chat cannot be saved after %s", async (_case, outcome) => {
+		seedMockPersonas([{ id: "persona-normal", persona: { name: "Normal Persona" } }]);
+		const { db: testDb, chatsService, messageService } = await loadServices();
+		db = testDb;
+		const chatId = await createAndLoadChat({
+			chatsService,
+			chat: makeChat({ id: "chat-save-fails", title: "Save fails", content: [] })
+		});
+		testState.openRouterResults.push({
+			text: "Reply that never gets saved",
+			...outcome,
+			// Storage starts refusing writes mid-reply, as a full disk or a failed sync push would.
+			whileInFlight: () => {
+				vi.spyOn(testDb.chats, "put").mockRejectedValue(new Error("QuotaExceededError"));
+			}
+		});
+		const generationEvents: Array<{ chatId: string; isGenerating: boolean }> = [];
+		window.addEventListener("generation-state-changed", (event) => {
+			generationEvents.push((event as CustomEvent).detail);
+		});
+
+		await messageService
+			.send("Hello", {
+				targetChatId: chatId,
+				selectedPersonalityId: "persona-normal",
+				attachmentFiles: makeEmptyFileList()
+			})
+			.catch(() => undefined);
+
+		expect(messageService.getIsGenerating(chatId), "the chat should not stay stuck generating").toBe(false);
+		expect(generationEvents.at(-1)).toMatchObject({ chatId, isGenerating: false });
+	});
+	it("ends generation when an RPG round cannot be saved", async () => {
+		seedMockPersonas([
+			{ id: "persona-rpg-a", persona: { name: "RPG Alpha" } },
+			{ id: "persona-rpg-b", persona: { name: "RPG Beta" } }
+		]);
+		const { db: testDb, chatsService, messageService } = await loadServices();
+		db = testDb;
+		const chatId = await createAndLoadChat({
+			chatsService,
+			chat: makeChat({
+				id: "chat-rpg-save-fails",
+				title: "RPG save fails",
+				content: [],
+				groupChat: {
+					mode: "rpg",
+					participantIds: ["persona-rpg-a", "persona-rpg-b"],
+					rpg: { turnOrder: ["user", "persona-rpg-a", "persona-rpg-b"], narratorEnabled: false }
+				}
+			})
+		});
+		testState.openRouterResults.push({
+			text: '{"kind":"reply","text":"Alpha speaks."}',
+			whileInFlight: () => {
+				vi.spyOn(testDb.chats, "put").mockRejectedValue(new Error("QuotaExceededError"));
+			}
+		});
+
+		await messageService
+			.send("Advance the round", {
+				targetChatId: chatId,
+				selectedPersonalityId: "persona-rpg-a",
+				attachmentFiles: makeEmptyFileList()
+			})
+			.catch(() => undefined);
+
+		expect(messageService.getIsGenerating(chatId), "the RPG chat should not stay stuck generating").toBe(false);
 	});
 });
