@@ -245,7 +245,6 @@
 	padding: 1rem;
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .dialog-panel {
