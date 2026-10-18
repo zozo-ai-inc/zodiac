@@ -309,10 +309,15 @@ body.settings-open .settings-sidebar {
 	line-height: 1.125rem;
 }
 
-/* Below 24.25rem the title and switcher no longer fit on one row, so the switcher takes its own. */
+/* Below 24.25rem the title and switcher no longer fit on one row, so the switcher takes its own below the close button. */
 @media (max-width: 24.25rem) {
 	.sidebar-top-bar .navbar {
 		flex: 1 0 100%;
+		order: 1;
+	}
+
+	#btn-hide-sidebar {
+		margin-left: auto;
 	}
 }
 
@@ -396,11 +401,6 @@ body.settings-open .settings-sidebar {
 
 	#btn-hide-sidebar {
 		display: block;
-	}
-
-	/* The close button sits before the wordmark here, and the row's gap already separates them. */
-	#zodiac-branding {
-		margin-left: 0;
 	}
 
 	#mainContent {
