@@ -2,14 +2,14 @@
 .group-chat-participant-search {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	margin-bottom: 0.75rem;
 	position: relative;
 	/* allow absolute placement of the count */
 	background-color: var(--input-bg);
 	border: 1px solid var(--input-text-border);
 	padding: 0.35rem 0.6rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 }
 
 /* Ensure the search input grows while the count sits inside it on the right */
@@ -45,7 +45,7 @@
 .group-chat-persona-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	max-height: 320px;
 	overflow: auto;
 	padding-right: 0.25rem;
@@ -57,7 +57,7 @@
 	gap: 0.6rem;
 	padding: 0.6rem 0.75rem;
 	border: 1px solid var(--input-text-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	cursor: pointer;
 	/* make entire row feel clickable */
 }
@@ -74,7 +74,7 @@
 .group-chat-persona-avatar {
 	width: 28px;
 	height: 28px;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	object-fit: cover;
 	flex: 0 0 auto;
 	margin-right: 0.5rem;
@@ -98,7 +98,7 @@
 .group-chat-mode-cards {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .group-chat-mode-card {
@@ -108,7 +108,7 @@
 	gap: 0.5rem 0.75rem;
 	padding: 0.75rem;
 	border: 1px solid var(--input-text-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	cursor: pointer;
 	user-select: none;
 	align-items: start;
@@ -164,21 +164,21 @@
 .group-chat-toggle-row {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin: 0.75rem 0 1rem;
 }
 
 .group-chat-guard-apply-all {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	margin-bottom: 0.75rem;
 }
 
 .group-chat-guard-apply-row {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .group-chat-guard-apply-row input[type="range"] {
@@ -194,17 +194,17 @@
 .group-chat-guard-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin: 0.5rem 0 1rem;
 }
 
 .group-chat-guard-row {
 	display: grid;
 	grid-template-columns: 1fr auto auto;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: center;
 	border: 1px solid var(--input-text-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	padding: 0.6rem 0.75rem;
 	background: var(--body-bg);
 }
@@ -223,16 +223,16 @@
 .group-chat-turn-order {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .group-chat-turn-order-item {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	border: 1px solid var(--input-text-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	padding: 0.55rem 0.75rem;
 	background: var(--body-bg);
 }
@@ -276,7 +276,7 @@
 
 .group-chat-turn-order-actions {
 	display: flex;
-	gap: 0.25rem;
+	gap: var(--space-1);
 }
 
 /* Dynamic group chat typing indicator */
@@ -289,7 +289,7 @@
 	opacity: 0.75;
 	background: var(--turn-control-bg, var(--message-box-bg, var(--card-bg, rgba(0, 0, 0, 0.05))));
 	outline: var(--turn-control-outline, var(--elevated-ui-outline));
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	box-shadow: var(--elevated-ui-shadow);
 	backdrop-filter: blur(12px);
 	pointer-events: auto;
@@ -305,11 +305,11 @@
 	margin-bottom: 0.5rem;
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: var(--space-4);
 	padding: 0.75rem 1.25rem;
 	background: var(--turn-control-bg, var(--message-box-bg, var(--card-bg, rgba(0, 0, 0, 0.05))));
 	outline: var(--turn-control-outline, var(--elevated-ui-outline));
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	box-shadow: var(--elevated-ui-shadow);
 	backdrop-filter: blur(12px);
 	pointer-events: auto;
@@ -328,7 +328,7 @@
 .turn-control-panel .btn {
 	display: flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	padding: 0.5rem 0.85rem;
 	font-size: 0.85rem;
 }
@@ -347,13 +347,13 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.75rem 1rem;
 	margin: 1rem auto;
 	max-width: 300px;
 	background: var(--card-bg, rgba(0, 0, 0, 0.05));
 	border: 1px dashed var(--card-border, rgba(0, 0, 0, 0.2));
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 	font-size: 0.85rem;
 	color: var(--body-fg);
 	font-style: italic;

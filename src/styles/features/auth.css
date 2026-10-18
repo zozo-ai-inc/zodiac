@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 #login-register-container {
@@ -20,7 +20,7 @@
 	max-width: 95%;
 	background: var(--modal-bg, var(--body-bg));
 	padding: 2.5rem;
-	border-radius: 1.5rem;
+	border-radius: var(--radius-3xl);
 	box-shadow: var(--elevated-ui-shadow);
 	border: var(--elevated-ui-outline);
 	box-sizing: border-box;
@@ -29,13 +29,13 @@
 #login {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 }
 
 #register {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 	font-size: 0.85rem;
 }
 
@@ -49,12 +49,12 @@
 #form-email-update {
 	background: var(--modal-bg, var(--body-bg));
 	padding: 2.5rem;
-	border-radius: 1.5rem;
+	border-radius: var(--radius-3xl);
 	box-shadow: var(--elevated-ui-shadow);
 	border: var(--elevated-ui-outline);
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 #form-password-reset h1,

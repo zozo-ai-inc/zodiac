@@ -31,7 +31,7 @@
 	width: 32rem;
 	flex-direction: column;
 	align-items: center;
-	gap: 1rem;
+	gap: var(--space-4);
 	overflow-y: auto;
 	scrollbar-gutter: stable;
 }
@@ -44,7 +44,7 @@
 
 /* Generic profile cards */
 .profile-card {
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	border: 1px solid transparent;
 	/* themed */
 	overflow: hidden;
@@ -58,9 +58,9 @@
 #subscription-status-row {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: -0.25rem;
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	overflow: hidden;
 	border: 1px solid transparent;
 	/* themed */
@@ -73,8 +73,8 @@
 #account-info-card {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
-	border-radius: 0.75rem;
+	gap: var(--space-2);
+	border-radius: var(--radius-lg);
 	overflow: hidden;
 	border: 1px solid transparent;
 	/* themed */
@@ -123,7 +123,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 /* Collapsible details with smooth height transition */

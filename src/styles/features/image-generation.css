@@ -2,7 +2,7 @@
 .message-images {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: 0.75rem;
 	max-width: 100%;
 }
@@ -11,7 +11,7 @@
 	display: block;
 	max-width: 100%;
 	height: auto;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	object-fit: contain;
 }
 
@@ -19,7 +19,7 @@
 .generated-image-wrapper {
 	position: relative;
 	display: inline-flex;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	overflow: hidden;
 	cursor: zoom-in;
 	background: #00000018;
@@ -63,7 +63,7 @@
 	animation: none;
 	font-size: 0.8rem;
 	padding: 0.35rem 0.45rem;
-	border-radius: 0.375rem;
+	border-radius: var(--radius-xs);
 	background: rgba(0, 0, 0, 0.45);
 }
 
@@ -88,7 +88,7 @@
 	bottom: 0;
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.4rem 0.45rem 0.5rem 0.45rem;
 	background: linear-gradient(0deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.22) 70%, rgba(0, 0, 0, 0) 100%);
 	opacity: 0;
@@ -155,7 +155,7 @@
 	max-width: 95vw;
 	max-height: 95dvh;
 	object-fit: contain;
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	box-shadow: 0 8px 40px -4px rgba(0, 0, 0, 0.6);
 	display: block;
 }
@@ -166,7 +166,7 @@
 	right: 0.25rem;
 	background: rgba(0, 0, 0, 0.74) !important;
 	color: #fff !important;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	padding: 0.35rem;
 	cursor: pointer;
 }
@@ -179,7 +179,7 @@
 .card-lora {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: stretch;
 	text-align: left;
 	padding: 0.75rem;
@@ -193,26 +193,26 @@
 #lora-section {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 #lora-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .lora-card-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .lora-card-header-main {
 	display: flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	flex: 1 1 auto;
 	min-width: 0;
 }
@@ -236,7 +236,7 @@
 .lora-card-meta {
 	display: flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	font-size: 0.82rem;
 	word-break: break-word;
 	line-height: 1.3;
@@ -246,7 +246,7 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	color: inherit;
 	text-decoration: none;
 }
@@ -276,7 +276,7 @@
 .lora-card-section {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .lora-card-section-title {
@@ -289,16 +289,16 @@
 .lora-card-triggers {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .lora-card-trigger {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.25rem;
+	gap: var(--space-1);
 	border: 1px solid transparent;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	padding: 0.25rem 0.75rem;
 	font-size: 0.82rem;
 	background: none;
@@ -325,7 +325,7 @@
 	justify-content: center;
 	width: 2rem;
 	height: 2rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	border: 1px solid transparent;
 	background: none;
 	cursor: pointer;
@@ -343,7 +343,7 @@
 .lora-strength {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .lora-strength-label {
@@ -354,7 +354,7 @@
 .lora-strength-control {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .lora-strength-slider {
@@ -374,14 +374,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	flex-wrap: wrap;
 }
 
 .lora-card-toggle {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.45rem;
+	gap: var(--space-2);
 	font-size: 0.85rem;
 	font-weight: 500;
 }
@@ -392,7 +392,7 @@
 
 /* LoRA add card layout */
 .card-add-lora {
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	border: 1px dashed transparent;
 	/* themed in dark/light */
 	padding: 0.5rem;
@@ -401,7 +401,7 @@
 .lora-add {
 	display: flex;
 	flex-direction: row !important;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: stretch;
 }
 

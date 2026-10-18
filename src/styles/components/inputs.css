@@ -5,7 +5,7 @@ select {
 	background-color: var(--input-bg);
 	color: var(--input-fg);
 	padding: 0.5rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	font-family:
 		noto sans,
 		sans-serif;
@@ -37,7 +37,7 @@ input[type="checkbox"] {
 	-moz-appearance: none;
 	width: 3rem;
 	height: 1.5rem;
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	background-color: var(--toggle-bg);
 	position: relative;
 	cursor: pointer;
@@ -106,10 +106,10 @@ form {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 0.4rem;
+	gap: var(--space-1-5);
 	padding: 0.5rem;
 	border: 1px solid var(--input-border, #ccc);
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	background: var(--input-bg, #fff);
 	min-height: 2.5rem;
 	cursor: text;
@@ -123,17 +123,17 @@ form {
 .tags-chips {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .tag-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.25rem;
+	gap: var(--space-1);
 	padding: 0.25rem 0.5rem;
 	background: var(--primary);
 	color: var(--accent-fg, #fff);
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	font-size: 0.8rem;
 	font-weight: 500;
 	white-space: nowrap;
@@ -175,7 +175,7 @@ form {
 .error-message {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	color: #df0707;
 }
 
@@ -191,7 +191,7 @@ form {
 	align-items: center;
 	background-color: var(--input-bg);
 	border: var(--input-border);
-	border-radius: 9999px;
+	border-radius: var(--radius-pill);
 	padding: 0.25rem;
 	position: relative;
 	width: 100%;
@@ -201,7 +201,7 @@ form {
 	flex: 1;
 	background: transparent;
 	border: none;
-	border-radius: 9999px;
+	border-radius: var(--radius-pill);
 	padding: 0.5rem 0.25rem;
 	font-size: 0.8rem;
 	color: var(--body-fg);
@@ -228,7 +228,7 @@ form {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .stepped-slider-btn-icon {

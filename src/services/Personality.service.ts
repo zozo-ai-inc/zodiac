@@ -443,6 +443,9 @@ export function createAddPersonalityCard() {
 	const card = document.createElement("div");
 	card.classList.add("card-personality", "card-add-personality");
 	card.id = "btn-add-personality";
+	card.setAttribute("role", "button");
+	card.setAttribute("aria-label", "Add persona");
+	card.tabIndex = 0;
 	card.innerHTML = `
         <div class="add-personality-content">
             <span class="material-symbols-outlined add-icon">add</span>
@@ -450,6 +453,11 @@ export function createAddPersonalityCard() {
     `;
 
 	card.addEventListener("click", () => {
+		showAddPersonaModal();
+	});
+	card.addEventListener("keydown", (event) => {
+		if (event.key !== "Enter" && event.key !== " ") return;
+		event.preventDefault();
 		showAddPersonaModal();
 	});
 

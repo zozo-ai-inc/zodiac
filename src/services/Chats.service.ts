@@ -612,6 +612,9 @@ function insertChatEntry(chat: DbChat, position: "append" | "prepend" = "prepend
 	// chat title
 	const chatLabelText = document.createElement("span");
 	chatLabelText.classList.add("chat-title-text");
+	// The label also holds icons and the actions button, so the radio takes its name from the title alone.
+	chatLabelText.id = `chat-title-${chat.id}`;
+	chatRadioButton.setAttribute("aria-labelledby", chatLabelText.id);
 	chatLabelText.style.overflow = "hidden";
 	chatLabelText.style.textOverflow = "ellipsis";
 	chatLabelText.textContent = chat.title;

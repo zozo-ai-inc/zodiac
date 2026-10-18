@@ -1,11 +1,12 @@
 import * as helpers from "../../utils/helpers";
 
 const chatSearchInput = document.querySelector<HTMLInputElement>("#chat-search-input");
+const chatSearchEmpty = document.querySelector<HTMLElement>("#chat-search-empty");
 
 // Debounce timer for chat search
 let chatSearchDebounceTimer: number;
 
-if (!chatSearchInput) {
+if (!chatSearchInput || !chatSearchEmpty) {
 	console.error("ChatSearch component is missing the search input element. Please check the HTML structure.");
 	throw new Error("ChatSearch component is not properly initialized.");
 }
@@ -39,6 +40,7 @@ function performSearch(): void {
 
 	// If search term is empty, show all chats
 	if (searchTerm === "") {
+		chatSearchEmpty?.classList.add("hidden");
 		chatElements.forEach((chatElement) => {
 			helpers.showElement(chatElement, true);
 		});
@@ -69,6 +71,8 @@ function performSearch(): void {
 	chatElementsWithScores.sort((a, b) => b.score - a.score);
 
 	const matchingElements = new Set(chatElementsWithScores.map((item) => item.element));
+	// With no chats at all, the list's own empty state already speaks for itself.
+	chatSearchEmpty?.classList.toggle("hidden", chatElements.length === 0 || matchingElements.size > 0);
 
 	chatElements.forEach((chatElement) => {
 		if (matchingElements.has(chatElement)) {

@@ -1,6 +1,6 @@
 .badge {
 	padding: 0.3rem 0.4rem 0.3rem 0.4rem;
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	font-size: 0.75rem;
 	font-weight: bold;
 	transition:

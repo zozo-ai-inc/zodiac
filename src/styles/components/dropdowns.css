@@ -22,7 +22,7 @@
 	backdrop-filter: blur(20px);
 	border: var(--dropdown-menu-border);
 	padding: 0.25rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	min-width: 8rem;
 	box-shadow: var(--dropdown-menu-shadow);
 	z-index: var(--layer-dropdown);
@@ -31,10 +31,10 @@
 .dropdown-menu .dropdown-menu-item {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	width: 100%;
 	padding: 0.5rem 0.75rem;
-	border-radius: 0.3rem;
+	border-radius: var(--radius-xs);
 	color: inherit;
 	font-size: 0.875rem;
 	text-decoration: none;

@@ -8,6 +8,26 @@
 	--elevated-ui-outline: 1px solid rgba(0, 0, 0, 0.1);
 	--menu-spawn-top-offset: 4px;
 
+	/* Corner radii. Nested corners use the outer radius less the gap between them, so a few stay computed. */
+	--radius-xs: 0.375rem;
+	--radius-sm: 0.5rem;
+	--radius-md: 0.625rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.25rem;
+	--radius-3xl: 1.5rem;
+	--radius-pill: 999px;
+
+	/* Spacing steps for gaps between items. */
+	--space-1: 0.25rem;
+	--space-1-5: 0.375rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+
 	/* App-level stacking. Local children keep their own small stacking indices. */
 	--layer-composer: 10;
 	--layer-sidebar: 11;
