@@ -8,7 +8,6 @@ import {
 	fetchMarketplacePersona
 } from "./Supabase.service";
 import { info, danger } from "./Toast.service";
-import { showElement } from "../utils/helpers";
 import * as syncService from "./Sync.service";
 import { onAppEvent } from "../events";
 import * as pinningService from "./Pinning.service";
@@ -298,10 +297,6 @@ export async function reloadFromDb() {
 		console.warn("Failed to restore last selected personality", e);
 	}
 
-	// Add the "Create New" card at the end
-	const createCard = createAddPersonalityCard();
-	document.querySelector("#personalitiesDiv")?.appendChild(createCard);
-
 	window.dispatchEvent(new CustomEvent("persona-list-updated"));
 }
 
@@ -391,12 +386,6 @@ function insert(personality: Personality, id: string) {
 	}
 	const card = generateCard(personality, id);
 	personalitiesDiv.append(card);
-
-	//move the add card to be the last element
-	const addCard = document.querySelector("#btn-add-personality");
-	if (addCard) {
-		personalitiesDiv.appendChild(addCard);
-	}
 	return card;
 }
 
@@ -407,12 +396,6 @@ function insertWithSync(personality: Personality, id: string, syncInfo: SyncInfo
 	}
 	const card = generateCard(personality, id, syncInfo);
 	personalitiesDiv.append(card);
-
-	//move the add card to be the last element
-	const addCard = document.querySelector("#btn-add-personality");
-	if (addCard) {
-		personalitiesDiv.appendChild(addCard);
-	}
 	return card;
 }
 
@@ -437,67 +420,6 @@ export function share(personality: Personality & { id?: string }, explicitId?: s
 	});
 }
 
-const MARKETPLACE_URL = "https://zodiac-marketplace.com/";
-
-export function createAddPersonalityCard() {
-	const card = document.createElement("div");
-	card.classList.add("card-personality", "card-add-personality");
-	card.id = "btn-add-personality";
-	card.innerHTML = `
-        <div class="add-personality-content">
-            <span class="material-symbols-outlined add-icon">add</span>
-        </div>
-    `;
-
-	card.addEventListener("click", () => {
-		showAddPersonaModal();
-	});
-
-	return card;
-}
-
-function showAddPersonaModal() {
-	const modal = document.querySelector<HTMLElement>("#modal-add-persona");
-	const overlay = document.querySelector<HTMLElement>(".overlay");
-	if (!modal || !overlay) return;
-
-	//hide other overlay items first
-	const overlayContent = overlay.querySelector(".overlay-content");
-	if (overlayContent) {
-		Array.from(overlayContent.children).forEach((child) => {
-			if (child !== modal) {
-				child.classList.add("hidden");
-			}
-		});
-	}
-
-	//show the overlay and modal with proper animation
-	showElement(overlay, false);
-	showElement(modal, false);
-}
-
-export function initAddPersonaModalHandlers() {
-	const modal = document.querySelector<HTMLElement>("#modal-add-persona");
-	if (!modal) return;
-
-	const localBtn = modal.querySelector<HTMLButtonElement>(".add-persona-local-btn");
-	const marketplaceBtn = modal.querySelector<HTMLButtonElement>(".add-persona-marketplace-btn");
-	const overlay = document.querySelector<HTMLElement>(".overlay");
-
-	localBtn?.addEventListener("click", () => {
-		//hide this modal and show the add personality form
-		modal.classList.add("hidden");
-		overlayService.showAddPersonalityForm();
-	});
-
-	marketplaceBtn?.addEventListener("click", () => {
-		//close the overlay and open marketplace in new tab
-		modal.classList.add("hidden");
-		overlay?.classList.add("hidden");
-		window.open(MARKETPLACE_URL, "_blank");
-	});
-}
-
 export async function removeAll() {
 	if (syncService.isOnlineSyncEnabled()) {
 		if (!syncService.isSyncActive()) return;
@@ -513,7 +435,7 @@ export async function removeAll() {
 	const personalityElements = document.querySelector<HTMLDivElement>("#personalitiesDiv")!.children;
 	for (let i = personalityElements.length - 1; i >= 0; i--) {
 		const element = personalityElements[i];
-		if (element.id !== "btn-add-personality" && element.id) {
+		if (element.id) {
 			element.remove();
 		}
 	}

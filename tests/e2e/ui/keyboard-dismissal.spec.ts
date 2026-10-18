@@ -38,7 +38,7 @@ test("keyboard-focused buttons show a focus ring", async ({ page }) => {
 		);
 	};
 
-	await expectFocusRing("#btn-new-chat");
+	await expectFocusRing("#btn-chat-add");
 	await expectFocusRing("#btn-chat-sort");
 
 	// Settings can push the sidebar off-screen, so its controls are checked last.
@@ -51,9 +51,10 @@ test("keyboard-focused buttons show a focus ring", async ({ page }) => {
 test("Escape closes the full-screen overlay", async ({ page }) => {
 	await openApp(page);
 	await page.locator(".sidebar .navbar-tab", { hasText: "Personas" }).click();
-	await page.locator("#btn-add-personality").click();
+	await page.locator("#btn-persona-add").click();
+	await page.getByRole("menuitem", { name: "Create persona" }).click();
 	const overlay = page.locator("#overlay");
-	await expect(page.locator("#modal-add-persona")).toBeVisible();
+	await expect(page.locator("#form-add-personality")).toBeVisible();
 
 	await page.keyboard.press("Escape");
 

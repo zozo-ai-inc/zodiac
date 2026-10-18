@@ -4,6 +4,23 @@
 	align-items: center;
 }
 
+/* The + beside search opens every add, import and clear action for the tab, so it is square to the field's height. */
+.sidebar-add-button {
+	align-self: stretch;
+	flex: 0 0 auto;
+	aspect-ratio: 1;
+	padding: 0;
+}
+
+.sidebar-add-button .material-symbols-outlined {
+	font-size: 1.375rem;
+}
+
+.sidebar-add-menu {
+	display: none;
+	min-width: 12rem;
+}
+
 .chat-search-wrapper {
 	flex: 1 1 auto;
 	display: flex;

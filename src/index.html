@@ -161,36 +161,6 @@
 				</div>
 				<div id="sidebar-content">
 					<div class="sidebar-section">
-						<div class="btn-array">
-							<div class="split-button">
-								<button id="btn-new-chat" class="split-button__main btn btn-primary">
-									<span class="material-symbols-outlined">add</span> <span>New Chat</span>
-								</button>
-								<button
-									type="button"
-									class="split-button__toggle btn btn-primary"
-									aria-label="More new chat options"
-									aria-haspopup="true"
-									aria-expanded="false"
-								>
-									<span class="material-symbols-outlined">expand_more</span>
-								</button>
-								<div class="split-button__menu dropdown-menu" role="menu">
-									<button class="split-button__menu-item" role="menuitem" id="btn-new-group-chat">
-										<span class="material-symbols-outlined">groups</span>
-										<span>Group Chat</span>
-									</button>
-									<button class="split-button__menu-item" role="menuitem" id="btn-chat-import">
-										<span class="material-symbols-outlined">upload</span>
-										<span>Import</span>
-									</button>
-								</div>
-							</div>
-							<button type="button" class="btn btn-secondary" id="btn-reset-chat">
-								<span class="material-symbols-outlined">clear_all</span>Clear All
-							</button>
-						</div>
-
 						<div class="filter-group chat-filter-group">
 							<div class="chat-search-wrapper">
 								<span class="material-symbols-outlined chat-search-icon">search</span>
@@ -204,6 +174,51 @@
 								>
 									<span class="material-symbols-outlined chat-sort-icon">sort</span>
 									<span class="chat-sort-label" id="chat-sort-label">Created</span>
+								</button>
+							</div>
+							<button
+								type="button"
+								class="btn btn-primary sidebar-add-button"
+								id="btn-chat-add"
+								aria-label="New chat menu"
+								aria-haspopup="menu"
+								aria-expanded="false"
+								aria-controls="chat-add-menu"
+								data-sidebar-menu
+							>
+								<span class="material-symbols-outlined">add</span>
+							</button>
+							<div
+								class="dropdown-menu sidebar-add-menu"
+								id="chat-add-menu"
+								role="menu"
+								aria-label="New chat"
+							>
+								<button type="button" class="dropdown-menu-item" role="menuitem" id="btn-new-chat">
+									<span class="material-symbols-outlined" aria-hidden="true">chat_bubble</span>New
+									chat
+								</button>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-new-group-chat"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">groups</span>New group
+									chat
+								</button>
+								<button type="button" class="dropdown-menu-item" role="menuitem" id="btn-chat-import">
+									<span class="material-symbols-outlined" aria-hidden="true">upload</span>Import chats
+								</button>
+								<hr class="dropdown-menu-divider" />
+								<button
+									type="button"
+									class="dropdown-menu-item dropdown-menu-item--danger"
+									role="menuitem"
+									id="btn-reset-chat"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">clear_all</span>Clear all
+									chats…
 								</button>
 							</div>
 						</div>
@@ -237,14 +252,6 @@
 							</button>
 						</div>
 
-						<div class="btn-array">
-							<button class="btn btn-primary" id="btn-import-personality">
-								<span class="material-symbols-outlined">upload</span>Import
-							</button>
-							<button type="button" class="btn btn-secondary" id="btn-clearall-personality">
-								<span class="material-symbols-outlined">clear_all</span>Clear All
-							</button>
-						</div>
 						<div class="filter-group chat-filter-group">
 							<div class="chat-search-wrapper">
 								<span class="material-symbols-outlined chat-search-icon">search</span>
@@ -258,6 +265,63 @@
 								>
 									<span class="material-symbols-outlined chat-sort-icon">sort</span>
 									<span class="chat-sort-label" id="persona-sort-label">Added</span>
+								</button>
+							</div>
+							<button
+								type="button"
+								class="btn btn-primary sidebar-add-button"
+								id="btn-persona-add"
+								aria-label="New persona menu"
+								aria-haspopup="menu"
+								aria-expanded="false"
+								aria-controls="persona-add-menu"
+								data-sidebar-menu
+							>
+								<span class="material-symbols-outlined">add</span>
+							</button>
+							<div
+								class="dropdown-menu sidebar-add-menu"
+								id="persona-add-menu"
+								role="menu"
+								aria-label="New persona"
+							>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-create-persona"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">edit</span>Create persona
+								</button>
+								<a
+									class="dropdown-menu-item"
+									role="menuitem"
+									href="https://zodiac-marketplace.com/"
+									target="_blank"
+									rel="noopener"
+									id="btn-browse-marketplace"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">storefront</span>Browse
+									Marketplace
+								</a>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-import-personality"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">upload</span>Import from
+									file
+								</button>
+								<hr class="dropdown-menu-divider" />
+								<button
+									type="button"
+									class="dropdown-menu-item dropdown-menu-item--danger"
+									role="menuitem"
+									id="btn-clearall-personality"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">clear_all</span>Clear all
+									personas…
 								</button>
 							</div>
 						</div>
@@ -1779,23 +1843,6 @@
 						</div>
 					</div>
 				</section>
-
-				<!-- Add Persona Modal -->
-				<div id="modal-add-persona" class="hidden">
-					<span class="material-symbols-outlined sync-modal-icon">person_add</span>
-					<h1>Add Persona</h1>
-					<p class="overlay-description">Create a new persona locally or browse the Zodiac Marketplace.</p>
-					<div class="overlay-actions overlay-actions-vertical">
-						<button class="btn btn-primary add-persona-marketplace-btn">
-							<span class="material-symbols-outlined">storefront</span>
-							Browse Marketplace
-						</button>
-						<button class="btn btn-secondary add-persona-local-btn">
-							<span class="material-symbols-outlined">edit</span>
-							Create Local
-						</button>
-					</div>
-				</div>
 
 				<!-- Sync Update Modal -->
 				<div id="modal-sync-update" class="hidden">

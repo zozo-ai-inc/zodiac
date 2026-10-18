@@ -31,6 +31,7 @@
 .dropdown-menu .dropdown-menu-item {
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
 	gap: 0.5rem;
 	width: 100%;
 	padding: 0.5rem 0.75rem;
@@ -51,6 +52,23 @@
 
 .dropdown-menu .dropdown-menu-item:active {
 	background: var(--dropdown-menu-item-active-bg);
+}
+
+.dropdown-menu .dropdown-menu-item .material-symbols-outlined {
+	font-size: 1.125rem;
+	opacity: 0.85;
+}
+
+/* Bulk destructive actions sit last, under a divider, in the danger colour. */
+.dropdown-menu .dropdown-menu-item--danger {
+	color: var(--danger);
+}
+
+.dropdown-menu-divider {
+	width: 100%;
+	margin: 0.25rem 0;
+	border: 0;
+	border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 
 @keyframes menuFadeIn {

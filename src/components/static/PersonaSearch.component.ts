@@ -41,10 +41,6 @@ function performSearch(): void {
 	const cardsWithScores: Array<{ element: HTMLElement; score: number }> = [];
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality") {
-			return;
-		}
-
 		const personalityName = card.querySelector(".personality-title")?.textContent;
 		if (!personalityName) {
 			return;
@@ -60,7 +56,7 @@ function performSearch(): void {
 	const matchingCards = new Set(cardsWithScores.map((item) => item.element));
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality" || matchingCards.has(card)) {
+		if (matchingCards.has(card)) {
 			helpers.showElement(card, true);
 		} else {
 			helpers.hideElement(card);

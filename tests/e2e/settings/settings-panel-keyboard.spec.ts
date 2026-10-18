@@ -27,7 +27,7 @@ test("open-settings without a page opens the panel without throwing", async ({ p
 	await stubExternalTraffic(page, []);
 	await seedLocalSettings(page);
 	await page.goto("/");
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 	const errorsBeforeDispatch = pageErrors.length;
 
 	await page.evaluate(() => {
