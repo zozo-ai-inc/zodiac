@@ -121,7 +121,10 @@ onAppEvent("generation-state-changed", (event) => {
 	}
 });
 
-// Smooth expand/collapse helper
+// Smooth expand/collapse helper. Each card's content has at most one transition in flight: a new click
+// first settles the previous one, so quick double clicks cannot leave the card half open.
+const pendingCardTransitions = new WeakMap<HTMLElement, () => void>();
+
 function toggleCard(cardEl: HTMLElement, contentSelector: string) {
 	const content = document.querySelector<HTMLElement>(contentSelector);
 	if (!content) {
@@ -129,31 +132,42 @@ function toggleCard(cardEl: HTMLElement, contentSelector: string) {
 		return;
 	}
 
-	const isCollapsed = cardEl.classList.contains("collapsed");
-	if (isCollapsed) {
-		// Expand
+	pendingCardTransitions.get(content)?.();
+
+	let finish: () => void;
+	if (cardEl.classList.contains("collapsed")) {
+		content.inert = false;
 		content.style.height = "0px";
 		cardEl.classList.remove("collapsed");
-		requestAnimationFrame(() => {
-			content.style.height = content.scrollHeight + "px";
-		});
-		const onEnd = () => {
+		void content.offsetHeight; // start from 0 so the height can animate
+		content.style.height = content.scrollHeight + "px";
+		finish = () => {
 			content.style.height = "auto";
-			content.removeEventListener("transitionend", onEnd);
 		};
-		content.addEventListener("transitionend", onEnd);
 	} else {
-		// Collapse
-		const currentHeight = content.scrollHeight;
-		content.style.height = currentHeight + "px";
+		content.style.height = content.scrollHeight + "px";
 		void content.offsetHeight; // force reflow
 		content.style.height = "0px";
-		const onEnd = () => {
+		finish = () => {
 			cardEl.classList.add("collapsed");
-			content.removeEventListener("transitionend", onEnd);
+			// Hidden controls should not be reachable with Tab while the card is closed.
+			content.inert = true;
 		};
-		content.addEventListener("transitionend", onEnd);
 	}
+
+	// transitionend never fires if the transition is interrupted or skipped, so a timer backs it up.
+	const fallback = window.setTimeout(() => settle(), 400);
+	const onEnd = (event: TransitionEvent) => {
+		if (event.target === content && event.propertyName === "height") settle();
+	};
+	function settle() {
+		window.clearTimeout(fallback);
+		content!.removeEventListener("transitionend", onEnd);
+		pendingCardTransitions.delete(content!);
+		finish();
+	}
+	content.addEventListener("transitionend", onEnd);
+	pendingCardTransitions.set(content, settle);
 }
 
 const subHeaderEl = subscriptionHeader as HTMLElement;
@@ -169,14 +183,17 @@ accountHeaderEl.addEventListener("click", () => toggleCard(accountCard as HTMLEl
 const subContent = document.querySelector<HTMLElement>("#subscription-card-content");
 if ((subscriptionCard as HTMLElement).classList.contains("collapsed") && subContent) {
 	subContent.style.height = "0px";
+	subContent.inert = true;
 }
 const infoContent = document.querySelector<HTMLElement>("#profile-info-content");
 if ((infoCard as HTMLElement).classList.contains("collapsed") && infoContent) {
 	infoContent.style.height = "0px";
+	infoContent.inert = true;
 }
 const accountContent = document.querySelector<HTMLElement>("#account-info-content");
 if ((accountCard as HTMLElement).classList.contains("collapsed") && accountContent) {
 	accountContent.style.height = "0px";
+	accountContent.inert = true;
 }
 
 function setAccountEmail(email: string | null) {

@@ -10,9 +10,9 @@
 	--tone-example-remove-hover: rgba(17, 46, 97, 0.12);
 	--tone-example-remove-active: rgba(17, 46, 97, 0.18);
 
-	--primary: #4c7cbe;
-	--primary-hover: #3c66a1;
-	--primary-active: #23487a;
+	--primary: #3f6eaf;
+	--primary-hover: #34598d;
+	--primary-active: #1d3b64;
 
 	/* Body */
 	--body-bg: #f0f6ff;
@@ -31,14 +31,14 @@
 	--navbar-tab-fg-active: #163881;
 
 	/* Buttons */
-	--button-bg: #4c7cbe;
+	--button-bg: #3f6eaf;
 	--button-fg: #edf1f8;
-	--button-hover-bg: #3c66a1;
-	--button-active-bg: #23487a;
+	--button-hover-bg: #34598d;
+	--button-active-bg: #1d3b64;
 	--button-toggled-bg: #a0bcebb0;
 
 	/* Tone example remove */
-	--tone-example-remove-fg: #23487a;
+	--tone-example-remove-fg: #1d3b64;
 	--tone-example-remove-hover-fg: #132c4d;
 
 	/* Toasts */
@@ -117,7 +117,7 @@
 	--card-add-personality-border: rgba(76, 124, 190, 0.5);
 	--card-add-personality-hover-bg: rgba(26, 88, 143, 0.158);
 	--card-add-personality-hover-border: rgba(76, 124, 190, 0.8);
-	--card-add-personality-icon-fg: #4c7cbe;
+	--card-add-personality-icon-fg: #3f6eaf;
 
 	/* Attachment container */
 	--attachment-container-bg: #03509c25;
@@ -127,12 +127,12 @@
 	--card-add-lora-border: 1px solid rgba(76, 124, 190, 0.45);
 
 	/* Toggle switches */
-	--toggle-checked-bg: #4c7cbe;
-	--toggle-checked-border: #3c66a1;
-	--toggle-checked-hover-bg: #3c66a1;
+	--toggle-checked-bg: #3f6eaf;
+	--toggle-checked-border: #34598d;
+	--toggle-checked-hover-bg: #34598d;
 
 	/* Thinking section */
-	--thinking-border: #4c7cbe;
+	--thinking-border: #3f6eaf;
 
 	/* Onboarding */
 	--onboarding-overlay-bg: rgba(235, 243, 255, 0.95);
@@ -143,35 +143,35 @@
 	--onboarding-card-border-hover: rgba(76, 124, 190, 0.5);
 	--onboarding-card-shadow: rgba(22, 42, 78, 0.15);
 	--onboarding-list-neutral-bg: rgba(188, 212, 243, 0.45);
-	--onboarding-list-neutral-icon: #3c66a1;
+	--onboarding-list-neutral-icon: #34598d;
 	--onboarding-badge-bg: rgba(76, 124, 190, 0.15);
 	--onboarding-badge-text: #2f5a8c;
 	--onboarding-recommended-border: rgba(76, 124, 190, 0.4);
-	--onboarding-recommended-badge: linear-gradient(135deg, #4c7cbe 0%, #3c66a1 100%);
+	--onboarding-recommended-badge: linear-gradient(135deg, #3f6eaf 0%, #34598d 100%);
 	--onboarding-hook-bg: rgba(76, 124, 190, 0.08);
 	--onboarding-hook-text: #2f5a8c;
-	--onboarding-bullet: #4c7cbe;
+	--onboarding-bullet: #3f6eaf;
 	--onboarding-instructions-bg: rgba(188, 212, 243, 0.35);
-	--onboarding-step-number-bg: #4c7cbe;
+	--onboarding-step-number-bg: #3f6eaf;
 	--onboarding-step-number-text: #edf1f8;
-	--onboarding-link: #3c66a1;
+	--onboarding-link: #34598d;
 	--onboarding-input-text: #0f2744;
 	--onboarding-input-border: rgba(76, 124, 190, 0.3);
-	--onboarding-input-border-focus: #4c7cbe;
+	--onboarding-input-border-focus: #3f6eaf;
 	--onboarding-input-focus-shadow: rgba(76, 124, 190, 0.15);
 	--onboarding-input-placeholder: rgba(45, 74, 110, 0.4);
 	--onboarding-status-loading-bg: rgba(76, 124, 190, 0.12);
 	--onboarding-status-loading-text: #2f5a8c;
 	--onboarding-error-bg: rgba(254, 226, 226, 0.8);
-	--onboarding-accent: #4c7cbe;
-	--onboarding-btn-primary-bg: #4c7cbe;
+	--onboarding-accent: #3f6eaf;
+	--onboarding-btn-primary-bg: #3f6eaf;
 	--onboarding-btn-primary-text: #edf1f8;
-	--onboarding-btn-primary-hover: #3c66a1;
+	--onboarding-btn-primary-hover: #34598d;
 	--onboarding-btn-shadow: rgba(22, 42, 78, 0.2);
 	--onboarding-btn-secondary-text: #2d4a6e;
 	--onboarding-btn-secondary-border: rgba(76, 124, 190, 0.35);
 	--onboarding-btn-secondary-hover: rgba(76, 124, 190, 0.08);
-	--onboarding-btn-text-color: #3c66a1;
+	--onboarding-btn-text-color: #34598d;
 	--onboarding-btn-text-hover: rgba(76, 124, 190, 0.08);
 	--onboarding-feature-bg: rgba(240, 246, 255, 0.6);
 }

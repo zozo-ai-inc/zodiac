@@ -13,12 +13,15 @@
 	--layer-sidebar: 11;
 	--layer-dropdown: 20;
 	--layer-maintenance-banner: 100;
-	--layer-lightbox: 1000;
+	--layer-onboarding: 9990;
 	--layer-mentions: 1200;
 	--layer-credits-popover: 9999;
 	--layer-overlay: 10000;
 	--layer-surface: 10020;
 	--layer-dialog: 10025;
 	--layer-dropdown-portal: 10030;
+	/* The lightbox is opened from inside chats while menus or popovers may still be open, so it covers them. */
+	--layer-lightbox: 10035;
+	--layer-tooltip: 10040;
 	--layer-toast: 99999;
 }

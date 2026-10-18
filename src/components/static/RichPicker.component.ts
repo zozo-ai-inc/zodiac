@@ -305,7 +305,7 @@ function createFamilyIcon(icon: ModelFamilyIcon): HTMLElement {
 
 	if (icon.type === "image") {
 		const element = document.createElement("img");
-		element.className = "settings-list-item-icon model-picker-family-icon model-picker-family-icon--image";
+		element.className = "settings-list-item-icon model-picker-family-icon";
 		element.src = icon.src;
 		element.alt = "";
 		element.title = icon.alt;

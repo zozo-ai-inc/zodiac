@@ -10,9 +10,9 @@
 	--tone-example-remove-hover: rgba(64, 17, 97, 0.12);
 	--tone-example-remove-active: rgba(64, 17, 97, 0.18);
 
-	--primary: #8e60d1;
-	--primary-hover: #7e56c5;
-	--primary-active: #6d49b4;
+	--primary: #8350cc;
+	--primary-hover: #7247c0;
+	--primary-active: #6443a5;
 
 	/* Body */
 	--body-bg: #f8f0ff;
@@ -31,10 +31,10 @@
 	--navbar-tab-highlight-bg: #c7aefd;
 
 	/* Buttons */
-	--button-bg: #8e60d1;
+	--button-bg: #8350cc;
 	--button-fg: #f4ebff;
-	--button-hover-bg: #7e56c5;
-	--button-active-bg: #6d49b4;
+	--button-hover-bg: #7247c0;
+	--button-active-bg: #6443a5;
 	--button-toggled-bg: #c4a0ebb0;
 
 	/* Tone example remove */
@@ -164,9 +164,9 @@
 	--onboarding-status-loading-text: #5a2f8c;
 	--onboarding-error-bg: rgba(254, 226, 254, 0.8);
 	--onboarding-accent: #9a4cbe;
-	--onboarding-btn-primary-bg: #9a4cbe;
+	--onboarding-btn-primary-bg: #8350cc;
 	--onboarding-btn-primary-text: #f1edf8;
-	--onboarding-btn-primary-hover: #7a3ca1;
+	--onboarding-btn-primary-hover: #7247c0;
 	--onboarding-btn-shadow: rgba(58, 22, 78, 0.2);
 	--onboarding-btn-secondary-text: #5e2d6e;
 	--onboarding-btn-secondary-border: rgba(140, 76, 190, 0.35);

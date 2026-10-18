@@ -57,17 +57,17 @@
 	--card-lora-shadow: 0 8px 24px rgba(4, 32, 8, 0.25);
 	--lora-card-meta-fg: #9ad8aa;
 	--lora-card-toggle-fg: #cbf6db;
-	--lora-card-trigger-bg: #253858;
+	--lora-card-trigger-bg: #255827;
 	--lora-card-trigger-border: rgba(43, 100, 70, 0.55);
 	--lora-card-trigger-fg: #d1ffec;
-	--lora-card-trigger-hover-bg: #315077;
-	--lora-card-trigger-copied-bg: #3b6ca1;
-	--lora-card-trigger-copied-border: #5b8fce;
+	--lora-card-trigger-hover-bg: #317734;
+	--lora-card-trigger-copied-bg: #3ba140;
+	--lora-card-trigger-copied-border: #5bce60;
 	--lora-card-empty-fg: #9ad8aa;
-	--lora-card-delete-bg: rgba(37, 58, 92, 0.6);
-	--lora-card-delete-border: rgba(58, 97, 150, 0.55);
+	--lora-card-delete-bg: rgba(37, 92, 39, 0.6);
+	--lora-card-delete-border: rgba(58, 150, 62, 0.55);
 	--lora-card-delete-fg: #d1ffec;
-	--lora-card-delete-hover-bg: rgba(40, 82, 135, 0.7);
+	--lora-card-delete-hover-bg: rgba(40, 135, 44, 0.7);
 	--lora-strength-slider: #7cffab;
 
 	/* Badges */
@@ -82,7 +82,7 @@
 	/* Selectable list element styles */
 	--input-radio-checked-bg: #0a632cb2;
 	--input-radio-checked-fg: #defffe;
-	--label-currentchat-hover-bg: #59719c24;
+	--label-currentchat-hover-bg: #599c5c24;
 
 	/* Message box */
 	--message-box-bg: #0b3f1698;
@@ -149,11 +149,11 @@
 	--onboarding-recommended-badge: linear-gradient(135deg, #5fc862 0%, #47a77b 100%);
 	--onboarding-hook-bg: rgba(95, 150, 95, 0.15);
 	--onboarding-hook-text: #a8edc9;
-	--onboarding-bullet: #7fa8d1;
+	--onboarding-bullet: #7fd183;
 	--onboarding-instructions-bg: rgba(31, 61, 44, 0.6);
 	--onboarding-step-number-bg: #5fc862;
 	--onboarding-step-number-text: #0b4424;
-	--onboarding-link: #7fa8d1;
+	--onboarding-link: #7fd183;
 	--onboarding-input-bg: rgba(18, 38, 27, 0.7);
 	--onboarding-input-text: #f0f8f4;
 	--onboarding-input-border: rgba(133, 194, 136, 0.25);

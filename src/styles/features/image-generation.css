@@ -125,6 +125,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	animation: lightboxFade 0.2s ease;
+	transition: opacity 0.2s ease;
+}
+
+.lightbox.lightbox--closing {
+	opacity: 0;
+	pointer-events: none;
+}
+
+@keyframes lightboxFade {
+	from {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lightbox {
+		animation: none;
+		transition: none;
+	}
 }
 
 .lightbox-backdrop {
@@ -409,7 +429,7 @@
 	flex: 1 1 auto;
 }
 
-.lora-add .btn-icon {
+.lora-add .btn {
 	padding: 0.5rem;
 	min-width: 2.75rem;
 	width: 2.75rem;
@@ -421,7 +441,7 @@
 
 :is([data-mode="dark"], [data-mode="light"]) .card-lora {
 	background-color: var(--card-add-lora-bg);
-	border: 1px solid var(--card-lora-border);
+	border: var(--card-lora-border);
 }
 
 [data-mode="dark"] .card-lora {
@@ -479,5 +499,5 @@
 
 :is([data-mode="dark"], [data-mode="light"]) .card-add-lora {
 	background-color: var(--card-add-lora-bg);
-	border: 1px solid var(--card-add-lora-border);
+	border: var(--card-add-lora-border);
 }

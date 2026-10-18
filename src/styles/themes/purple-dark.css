@@ -82,10 +82,10 @@
 	/* Selectable list element styles */
 	--input-radio-checked-bg: #630a63b2;
 	--input-radio-checked-fg: #ffdeff;
-	--label-currentchat-hover-bg: #9c597124;
+	--label-currentchat-hover-bg: #7a599c24;
 
 	/* Message box */
-	--message-box-bg: #44130f98;
+	--message-box-bg: #290f4498;
 
 	/* Cards */
 	--card-bg: #241124;
@@ -164,7 +164,7 @@
 	--onboarding-status-loading-text: #eda8ed;
 	--onboarding-error-bg: rgba(127, 29, 127, 0.3);
 	--onboarding-accent: #d17fd1;
-	--onboarding-btn-primary-bg: #c862c8;
+	--onboarding-btn-primary-bg: #b885eb;
 	--onboarding-btn-primary-text: #440b69;
 	--onboarding-btn-primary-hover: #8957ac;
 	--onboarding-btn-secondary-text: #e6d1e6;

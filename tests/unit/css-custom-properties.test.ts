@@ -24,15 +24,28 @@ for (const source of [...styleSheets, ...scriptsAndMarkup]) {
 	for (const match of source.matchAll(/setProperty\(\s*["'`](--[\w-]+)/g)) definedNames.add(match[1]);
 }
 
+const markup = readFileSync(join(SRC, "index.html"), "utf8");
+
 describe("stylesheet custom properties", () => {
 	it("defines every custom property a stylesheet reads without a fallback", () => {
 		const undefinedNames = new Set<string>();
-		for (const css of styleSheets) {
+		for (const css of [...styleSheets, markup]) {
 			// `var(--name)` with no comma has nothing to fall back on when the name is missing.
 			for (const match of css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
 				if (!definedNames.has(match[1])) undefinedNames.add(match[1]);
 			}
 		}
 		expect([...undefinedNames].sort()).toEqual([]);
+	});
+
+	it("never reads a custom property that no theme or script defines, even behind a fallback", () => {
+		// The fallback would always win, so the rule never follows the theme it appears to use.
+		const neverDefined = new Set<string>();
+		for (const css of [...styleSheets, markup]) {
+			for (const match of css.matchAll(/var\(\s*(--[\w-]+)\s*,/g)) {
+				if (!definedNames.has(match[1])) neverDefined.add(match[1]);
+			}
+		}
+		expect([...neverDefined].sort()).toEqual([]);
 	});
 });

@@ -33,7 +33,7 @@ function performSearch(): void {
 
 	if (searchTerm === "") {
 		personalityCards.forEach((card) => {
-			helpers.showElement(card, true);
+			card.classList.remove("hidden");
 		});
 		return;
 	}
@@ -57,9 +57,9 @@ function performSearch(): void {
 
 	personalityCards.forEach((card) => {
 		if (matchingCards.has(card)) {
-			helpers.showElement(card, true);
+			card.classList.remove("hidden");
 		} else {
-			helpers.hideElement(card);
+			card.classList.add("hidden");
 		}
 	});
 }

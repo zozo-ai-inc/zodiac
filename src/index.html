@@ -1026,7 +1026,7 @@
 														/>
 														<button
 															id="btn-add-lora"
-															class="btn-icon btn btn-primary"
+															class="btn btn-primary"
 															aria-label="Add LoRA"
 														>
 															<span class="material-symbols-outlined">add_link</span>
@@ -1481,28 +1481,36 @@
 								<!-- we match the name property of each input to the corresponding key in our personality model (Personality.service.js) -->
 								<h3>Basic Info</h3>
 								<input style="display: none" name="id" />
-								<label for="name">Name:</label>
-								<input type="text" name="name" placeholder="Mario" list="name-list" />
-								<label for="description">Description:</label>
+								<label for="persona-name">Name:</label>
+								<input id="persona-name" type="text" name="name" placeholder="Mario" />
+								<label for="persona-description">Description:</label>
 								<input
+									id="persona-description"
 									type="text"
 									name="description"
 									placeholder="A  plumber with a shroom addiction."
 								/>
-								<label for="image">Image URL:</label>
-								<input type="text" name="image" placeholder="https://example.com/mario.png" />
-								<label for="prompt">System Prompt:</label>
+								<label for="persona-image">Image URL:</label>
+								<input
+									id="persona-image"
+									type="text"
+									name="image"
+									placeholder="https://example.com/mario.png"
+								/>
+								<label for="persona-prompt">System Prompt:</label>
 								<textarea
+									id="persona-prompt"
 									type="text"
 									name="prompt"
 									placeholder="You are to act as main character from the Mario video game series..."
 									style="height: 5rem; resize: vertical"
 								></textarea>
 							</div>
-							<div class="step" id="group-chat-step-mode">
+							<div class="step">
 								<h3>Personality</h3>
-								<label for="aggressiveness">Aggressiveness:</label>
+								<label for="persona-aggressiveness">Aggressiveness:</label>
 								<input
+									id="persona-aggressiveness"
 									type="range"
 									name="aggressiveness"
 									min="0"
@@ -1516,8 +1524,9 @@
 									<option value="2">2</option>
 									<option value="3">3</option>
 								</datalist>
-								<label for="sensuality">Sensuality:</label>
+								<label for="persona-sensuality">Sensuality:</label>
 								<input
+									id="persona-sensuality"
 									type="range"
 									name="sensuality"
 									min="0"
@@ -1531,8 +1540,9 @@
 									<option value="2">2</option>
 									<option value="3">3</option>
 								</datalist>
-								<label for="independence">Independence:</label>
+								<label for="persona-independence">Independence:</label>
 								<input
+									id="persona-independence"
 									type="range"
 									name="independence"
 									min="0"
@@ -1623,7 +1633,7 @@
 								<div id="group-chat-persona-list" class="group-chat-persona-list"></div>
 							</div>
 
-							<div class="step">
+							<div class="step" id="group-chat-step-mode">
 								<h1>Mode</h1>
 								<p class="overlay-description">Choose how participants take turns.</p>
 
@@ -2099,7 +2109,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 						<button
 							type="button"
 							id="btn-close-subscription"
-							class="subscription-close-button btn-textual"
+							class="subscription-close-button"
 							aria-label="Close plans"
 						>
 							<span class="material-symbols-outlined" aria-hidden="true">close</span>
@@ -3272,7 +3282,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 								<p
 									id="onboarding-thinking-hint"
 									class="setting-hint"
-									style="display: none; color: var(--accent-color)"
+									style="display: none; color: var(--onboarding-accent)"
 								>
 									Thinking is required for this model.
 								</p>

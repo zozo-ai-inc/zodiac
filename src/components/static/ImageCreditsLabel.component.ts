@@ -506,8 +506,12 @@ function togglePopover(): void {
 	}
 }
 
+// The close fade hides the popover after 200ms; reopening within that window must cancel it.
+let popoverHideTimer: number | undefined;
+
 function showPopover(): void {
 	if (!imageCreditsLabel || !imageCreditsPopover) return;
+	window.clearTimeout(popoverHideTimer);
 
 	renderPopoverContent();
 	positionPopover();
@@ -525,7 +529,8 @@ function hidePopover(): void {
 
 	imageCreditsPopover.classList.remove("visible");
 	// Wait for animation to complete
-	setTimeout(() => {
+	window.clearTimeout(popoverHideTimer);
+	popoverHideTimer = window.setTimeout(() => {
 		imageCreditsPopover.classList.add("hidden");
 	}, 200);
 

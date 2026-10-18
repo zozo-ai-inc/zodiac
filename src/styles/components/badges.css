@@ -7,7 +7,7 @@
 		width ease-in-out 0.25s,
 		gap ease-in-out 0.25s;
 	background-color: var(--badge-bg);
-	border: 1px solid var(--badge-border);
+	border: var(--badge-border);
 	color: var(--badge-fg);
 }
 

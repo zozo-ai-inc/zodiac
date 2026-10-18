@@ -577,6 +577,7 @@
 
 #overlay > .overlay-content > #form-subscription .subscription-close-button {
 	position: absolute;
+	cursor: pointer;
 	top: 1rem;
 	right: 1rem;
 	z-index: 3;
@@ -994,6 +995,12 @@
 	background-clip: text;
 }
 
+[data-mode="light"] #form-subscription .tier-badge-max {
+	background: linear-gradient(135deg, #0f172a, #475569);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+
 #form-subscription .subscription-plan-subtitle {
 	margin: 0;
 	font-size: 0.97rem;
@@ -1395,6 +1402,10 @@
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: rgba(125, 211, 252, 0.9);
+}
+
+[data-mode="light"] #form-subscription .subscription-faq-eyebrow {
+	color: #0369a1;
 }
 
 #form-subscription .subscription-faq-header h2 {

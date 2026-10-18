@@ -70,6 +70,7 @@ function buildMenu() {
 		btn.setAttribute("role", "menuitemradio");
 		btn.setAttribute("aria-checked", mode === currentMode ? "true" : "false");
 		btn.textContent = label;
+		btn.dataset.sortMode = mode;
 
 		if (mode === currentMode) {
 			btn.classList.add("active");
@@ -107,6 +108,14 @@ function openMenu() {
 		buildMenu();
 	}
 	if (!menu) return;
+
+	// The menu is built once, so the checked option follows the stored order each time it opens.
+	const currentMode = getPersonaSortMode();
+	menu.querySelectorAll<HTMLElement>("[data-sort-mode]").forEach((item) => {
+		const isCurrent = item.dataset.sortMode === currentMode;
+		item.setAttribute("aria-checked", String(isCurrent));
+		item.classList.toggle("active", isCurrent);
+	});
 
 	menu.classList.add("open");
 	sortButton.setAttribute("aria-expanded", "true");
