@@ -27,7 +27,8 @@ test("open-settings without a page opens the panel without throwing", async ({ p
 	await stubExternalTraffic(page, []);
 	await seedLocalSettings(page);
 	await page.goto("/");
-	await expect(page.locator("#btn-chat-add")).toBeVisible();
+	// The button is static markup; wait for the app to finish starting so the settings listener exists.
+	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
 	const errorsBeforeDispatch = pageErrors.length;
 
 	await page.evaluate(() => {

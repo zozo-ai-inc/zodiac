@@ -2,7 +2,7 @@ button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.3rem;
+	gap: var(--space-1);
 	font-size: 1rem;
 	font-weight: normal;
 	transition: background-color 0.2s;
@@ -27,13 +27,13 @@ button:focus-visible {
 		box-shadow 0.15s ease;
 	border: none;
 	padding: 0.45rem 0.625rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	font-size: 0.8125rem;
 	font-weight: 600;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 }
 
 .btn:disabled {
@@ -136,7 +136,7 @@ button:focus-visible {
 	height: 2rem;
 	padding: 0;
 	border: none;
-	border-radius: 0.625rem;
+	border-radius: var(--radius-md);
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
@@ -164,7 +164,7 @@ button:focus-visible {
 	display: flex;
 	flex-direction: row;
 	justify-content: stretch;
-	gap: 0.375rem;
+	gap: var(--space-1-5);
 	width: 100%;
 }
 
@@ -175,7 +175,7 @@ button:focus-visible {
 .btn-array-vertical {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	width: 100%;
 }
 

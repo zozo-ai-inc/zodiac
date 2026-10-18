@@ -8,13 +8,13 @@
 .settings-nav-container {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 }
 
 .settings-home {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .settings-title {
@@ -24,12 +24,12 @@
 .settings-list {
 	display: flex;
 	flex-direction: column;
-	gap: 0.375rem;
+	gap: var(--space-1-5);
 }
 
 .settings-list-item {
 	width: 100%;
-	border-radius: 0.625rem;
+	border-radius: var(--radius-md);
 	padding: 0.625rem 0.75rem;
 	border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
 	background-color: var(--card-bg, rgba(0, 0, 0, 0.05));
@@ -42,7 +42,7 @@
 		background-color 0.15s ease,
 		border-color 0.15s ease,
 		transform 0.1s ease;
-	gap: 0.25rem;
+	gap: var(--space-1);
 }
 
 .settings-list-item:hover,
@@ -94,13 +94,13 @@
 .settings-page {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .settings-page-content {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 }
 
 .settings-or-divider {
@@ -113,35 +113,35 @@
 .settings-ux-group {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .settings-delimiter-group {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .custom-delimiter-instructions {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .delimiter-preview {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .delimiter-preview-box {
 	border: 1px solid var(--input-text-border);
 	background-color: var(--input-bg);
-	border-radius: 0.6rem;
+	border-radius: var(--radius-md);
 	padding: 0.75rem;
 	display: flex;
 	flex-direction: column;
-	gap: 0.4rem;
+	gap: var(--space-1-5);
 }
 
 .delimiter-preview-line {
@@ -188,7 +188,7 @@
 .api-key-group {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: var(--space-1);
 }
 
 #prefer-premium-endpoint-toggle {
@@ -200,16 +200,16 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 16px;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 	background: var(--input-bg);
 	border: 1px solid var(--card-border);
-	gap: 16px;
+	gap: var(--space-4);
 }
 
 .settings-toggle-entry-label {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--space-1);
 	flex: 1;
 	cursor: pointer;
 }
@@ -236,16 +236,16 @@
 	align-items: center;
 	padding: 16px;
 	margin-top: 12px;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 	background: var(--input-bg);
 	border: 1px solid var(--card-border);
-	gap: 16px;
+	gap: var(--space-4);
 }
 
 .settings-item-label {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--space-1);
 	flex: 1;
 }
 
@@ -329,14 +329,14 @@
 .generation-settings {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 }
 
 .generation-settings > div {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 4px;
+	gap: var(--space-1);
 }
 
 .generation-settings .material-symbols-outlined {
@@ -349,7 +349,7 @@
 
 .setting-label {
 	display: flex;
-	gap: 4px;
+	gap: var(--space-1);
 	align-items: center;
 }
 
@@ -361,19 +361,19 @@
 .ui-settings {
 	display: flex;
 	flex-direction: column;
-	gap: 1.25rem;
+	gap: var(--space-5);
 }
 
 .ui-setting {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 /* Mode Selector */
 .mode-selector {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: center;
 }
 
@@ -381,7 +381,7 @@
 	flex: 1;
 	padding: 0.5rem;
 	border: 2px solid transparent;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	cursor: pointer;
 	transition: all 0.2s ease;
 	display: flex;
@@ -397,7 +397,7 @@
 .theme-selector {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .theme-btn {
@@ -432,7 +432,7 @@
 .api-key-error {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: var(--space-1);
 	font-size: 0.8rem;
 	opacity: 0.8;
 

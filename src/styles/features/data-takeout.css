@@ -12,7 +12,7 @@
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: 1rem;
+	gap: var(--space-4);
 }
 
 .takeout-sheet__subtitle {
@@ -26,7 +26,7 @@
 	display: flex;
 	flex: 1 1 auto;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	min-height: 0;
 	overflow-y: auto;
 	padding-right: 0.25rem;
@@ -36,7 +36,7 @@
 .takeout-destinations {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	min-width: 0;
 	margin: 0;
 	padding: 0;
@@ -52,10 +52,10 @@
 .takeout-file-picker {
 	display: flex;
 	align-items: flex-start;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	padding: 0.75rem;
 	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-	border-radius: 0.65rem;
+	border-radius: var(--radius-md);
 	background: var(--card-bg, color-mix(in srgb, currentColor 4%, transparent));
 	cursor: pointer;
 }
@@ -138,7 +138,7 @@
 .takeout-conflicts,
 .takeout-status {
 	padding: 0.75rem;
-	border-radius: 0.65rem;
+	border-radius: var(--radius-md);
 	font-size: 0.88rem;
 	line-height: 1.4;
 }

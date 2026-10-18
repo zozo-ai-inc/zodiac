@@ -56,10 +56,11 @@ test("a closing overlay lets clicks through to the app straight away", async ({ 
 	await page.locator("#btn-login").click();
 	await expect(page.locator("#login-register-tabs")).toBeVisible();
 	const personasTab = page.locator(".sidebar .navbar-tab", { hasText: "Personas" });
-	const box = (await personasTab.boundingBox())!;
 
 	await page.locator("#btn-hide-overlay").click();
-	// A raw click, without waiting for anything to settle, as a quick user would.
+	// Measured only now: the terms banner can still change height after load and move the sidebar.
+	const box = (await personasTab.boundingBox())!;
+	// A raw click, without waiting for anything to settle, as a quick user would; well inside the 200ms fade.
 	await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 
 	await expect(

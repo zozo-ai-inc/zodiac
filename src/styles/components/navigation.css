@@ -2,7 +2,7 @@
 	position: relative;
 	display: flex;
 	flex-direction: row;
-	border-radius: 0.625rem;
+	border-radius: var(--radius-md);
 	margin-bottom: 0.5rem;
 	z-index: 0;
 	align-items: center;
@@ -16,7 +16,7 @@
 	overflow: hidden;
 	padding: 0.45rem 0.5rem;
 	text-align: center;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	z-index: 2;
 	-webkit-tap-highlight-color: transparent;
 	cursor: pointer;
@@ -40,7 +40,7 @@
 	box-sizing: border-box;
 	margin: 0;
 	position: absolute;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	transition:
 		left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
 		width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,6 +52,11 @@
 
 .navbar-tab:not(.navbar-tab-active):hover {
 	background-color: var(--navbar-tab-hover-bg);
+}
+
+.navbar-tab:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: -2px;
 }
 
 @media (max-width: 1032px) {

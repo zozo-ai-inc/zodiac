@@ -224,7 +224,11 @@
 						</div>
 
 						<input type="radio" name="currentChat" value="none" checked />
+						<p class="empty-state hidden" id="chat-search-empty" role="status">
+							No chats match your search
+						</p>
 						<div id="chatHistorySection"></div>
+						<p class="empty-state" id="chat-list-empty">No chats yet. Start one with New Chat.</p>
 					</div>
 
 					<div class="sidebar-section hidden" id="personalitySection">
@@ -325,6 +329,9 @@
 								</button>
 							</div>
 						</div>
+						<p class="empty-state hidden" id="persona-search-empty" role="status">
+							No personas match your search
+						</p>
 						<div id="personalitiesDiv"></div>
 					</div>
 				</div>
@@ -484,11 +491,19 @@
 									<div
 										class="navbar-tab navbar-tab-active"
 										data-roleplay-tab="dialogue"
+										role="tab"
 										aria-selected="true"
+										tabindex="0"
 									>
 										Dialogue
 									</div>
-									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
+									<div
+										class="navbar-tab"
+										data-roleplay-tab="actions"
+										role="tab"
+										aria-selected="false"
+										tabindex="-1"
+									>
 										Actions
 									</div>
 									<div class="navbar-tab-highlight"></div>

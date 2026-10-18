@@ -38,11 +38,11 @@
 	position: relative;
 	background: var(--card-bg, rgba(0, 0, 0, 0.05));
 	border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
-	border-radius: 16px;
+	border-radius: var(--radius-xl);
 	padding: 2.5rem 1.25rem 1.5rem 1.25rem;
 	margin-bottom: 2rem;
 	box-sizing: border-box;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 /* Round header (badge + actions) */
@@ -53,7 +53,7 @@
 	transform: translateX(-50%);
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	z-index: 0;
 }
 
@@ -66,7 +66,7 @@
 	background: var(--badge-bg, rgba(0, 0, 0, 0.08));
 	border: var(--badge-border, 1px solid rgba(0, 0, 0, 0.12));
 	padding: 3px 12px;
-	border-radius: 10px;
+	border-radius: var(--radius-md);
 	user-select: none;
 }
 
@@ -136,7 +136,7 @@
 .narrator-footer {
 	display: flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	margin-top: 0.4rem;
 }
 
@@ -158,7 +158,7 @@
 
 .roleplay-composer {
 	display: grid;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	padding: 0.75rem;
 }
 
@@ -172,7 +172,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	flex-wrap: wrap;
 }
 
@@ -198,9 +198,9 @@
 .roleplay-clear-actions {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.3rem;
+	gap: var(--space-1);
 	padding: 0.35rem 0.6rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	text-transform: none;
 	font-size: 0.8rem;
 	font-weight: 600;
@@ -236,7 +236,7 @@
 
 .roleplay-suggestions {
 	display: grid;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .roleplay-suggestion {
@@ -267,7 +267,7 @@
 
 .roleplay-action-category-nav {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	overflow-x: auto;
 	padding-bottom: 0.15rem;
 	scrollbar-width: thin;
@@ -276,7 +276,7 @@
 .roleplay-action-category-pill {
 	flex: 0 0 auto;
 	padding: 0.4rem 0.75rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	border: 1px solid color-mix(in srgb, var(--card-border) 72%, var(--button-bg) 28%);
 	background: color-mix(in srgb, var(--input-bg) 72%, var(--button-bg) 28%);
 	color: inherit;
@@ -287,7 +287,7 @@
 .roleplay-action-category-entry {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.2rem;
+	gap: var(--space-1);
 	flex: 0 0 auto;
 }
 
@@ -302,7 +302,7 @@
 	justify-content: center;
 	width: 2rem;
 	height: 2rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	border: 0;
 	background: transparent;
 	color: inherit;
@@ -351,7 +351,7 @@
 .roleplay-action-strip {
 	display: flex;
 	overflow-x: auto;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding-bottom: 0.15rem;
 	scrollbar-width: thin;
 }
@@ -359,11 +359,11 @@
 .roleplay-action-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	flex: 0 0 auto;
 	padding: 0.2rem;
 	border: 1px solid var(--card-border);
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	background: var(--input-bg);
 	transition:
 		background-color 0.15s ease,
@@ -390,7 +390,7 @@
 
 .roleplay-action-chip__select {
 	padding: 0.35rem 0.7rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	white-space: nowrap;
 }
 
@@ -414,7 +414,7 @@
 	justify-content: center;
 	width: 2rem;
 	height: 2rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	opacity: 0.7;
 	font-size: 1.1rem;
 }
@@ -471,7 +471,7 @@
 .roleplay-inline-add {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.4rem;
+	gap: var(--space-1-5);
 	flex: 0 0 auto;
 }
 
@@ -565,7 +565,7 @@
 		content: "";
 		width: 2.5rem;
 		height: 0.25rem;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		background: currentColor;
 		opacity: 0.28;
 	}
@@ -587,9 +587,4 @@
 .roleplay-custom-payload {
 	resize: vertical;
 	min-height: 6rem;
-}
-
-.roleplay-empty-state {
-	font-size: 0.9rem;
-	opacity: 0.7;
 }

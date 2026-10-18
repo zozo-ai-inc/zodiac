@@ -1,13 +1,13 @@
 .domain-migration-sheet {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 	width: min(100%, 36rem);
 	max-height: calc(100dvh - 2rem);
 	overflow-y: auto;
 	overscroll-behavior: contain;
 	padding: 1.75rem;
-	border-radius: 1.25rem;
+	border-radius: var(--radius-2xl);
 	background: var(--sidebar-bg, var(--body-bg, #20242d));
 	color: var(--body-fg, #f3f4f6);
 	border: var(--elevated-ui-outline, 1px solid rgb(255 255 255 / 15%));
@@ -35,7 +35,7 @@
 .domain-migration-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 .domain-migration-actions > button {
 	width: 100%;
@@ -43,7 +43,7 @@
 .domain-migration-acknowledgement {
 	display: flex;
 	align-items: flex-start;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 .domain-migration-acknowledgement input[type="checkbox"] {
 	appearance: auto;

@@ -401,7 +401,7 @@ function createGroupDivider(label: string): HTMLDivElement {
 
 function createEmptyState(message: string): HTMLDivElement {
 	const empty = document.createElement("div");
-	empty.className = "model-picker-empty";
+	empty.className = "empty-state model-picker-empty";
 	empty.textContent = message;
 	return empty;
 }

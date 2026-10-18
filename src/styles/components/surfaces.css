@@ -48,7 +48,7 @@
 
 .overlay-actions {
 	display: flex;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	justify-content: flex-end;
 	margin-top: 1rem;
 }
@@ -119,14 +119,14 @@
 .adaptive-sheet {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	width: min(32rem, calc(100dvw - 2rem));
 	max-height: min(80dvh, 40rem);
 	/* Sheets clip their animated shell; overflowing sheet content needs an inner scroll container. */
 	overflow: hidden;
 	padding: 2rem;
 	border: var(--elevated-ui-outline);
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	background: var(--sidebar-bg, var(--modal-bg, var(--body-bg)));
 	box-shadow: var(--elevated-ui-shadow);
 	box-sizing: border-box;
@@ -149,7 +149,7 @@
 .surface-header {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .surface-header > .surface-title {
@@ -206,7 +206,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.75rem 1rem;
 }
 
@@ -250,13 +250,13 @@
 .dialog-panel {
 	display: flex;
 	flex-direction: column;
-	gap: 1.25rem;
+	gap: var(--space-5);
 	width: 25rem;
 	max-width: 100%;
 	max-height: min(80dvh, 32rem);
 	padding: 1.5rem;
 	border: var(--elevated-ui-outline);
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	background: var(--modal-bg);
 	color: var(--modal-fg);
 	box-shadow: var(--modal-shadow);

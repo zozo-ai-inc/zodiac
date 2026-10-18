@@ -1004,7 +1004,7 @@ function renderSuggestions(): void {
 
 	if (isGeneratingSuggestions) {
 		const emptyState = document.createElement("div");
-		emptyState.className = "roleplay-empty-state";
+		emptyState.className = "empty-state";
 		const text = document.createElement("span");
 		text.textContent = "Generating suggestions...";
 		emptyState.append(text);
@@ -1014,7 +1014,7 @@ function renderSuggestions(): void {
 
 	if (suggestionOptions.length === 0) {
 		const emptyState = document.createElement("div");
-		emptyState.className = "roleplay-empty-state";
+		emptyState.className = "empty-state";
 		emptyState.textContent = "Refresh to generate four quick roleplay replies.";
 		ensuredRoleplaySuggestions.append(emptyState);
 		return;
