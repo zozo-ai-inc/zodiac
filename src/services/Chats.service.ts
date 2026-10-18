@@ -487,23 +487,37 @@ function pickRicherChatSnapshot(
 	return primary ?? secondary ?? undefined;
 }
 
-export async function initialize() {
+/**
+ * Rebuilds the sidebar chat list. Returns false, leaving the current list in place, when the chats could not be read.
+ */
+export async function initialize(): Promise<boolean> {
 	const chatContainer = document.querySelector<HTMLDivElement>("#chatHistorySection");
 	if (!chatContainer) {
 		console.error("Chat container not found");
-		return;
+		return false;
 	}
+	// Read before clearing, so a failed read (for example offline during "Sync Now") cannot empty the sidebar.
+	const chats = await readAllChats(db);
+	if (!chats) return false;
+
+	// The open chat is whichever sidebar radio is checked, so note it before the entries are replaced.
+	const currentChatId = getCurrentChatId();
 	chatContainer.innerHTML = "";
 	// Ensure sort mode is loaded from storage (or defaulted) before first render
 	const mode = getChatSortMode();
-	const chats = await getAllChats(db);
 	const sortedChats = sortChats(chats, mode);
 	// For initial render, append in sorted order so the first item in the
 	// sorted array appears at the top visually.
 	for (const chat of sortedChats) {
 		insertChatEntry(chat, "append");
 	}
-	await reorderChatListInDom();
+	await reorderChatListInDom(chats);
+	// Rebuilt entries start unchecked; keep the open chat selected without reloading it.
+	if (currentChatId) {
+		const currentEntry = chatContainer.querySelector<HTMLInputElement>(`input[value='chat${currentChatId}']`);
+		if (currentEntry) currentEntry.checked = true;
+	}
+	return true;
 }
 
 export function setChatSortMode(mode: ChatSortMode) {
@@ -527,17 +541,14 @@ export function getChatSortMode(): ChatSortMode {
 
 // Helper to get the current chat ordering based on the active sort mode,
 // using real data from Dexie so that created_at and last_interaction behave correctly.
-async function getSortedChatsSnapshotFromDb(): Promise<DbChat[]> {
-	const chats = await getAllChats(db);
-	const mode = getChatSortMode();
-	return sortChats(chats, mode);
-}
-
-// Reorder existing DOM nodes in #chatHistorySection to match the current sort mode
-async function reorderChatListInDom() {
+// Reorder existing DOM nodes in #chatHistorySection to match the current sort mode.
+// Pass the chats when they were just read; a failed read leaves the list as it is rather than emptying it.
+async function reorderChatListInDom(chats?: DbChat[]) {
 	if (!chatHistorySection) return;
 
-	const sorted = await getSortedChatsSnapshotFromDb();
+	const source = chats ?? (await readAllChats(db));
+	if (!source) return;
+	const sorted = sortChats(source, getChatSortMode());
 	const pinnedIds = new Set(pinningService.getPinnedChatIds());
 	const pinnedCount = sorted.reduce((count, chat) => count + (pinnedIds.has(chat.id) ? 1 : 0), 0);
 	let didInsertPinnedHeader = false;
@@ -700,6 +711,19 @@ function insertChatEntry(chat: DbChat, position: "append" | "prepend" = "prepend
 	editItem.classList.add("chat-actions-item");
 	editItem.setAttribute("role", "menuitem");
 	editItem.innerHTML = `<span class="material-symbols-outlined chat-action-icon">edit</span><span>Edit title</span>`;
+	// The title as last saved; the row's `chat` snapshot goes stale after the first rename.
+	let savedTitle = chat.title;
+	chatLabelText.addEventListener("keydown", (e) => {
+		if (chatLabelText.getAttribute("contenteditable") !== "true") return;
+		if (e.key === "Enter") {
+			e.preventDefault();
+			chatLabelText.blur();
+		} else if (e.key === "Escape") {
+			e.preventDefault();
+			chatLabelText.textContent = savedTitle;
+			chatLabelText.blur();
+		}
+	});
 	editItem.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -713,18 +737,25 @@ function insertChatEntry(chat: DbChat, position: "append" | "prepend" = "prepend
 				void (async () => {
 					chatLabelText.removeAttribute("contenteditable");
 					const newTitle = chatLabelText.textContent?.trim() || "";
-					if (newTitle && newTitle !== chat.title) {
-						await editChat(chat.id, newTitle);
+					// A blank name is not a rename; keep the one that is saved.
+					if (!newTitle || newTitle === savedTitle) {
+						chatLabelText.textContent = savedTitle;
+						return;
 					}
+					const saved = await editChat(chat.id, newTitle).catch((error) => {
+						console.error("Failed to rename chat", error);
+						return false;
+					});
+					if (saved) {
+						savedTitle = newTitle;
+						return;
+					}
+					// Never show a name that was not saved.
+					chatLabelText.textContent = savedTitle;
+					toastService.danger({ title: "Rename failed", text: "Couldn't save the new chat name." });
 				})(),
 			{ once: true }
 		);
-		chatLabelText.addEventListener("keydown", (e) => {
-			if (e.key === "Enter") {
-				e.preventDefault();
-				chatLabelText.blur();
-			}
-		});
 	});
 
 	const deleteItem = document.createElement("button");
@@ -1547,26 +1578,33 @@ export async function loadChat(chatID: string, dbArg: Db = db) {
 	}
 }
 
-export async function getAllChats(db: Db): Promise<DbChat[]> {
+/** All chats, or null when synced chats could not be read; the remote cache is only replaced by a successful read. */
+async function readAllChats(db: Db): Promise<DbChat[] | null> {
 	if (syncService.isOnlineSyncEnabled()) {
 		if (!syncService.isSyncActive()) return [];
 		const remoteChats = await syncService.fetchSyncedChatsMetadata();
+		if (!remoteChats) return null;
 		cacheRemoteChats(remoteChats);
 		return remoteChats;
 	}
-	const chats = await db.chats.orderBy("timestamp").toArray(); // Get all objects
-	return chats;
+	return await db.chats.orderBy("timestamp").toArray();
 }
 
-export async function editChat(id: string, title: string) {
+export async function getAllChats(db: Db): Promise<DbChat[]> {
+	return (await readAllChats(db)) ?? [];
+}
+
+/** Returns whether the new title was saved. */
+export async function editChat(id: string, title: string): Promise<boolean> {
 	const didUpdate = await mutateChat(id, (chat) => {
 		chat.title = title;
 		return true;
 	});
-	if (!didUpdate) return;
+	if (!didUpdate) return false;
 
 	// Resort entries in place to reflect updated title without full reload
 	void reorderChatListInDom();
+	return true;
 }
 
 export async function exportChat(id: string): Promise<void> {

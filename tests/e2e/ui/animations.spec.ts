@@ -15,24 +15,6 @@ async function openApp(page: Page): Promise<void> {
 }
 
 /**
- * Samples an element over the next few frames: whether it is still rendered and its opacity.
- * Starting the sampler before the triggering click catches the very first frame of a change.
- */
-async function startSampling(page: Page, selector: string): Promise<void> {
-	await page.evaluate((target) => {
-		const samples: Array<{ rendered: boolean; opacity: number }> = [];
-		(window as unknown as { __samples: typeof samples }).__samples = samples;
-		const sample = () => {
-			const element = document.querySelector<HTMLElement>(target);
-			const rendered = !!element && element.getClientRects().length > 0;
-			samples.push({ rendered, opacity: rendered ? Number(getComputedStyle(element!).opacity) : 0 });
-			if (samples.length < 12) requestAnimationFrame(sample);
-		};
-		requestAnimationFrame(sample);
-	}, selector);
-}
-
-/**
  * Clicks inside the page and reports how long `target` stays rendered afterwards, in milliseconds.
  * A fade keeps the element in the layout until its 200ms timer ends; vanishing removes it within a frame.
  * Layout presence is timer-driven, so it is steadier on a busy CI runner than sampling the animated opacity.
@@ -56,28 +38,17 @@ async function renderedMsAfterClick(page: Page, clickSelector: string, targetSel
 	);
 }
 
-async function readSamples(page: Page): Promise<Array<{ rendered: boolean; opacity: number }>> {
-	await page.waitForTimeout(400);
-	return await page.evaluate(
-		() => (window as unknown as { __samples: Array<{ rendered: boolean; opacity: number }> }).__samples
-	);
-}
-
 test("closing the overlay fades its content out together with the backdrop", async ({ page }) => {
 	await openApp(page);
 	await page.locator("#btn-login").click();
 	await expect(page.locator("#login-register-tabs")).toBeVisible();
 	await page.waitForTimeout(300);
 
-	await startSampling(page, "#login-register-tabs");
-	await page.locator("#btn-hide-overlay").click();
-	const samples = await readSamples(page);
-
-	// While the backdrop fades (about 200ms, over ten frames), the form should still be there, fading with it.
+	// The content stays in place for the backdrop's 200ms fade; before, it was hidden within a frame.
 	expect(
-		samples.slice(0, 4).every((frame) => frame.rendered),
+		await renderedMsAfterClick(page, "#btn-hide-overlay", "#login-register-tabs"),
 		"the overlay's content should not blink out before its backdrop has faded"
-	).toBe(true);
+	).toBeGreaterThanOrEqual(150);
 });
 
 test("a closing overlay lets clicks through to the app straight away", async ({ page }) => {
@@ -110,7 +81,7 @@ test("the confirm dialog fades out when answered", async ({ page }) => {
 	expect(
 		await renderedMsAfterClick(page, "#btn-dialog-ok", "#dialog"),
 		"the dialog should fade out rather than vanish in one frame"
-	).toBeGreaterThanOrEqual(120);
+	).toBeGreaterThanOrEqual(150);
 });
 
 test("the image lightbox fades in and out", async ({ page }) => {
@@ -140,19 +111,18 @@ test("the image lightbox fades in and out", async ({ page }) => {
 	await page.locator("label[for='chatchat-lightbox']").click();
 	await page.locator(".generated-image-wrapper").hover();
 
-	await startSampling(page, ".lightbox");
-	await page.locator(".generated-image-overlay .btn-expand").click();
-	const opening = await readSamples(page);
-	expect(
-		opening.some((frame) => frame.rendered && frame.opacity < 1),
-		"the lightbox backdrop should fade in rather than appear at full strength"
-	).toBe(true);
+	// The whole lightbox, backdrop included, should be animating in the moment it appears.
+	const animatesIn = await page.evaluate(() => {
+		document.querySelector<HTMLElement>(".generated-image-overlay .btn-expand")!.click();
+		return (document.querySelector<HTMLElement>(".lightbox")?.getAnimations().length ?? 0) > 0;
+	});
+	expect(animatesIn, "the lightbox backdrop should fade in rather than appear at full strength").toBe(true);
 
 	await page.waitForTimeout(300);
 	expect(
 		await renderedMsAfterClick(page, ".lightbox-close", ".lightbox"),
 		"the lightbox should fade out rather than disappear at once"
-	).toBeGreaterThanOrEqual(120);
+	).toBeGreaterThanOrEqual(150);
 });
 
 test("the sidebar keeps its slide on a narrow desktop after the mobile sidebar was used", async ({ page }) => {

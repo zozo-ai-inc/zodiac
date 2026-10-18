@@ -162,6 +162,8 @@ export async function buildTakeoutExport(
 	} else {
 		if (categories.includes("chats")) {
 			const metadata = await syncService.fetchSyncedChatsMetadata();
+			// An export missing every chat would look complete, so a failed read fails the export.
+			if (metadata === null) throw new Error("Failed to read your cloud chats.");
 			const includeMedia = categories.includes("media");
 			for (let index = 0; index < metadata.length; index++) {
 				signal?.throwIfAborted();
@@ -260,6 +262,7 @@ async function parseImportFiles(files: readonly File[]): Promise<ParsedTakeout> 
 
 async function readCompleteCloudChats(): Promise<DbChat[]> {
 	const metadata = await syncService.fetchSyncedChatsMetadata();
+	if (metadata === null) throw new Error("Failed to read your cloud chats.");
 	const chats: DbChat[] = [];
 	for (const chat of metadata) {
 		const messages = await syncService.fetchAllSyncedChatMessages(chat.id);

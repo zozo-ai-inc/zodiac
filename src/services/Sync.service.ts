@@ -787,7 +787,8 @@ async function fetchAllSyncedPersonasPaged(userId: string): Promise<Array<{
 	return rows;
 }
 
-export async function fetchSyncedChatsMetadata(): Promise<DbChat[]> {
+/** Returns null when the chats could not be read, so callers can tell a failure from an account with no chats. */
+export async function fetchSyncedChatsMetadata(): Promise<DbChat[] | null> {
 	if (!isSyncActive()) return [];
 
 	const user = await getCurrentUser();
@@ -797,7 +798,7 @@ export async function fetchSyncedChatsMetadata(): Promise<DbChat[]> {
 	const data = await fetchAllSyncedChatsPaged(user.id);
 	if (!data) {
 		console.error("fetchSyncedChatsMetadata failed to read synced chats");
-		return [];
+		return null;
 	}
 
 	const activeRows = data.filter((row) => !row.deleted);

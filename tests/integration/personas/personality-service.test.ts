@@ -465,6 +465,35 @@ describe("Personality.service persona CRUD", () => {
 			)?.checked
 		).toBe(true);
 	});
+	it("keeps a synced persona's card and selection when deleting it fails", async () => {
+		const syncService = await import("../../../src/services/Sync.service");
+		const toastService = await import("../../../src/services/Toast.service");
+		vi.mocked(syncService.isOnlineSyncEnabled).mockReturnValue(true);
+		vi.mocked(syncService.isSyncActive).mockReturnValue(true);
+		vi.mocked(syncService.fetchSyncedPersonas).mockImplementation(async () => [
+			makePersona({ id: "persona-stays", name: "Stays Put", description: "Its delete fails." })
+		]);
+		// The cloud refuses the delete, for example because the device is offline.
+		vi.mocked(syncService.deleteSyncedPersona).mockResolvedValue(false);
+
+		const { db: testDb, personalityService } = await loadPersonalityService();
+		db = testDb;
+		document.querySelector<HTMLInputElement>("#personality-persona-stays input[name='personality']")?.click();
+
+		document.querySelector<HTMLButtonElement>("#personality-persona-stays .btn-delete-card")?.click();
+		await waitForCondition(
+			() => vi.mocked(syncService.deleteSyncedPersona).mock.calls.length > 0,
+			"Timed out waiting for the delete attempt"
+		);
+		await new Promise((resolve) => setTimeout(resolve, 0));
+
+		expect(
+			document.querySelector("#personality-persona-stays"),
+			"a persona that was not deleted should keep its card"
+		).not.toBeNull();
+		expect((await personalityService.getSelected())?.name).toBe("Stays Put");
+		expect(toastService.danger).toHaveBeenCalled();
+	});
 });
 
 describe("Personality.service persona card rendering", () => {
