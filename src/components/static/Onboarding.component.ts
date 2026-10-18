@@ -1186,6 +1186,16 @@ function setupSummary(): void {
 
 						onboardingService.markCompleted();
 
+						// Back from checkout can restore this page from the back/forward cache still showing "Redirecting...".
+						window.addEventListener(
+							"pageshow",
+							(event) => {
+								if (!event.persisted) return;
+								summaryFinishButton!.disabled = false;
+								summaryFinishButton!.textContent = "Continue to Checkout";
+							},
+							{ once: true }
+						);
 						// Redirect to Stripe checkout
 						window.location.href = url;
 					} catch (error) {

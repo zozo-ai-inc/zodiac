@@ -365,23 +365,33 @@ export async function getAll() {
 	return personalities.map(normalizePersonaTimestamps);
 }
 
-export async function remove(id: string) {
+/** Returns whether the persona was deleted; failures have already been reported to the user. */
+export async function remove(id: string): Promise<boolean> {
 	if (id === "-1") {
-		return;
+		return false;
 	}
 
 	if (syncService.isOnlineSyncEnabled()) {
-		if (!syncService.isSyncActive()) return;
-		const ok = await syncService.deleteSyncedPersona(id);
-		if (ok) {
-			removeCachedSyncedPersona(id);
+		if (!syncService.isSyncActive()) {
+			danger({ title: "Sync locked", text: "Unlock cloud sync before deleting personas." });
+			return false;
 		}
+		const ok = await syncService.deleteSyncedPersona(id);
+		if (!ok) {
+			danger({
+				title: "Delete failed",
+				text: "Couldn't delete the persona from the cloud. Try again when you're online."
+			});
+			return false;
+		}
+		removeCachedSyncedPersona(id);
 		await pinningService.removePersonaPin(id);
-		return;
+		return true;
 	}
 
 	await db.personalities.delete(id);
 	await pinningService.removePersonaPin(id);
+	return true;
 }
 
 function insert(personality: Personality, id: string) {
@@ -584,7 +594,8 @@ export async function add(personality: Personality, explicitId?: string): Promis
 	return true;
 }
 
-export async function edit(id: string, personality: Personality) {
+/** Returns whether the change was saved; failures have already been reported to the user. */
+export async function edit(id: string, personality: Personality): Promise<boolean> {
 	//check if this is a synced personality from marketplace
 	const existing = syncService.isOnlineSyncEnabled()
 		? (await fetchSyncedPersonasCached()).find((p) => p.id === id)
@@ -602,14 +613,14 @@ export async function edit(id: string, personality: Personality) {
 	if (syncService.isOnlineSyncEnabled()) {
 		if (!syncService.isSyncActive()) {
 			danger({ title: "Sync locked", text: "Unlock cloud sync before editing personas." });
-			return;
+			return false;
 		}
-		if (!existing) return;
+		if (!existing) return false;
 		const merged = normalizePersonaTimestamps({ ...(existing as DbPersonality), ...updateData, id });
 		const syncedOk = await syncService.pushPersona(merged);
 		if (!syncedOk) {
 			danger({ title: "Sync failed", text: "Failed to update persona in cloud." });
-			return;
+			return false;
 		}
 		upsertCachedSyncedPersona(merged);
 	} else {
@@ -620,6 +631,7 @@ export async function edit(id: string, personality: Personality) {
 
 	//reselect the personality if it was selected prior
 	document.querySelector(`#personality-${id}`)?.querySelector("input")?.click();
+	return true;
 }
 
 export function generateCard(personality: Personality, id: string, syncInfo?: SyncInfo) {
@@ -717,20 +729,23 @@ export function generateCard(personality: Personality, id: string, syncInfo?: Sy
 		share(personality, id);
 	});
 	if (deleteButton) {
-		deleteButton.addEventListener("click", () => {
-			//first if the personality to delete is the one currently selected, we select the default personality
-			if (input?.checked) {
-				document
-					.querySelector<HTMLInputElement>(
-						"#personalitiesDiv .card-personality:not([id]) input[name='personality']"
-					)
-					?.click();
-			}
-			if (id && id != "-1") {
-				void remove(id);
-			}
-			card.remove();
-		});
+		deleteButton.addEventListener(
+			"click",
+			() =>
+				void (async () => {
+					// Only change the card and the selection once the persona is really gone.
+					if (id && id != "-1" && !(await remove(id))) return;
+					//if the deleted personality was the selected one, fall back to the default personality
+					if (input?.checked) {
+						document
+							.querySelector<HTMLInputElement>(
+								"#personalitiesDiv .card-personality:not([id]) input[name='personality']"
+							)
+							?.click();
+					}
+					card.remove();
+				})()
+		);
 	}
 	if (editButton) {
 		editButton.addEventListener(
