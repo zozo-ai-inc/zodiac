@@ -246,14 +246,14 @@
 	white-space: normal;
 	line-height: 1.4;
 	padding: 0.75rem 0.9rem;
-	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
+	border: 1px solid color-mix(in srgb, var(--card-border) 84%, transparent);
 	background: color-mix(in srgb, var(--input-bg) 80%, var(--button-bg) 20%);
 	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 .roleplay-suggestion:hover:not(:disabled) {
 	background: color-mix(in srgb, var(--input-bg) 64%, var(--button-bg) 36%);
-	border-color: color-mix(in srgb, var(--button-bg) 38%, var(--border-color));
+	border-color: color-mix(in srgb, var(--button-bg) 38%, var(--card-border));
 }
 
 .roleplay-suggestion:active:not(:disabled) {
@@ -277,7 +277,7 @@
 	flex: 0 0 auto;
 	padding: 0.4rem 0.75rem;
 	border-radius: 999px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 72%, var(--button-bg) 28%);
+	border: 1px solid color-mix(in srgb, var(--card-border) 72%, var(--button-bg) 28%);
 	background: color-mix(in srgb, var(--input-bg) 72%, var(--button-bg) 28%);
 	color: inherit;
 	font-size: 0.82rem;
@@ -320,18 +320,18 @@
 }
 
 .roleplay-action-chip__icon--danger:hover {
-	color: var(--danger-color, #d9534f);
+	color: var(--danger);
 }
 
 .roleplay-action-category-pill:hover:not(.active):not(:disabled) {
 	background: color-mix(in srgb, var(--input-bg) 58%, var(--button-bg) 42%);
-	border-color: color-mix(in srgb, var(--button-bg) 52%, var(--border-color));
+	border-color: color-mix(in srgb, var(--button-bg) 52%, var(--card-border));
 }
 
 .roleplay-action-category-pill.active {
 	background: var(--button-bg);
 	color: var(--button-fg);
-	border-color: color-mix(in srgb, var(--button-bg) 82%, var(--border-color));
+	border-color: color-mix(in srgb, var(--button-bg) 82%, var(--card-border));
 }
 
 .roleplay-add-entry {
@@ -356,7 +356,7 @@
 	gap: 0.35rem;
 	flex: 0 0 auto;
 	padding: 0.2rem;
-	border: 1px solid var(--border-color);
+	border: 1px solid var(--card-border);
 	border-radius: 999px;
 	background: var(--input-bg);
 	transition:
@@ -367,7 +367,7 @@
 }
 
 .roleplay-action-chip:hover {
-	border-color: color-mix(in srgb, var(--button-bg) 30%, var(--border-color));
+	border-color: color-mix(in srgb, var(--button-bg) 30%, var(--card-border));
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--button-bg) 10%, transparent);
 }
 
@@ -423,7 +423,7 @@
 }
 
 .roleplay-action-chip.selected {
-	border-color: color-mix(in srgb, var(--button-bg) 88%, var(--border-color));
+	border-color: color-mix(in srgb, var(--button-bg) 88%, var(--card-border));
 	background: color-mix(in srgb, var(--button-bg) 82%, var(--input-bg));
 	color: var(--button-fg);
 	box-shadow:

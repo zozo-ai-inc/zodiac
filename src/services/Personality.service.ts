@@ -650,19 +650,19 @@ export function generateCard(personality: Personality, id: string, syncInfo?: Sy
             <img class="background-img" src="${personality.image}"></img>
             <input  type="radio" name="personality" value="${personality.name}">
             <div class="btn-array-personalityactions">
-                ${id ? `<button class="btn-textual btn-pin-card material-symbols-outlined" title="Pin persona">keep</button>` : ""}
+                ${id ? `<button type="button" class="btn-textual btn-pin-card material-symbols-outlined" title="Pin persona" aria-label="Pin persona">keep</button>` : ""}
                 ${
 					id
-						? `<button class="btn-textual btn-edit-card material-symbols-outlined" 
-                    id="btn-edit-personality-${personality.name}">edit</button>`
+						? `<button type="button" class="btn-textual btn-edit-card material-symbols-outlined"
+                    id="btn-edit-personality-${personality.name}" aria-label="Edit persona">edit</button>`
 						: ""
 				}
-                <button class="btn-textual btn-share-card material-symbols-outlined" 
-                    id="btn-share-personality-${personality.name}">share</button>
+                <button type="button" class="btn-textual btn-share-card material-symbols-outlined"
+                    id="btn-share-personality-${personality.name}" aria-label="Share persona">share</button>
                 ${
 					id
-						? `<button class="btn-textual btn-delete-card material-symbols-outlined"
-                    id="btn-delete-personality-${personality.name}">delete</button>`
+						? `<button type="button" class="btn-textual btn-delete-card material-symbols-outlined"
+                    id="btn-delete-personality-${personality.name}" aria-label="Delete persona">delete</button>`
 						: ""
 				}
             </div>

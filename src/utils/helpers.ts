@@ -334,25 +334,42 @@ export async function confirmDialog(
 		throw new Error("Dialog elements not found in the document");
 	}
 
+	const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+	dialog.classList.toggle("dialog--danger", Boolean(options.danger));
 	btnDialogOk.classList.remove("btn-danger", "btn-primary");
 	btnDialogOk.classList.add(options.danger ? "btn-danger" : "btn-primary");
 	btnDialogOk.textContent = options.okText ?? "OK";
 	btnDialogCancel.textContent = options.cancelText ?? "Cancel";
+	dialogMessage.textContent = message;
 
 	showElement(dialog, false);
+	// Cancel is the safe default for a keyboard user who presses Enter straight away.
+	requestAnimationFrame(() => btnDialogCancel.focus({ preventScroll: true }));
 
 	return new Promise((resolve) => {
-		dialogMessage.textContent = message;
-
-		btnDialogOk.onclick = () => {
+		const settle = (confirmed: boolean) => {
+			window.removeEventListener("keydown", handleKeydown, true);
 			hideElement(dialog, true);
-			resolve(true);
+			if (previousFocus && document.contains(previousFocus)) previousFocus.focus({ preventScroll: true });
+			resolve(confirmed);
 		};
 
-		btnDialogCancel.onclick = () => {
-			hideElement(dialog, true);
-			resolve(false);
+		// Captured on window so the dialog answers Escape and Tab before any sheet or panel beneath it.
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				settle(false);
+			} else if (event.key === "Tab") {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				(document.activeElement === btnDialogCancel ? btnDialogOk : btnDialogCancel).focus();
+			}
 		};
+		window.addEventListener("keydown", handleKeydown, true);
+
+		btnDialogOk.onclick = () => settle(true);
+		btnDialogCancel.onclick = () => settle(false);
 	});
 }
 

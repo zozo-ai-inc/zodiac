@@ -8,8 +8,14 @@ button {
 	transition: background-color 0.2s;
 }
 
-button:focus {
+button:focus:not(:focus-visible) {
 	outline: none;
+}
+
+/* Every button gets the same keyboard focus ring; pointer focus stays unmarked. */
+button:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 /* Base styled button class - opt-in for default button appearance */
@@ -69,7 +75,7 @@ button:focus {
 
 .btn-secondary {
 	background-color: var(--input-bg);
-	color: var(--text-primary);
+	color: var(--body-fg);
 	border: 1px solid var(--input-text-border);
 }
 
@@ -118,6 +124,40 @@ button:focus {
 	font-size: inherit;
 	font-weight: inherit;
 	text-transform: uppercase;
+}
+
+/* Icon-only controls such as close and back share one size, shape and hover across every panel. */
+.btn-icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+	border: none;
+	border-radius: 0.625rem;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.btn-icon.material-symbols-outlined,
+.btn-icon > .material-symbols-outlined {
+	font-size: 1.25rem;
+}
+
+.btn-icon:hover {
+	background-color: var(--navbar-tab-hover-bg);
+}
+
+/* Fingers need a larger target than a mouse pointer. */
+@media (pointer: coarse) {
+	.btn-icon {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
 }
 
 /* Split Button Component */

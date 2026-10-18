@@ -13,6 +13,9 @@
 
 	--toast-fg: #000000;
 
+	--body-fg-muted: color-mix(in srgb, var(--body-fg) 65%, transparent);
+	--danger: #c62828;
+
 	/* Dialog */
 	--dialog-bg: #971c1c;
 	--dialog-shadow: none;

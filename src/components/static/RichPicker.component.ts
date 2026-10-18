@@ -26,6 +26,7 @@ const familiesView = document.querySelector<HTMLElement>("#model-picker-families
 const familyList = document.querySelector<HTMLElement>("#model-picker-family-list");
 const detailView = document.querySelector<HTMLElement>("#model-picker-family-detail");
 const backButton = document.querySelector<HTMLButtonElement>("#model-picker-back");
+const closeButton = document.querySelector<HTMLButtonElement>("#btn-close-model-picker");
 const familyTitle = document.querySelector<HTMLElement>("#model-picker-family-title");
 const searchInput = document.querySelector<HTMLInputElement>("#model-picker-search-input");
 const megaToggle = document.querySelector<HTMLButtonElement>("#model-picker-mega-toggle");
@@ -40,6 +41,7 @@ if (
 	!familyList ||
 	!detailView ||
 	!backButton ||
+	!closeButton ||
 	!familyTitle ||
 	!searchInput ||
 	!megaToggle ||
@@ -696,6 +698,7 @@ function refreshOpenSheet(): void {
 
 ensuredTrigger.addEventListener("click", openSheet);
 ensuredBack.addEventListener("click", navigateToFamilyList);
+closeButton.addEventListener("click", () => surfaceService.close(SHEET_ID));
 ensuredMegaToggle.addEventListener("click", () => {
 	detailMegaOnly = !detailMegaOnly;
 	renderFamilyDetail();

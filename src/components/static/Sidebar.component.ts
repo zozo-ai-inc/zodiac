@@ -4,8 +4,8 @@ import * as chatsService from "../../services/Chats.service";
 import { db } from "../../services/Db.service";
 import "./ChatSearch.component";
 
-const hideSidebarButton = document.querySelector("#btn-hide-sidebar");
-const showSidebarButton = document.querySelector("#btn-show-sidebar");
+const hideSidebarButton = document.querySelector<HTMLButtonElement>("#btn-hide-sidebar");
+const showSidebarButton = document.querySelector<HTMLButtonElement>("#btn-show-sidebar");
 const sidebarViews = document.querySelectorAll<HTMLElement>(".sidebar-section");
 const sidebar = document.querySelector<HTMLDivElement>(".sidebar");
 const clearAllPersonalitiesButton = document.querySelector("#btn-clearall-personality");
@@ -27,12 +27,43 @@ if (
 	console.error("Sidebar component is missing some elements. Please check the HTML structure.");
 	throw new Error("Sidebar component is not properly initialized.");
 }
-hideSidebarButton.addEventListener("click", () => {
-	helpers.hideElement(sidebar);
+const mobileLayoutQuery = window.matchMedia("(max-width: 1032px)");
+
+function isMobileSidebarOpen(): boolean {
+	return mobileLayoutQuery.matches && !sidebar!.classList.contains("hidden") && sidebar!.style.display === "flex";
+}
+
+// Several modules hide the sidebar directly, so the toggle's state follows the element rather than the handlers.
+function syncShowSidebarExpanded(): void {
+	showSidebarButton!.setAttribute("aria-expanded", String(isMobileSidebarOpen()));
+}
+
+new MutationObserver(syncShowSidebarExpanded).observe(sidebar, {
+	attributes: true,
+	attributeFilter: ["class", "style"]
 });
+mobileLayoutQuery.addEventListener("change", syncShowSidebarExpanded);
+syncShowSidebarExpanded();
+
+function closeMobileSidebar(): void {
+	helpers.hideElement(sidebar!);
+	showSidebarButton!.focus({ preventScroll: true });
+}
+
+hideSidebarButton.addEventListener("click", closeMobileSidebar);
 showSidebarButton.addEventListener("click", () => {
 	sidebar.style.display = "flex";
 	helpers.showElement(sidebar, false);
+});
+
+// Layers opened from the sidebar (menus, settings, overlays, sheets) claim Escape first.
+document.addEventListener("keydown", (event) => {
+	if (event.key !== "Escape" || event.defaultPrevented || !isMobileSidebarOpen()) return;
+	if (document.body.classList.contains("settings-open")) return;
+	if (!document.querySelector<HTMLElement>("#overlay")?.classList.contains("hidden")) return;
+	if (document.querySelector("#surface-plane > .surface-plane__item:not(.hidden)")) return;
+	event.preventDefault();
+	closeMobileSidebar();
 });
 clearAllPersonalitiesButton.addEventListener(
 	"click",

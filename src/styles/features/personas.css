@@ -106,6 +106,17 @@
 	gap: 0.3rem;
 }
 
+@media (pointer: coarse) {
+	.btn-array-personalityactions {
+		gap: 0;
+	}
+
+	.btn-array-personalityactions > button {
+		min-width: 2.25rem;
+		min-height: 2.25rem;
+	}
+}
+
 .card-personality {
 	position: relative;
 	border-radius: 0.75rem;

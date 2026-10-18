@@ -102,6 +102,13 @@
 	opacity: 1;
 }
 
+/* Without hover, the actions would be invisible until tapped blind. */
+@media (hover: none) {
+	.generated-image-overlay {
+		opacity: 1;
+	}
+}
+
 .generated-image-overlay .btn-image-action {
 	color: #e4e4e4 !important;
 }
@@ -303,11 +310,6 @@
 		transform 0.2s ease;
 }
 
-.lora-card-trigger:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
-}
-
 .lora-card-trigger[data-copied="true"] {
 	transform: translateY(-1px);
 }
@@ -336,11 +338,6 @@
 
 .lora-card-delete .material-symbols-outlined {
 	font-size: 1.15rem;
-}
-
-.lora-card-delete:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
 }
 
 .lora-strength {

@@ -20,11 +20,8 @@ body.maintenance-banner-visible #main-container {
 	pointer-events: none;
 }
 
-/* The padding keeps the tap target at 1.75rem around the smaller icon. */
 #btn-hide-sidebar {
 	display: none;
-	padding: 0.25rem;
-	font-size: 1.25rem;
 }
 
 #main-container {
@@ -79,22 +76,8 @@ body.settings-open .settings-sidebar {
 	transition-delay: 0s;
 }
 
-/* One size for the panel title, whether it names the panel or the open settings page. */
 .settings-sidebar-title {
 	margin-right: auto;
-	font-size: 1.1rem;
-	font-weight: 600;
-	line-height: 1.75rem;
-}
-
-#btn-settings-back {
-	display: flex;
-}
-
-/* The padding keeps the tap target at 1.75rem around the smaller icon. */
-#btn-close-settings {
-	padding: 0.25rem;
-	font-size: 1.25rem;
 }
 
 .sidebar-top-bar {
@@ -217,8 +200,7 @@ body.settings-open .settings-sidebar {
 }
 
 .sidebar-account:focus-visible,
-.sidebar-footer-button:focus-visible,
-#btn-close-settings:focus-visible {
+.sidebar-footer-button:focus-visible {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
@@ -400,7 +382,7 @@ body.settings-open .settings-sidebar {
 	}
 
 	#btn-hide-sidebar {
-		display: block;
+		display: inline-flex;
 	}
 
 	#mainContent {
@@ -418,6 +400,6 @@ body.settings-open .settings-sidebar {
 	}
 
 	#btn-show-sidebar {
-		display: block;
+		display: inline-flex;
 	}
 }

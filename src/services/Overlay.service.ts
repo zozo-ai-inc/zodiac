@@ -8,6 +8,16 @@ import { dispatchElementEvent, createEmptyEvent } from "../events";
 const overlay = document.querySelector<HTMLElement>(".overlay")!;
 const overlayItems = overlay.querySelector<HTMLElement>(".overlay-content")!.children;
 const personalityForm = document.querySelector<HTMLElement>("#form-add-personality")!;
+const hideOverlayButton = document.querySelector<HTMLButtonElement>("#btn-hide-overlay")!;
+
+// Escape does what the back button does, and only while the current flow shows it.
+document.addEventListener("keydown", (event) => {
+	if (event.key !== "Escape" || event.defaultPrevented || overlay.classList.contains("hidden")) return;
+	if (document.querySelector("#surface-plane > .surface-plane__item:not(.hidden)")) return;
+	if (hideOverlayButton.getClientRects().length === 0) return;
+	event.preventDefault();
+	hideOverlayButton.click();
+});
 
 function formatMessageDebugInfo(debugInfo?: MessageDebugInfo): string {
 	if (!debugInfo) {

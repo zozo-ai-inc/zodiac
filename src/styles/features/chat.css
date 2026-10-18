@@ -75,7 +75,7 @@ body.full-width-chat .message-container {
 	padding: 0.08rem 0.45rem;
 	margin: 0 0.1rem;
 	border-radius: 999px;
-	background: rgba(var(--accent-color, 76, 124, 190), 0.18);
+	background: color-mix(in srgb, var(--primary) 18%, transparent);
 	color: var(--accent-fg, inherit);
 	font-weight: 650;
 	line-height: 1.25;
@@ -87,7 +87,7 @@ body.full-width-chat .message-container {
 }
 
 .message-text .mention-chip:hover {
-	background: rgba(var(--accent-color, 76, 124, 190), 0.3);
+	background: color-mix(in srgb, var(--primary) 30%, transparent);
 	transform: translateY(-1px);
 }
 
@@ -98,7 +98,7 @@ body.full-width-chat .message-container {
 	padding: 0.06rem 0.45rem;
 	margin: 0 0.1rem;
 	border-radius: 999px;
-	background: rgba(var(--accent-color, 76, 124, 190), 0.22);
+	background: color-mix(in srgb, var(--primary) 22%, transparent);
 	color: var(--accent-fg, inherit);
 	font-weight: 650;
 	line-height: 1.25;
@@ -141,7 +141,7 @@ body.full-width-chat .message-container {
 
 .mention-suggestion-item:hover,
 .mention-suggestion-item.active {
-	background: rgba(var(--accent-color, 76, 124, 190), 0.18);
+	background: color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .mention-suggestion-empty {
@@ -526,6 +526,13 @@ body.full-width-chat #message-box {
 	line-height: 1;
 }
 
+@media (pointer: coarse) {
+	.chat-actions-button {
+		min-width: 2.25rem;
+		min-height: 2.25rem;
+	}
+}
+
 .chat-actions-menu {
 	position: absolute;
 	top: 100%;
@@ -824,7 +831,7 @@ body.full-width-chat #message-box {
 	margin: 0;
 	font-size: 0.95rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .image-credits-popover-close {
@@ -861,13 +868,13 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-item .credit-description {
 	font-size: 0.875rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-item .credit-amount {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-note {
@@ -876,7 +883,7 @@ body.full-width-chat #message-box {
 	gap: 8px;
 	padding: 8px;
 	font-size: 0.8rem;
-	color: var(--text-secondary);
+	color: var(--body-fg-muted);
 	background: var(--input-bg);
 	border-radius: 6px;
 }
@@ -909,7 +916,7 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-total .credit-total-label {
 	font-size: 0.9rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-total .credit-total-amount {
@@ -929,11 +936,11 @@ body.full-width-chat #message-box {
 }
 
 .credit-breakdown-remaining .credit-remaining-label {
-	color: var(--text-secondary);
+	color: var(--body-fg-muted);
 }
 
 .credit-breakdown-remaining .credit-remaining-amount {
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-simple-item {
@@ -947,13 +954,13 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-simple-item .credit-simple-label {
 	font-size: 0.875rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-simple-item .credit-simple-value {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-shortage {
@@ -1006,7 +1013,7 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-action .btn-neutral {
 	background-color: var(--input-bg);
-	color: var(--text-primary);
+	color: var(--body-fg);
 	border: 1px solid var(--card-border);
 }
 
@@ -1060,6 +1067,18 @@ body.full-width-chat #message-box {
 	display: flex;
 	gap: 0.5rem;
 	align-items: center;
+}
+
+/* The icons stay their size; only the touch area around them grows. */
+@media (pointer: coarse) {
+	.message-actions {
+		gap: 0;
+	}
+
+	.message-actions > button {
+		min-width: 2.25rem;
+		min-height: 2.25rem;
+	}
 }
 
 .btn-message-debug {
@@ -1186,12 +1205,12 @@ input[name="currentChat"][value="none"] {
 }
 
 .editable-attachment {
-	border: 2px dashed rgba(var(--accent-color), 0.3);
+	border: 2px dashed color-mix(in srgb, var(--primary) 30%, transparent);
 	transition: border-color 0.2s ease;
 }
 
 .editable-attachment:hover {
-	border-color: rgba(var(--accent-color), 0.6);
+	border-color: color-mix(in srgb, var(--primary) 60%, transparent);
 }
 
 .editable-attachment .btn-remove-attachment {
@@ -1207,14 +1226,14 @@ input[name="currentChat"][value="none"] {
 /* History Image Preview */
 .history-image-preview {
 	position: relative;
-	border: 2px solid rgba(var(--accent-color), 0.5);
-	box-shadow: 0 0 8px rgba(var(--accent-color), 0.3);
+	border: 2px solid color-mix(in srgb, var(--primary) 50%, transparent);
+	box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 30%, transparent);
 	transition: all 0.2s ease;
 }
 
 .history-image-preview:hover {
-	border-color: rgba(var(--accent-color), 0.8);
-	box-shadow: 0 0 12px rgba(var(--accent-color), 0.5);
+	border-color: color-mix(in srgb, var(--primary) 80%, transparent);
+	box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 50%, transparent);
 	transform: scale(1.02);
 }
 
@@ -1222,7 +1241,7 @@ input[name="currentChat"][value="none"] {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(135deg, rgba(var(--accent-color), 0.1), transparent);
+	background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent), transparent);
 	pointer-events: none;
 }
 
@@ -1268,11 +1287,11 @@ input[name="currentChat"][value="none"] {
 	}
 
 	10% {
-		background-color: rgba(var(--accent-color), 0.2);
+		background-color: color-mix(in srgb, var(--primary) 20%, transparent);
 	}
 
 	90% {
-		background-color: rgba(var(--accent-color), 0.2);
+		background-color: color-mix(in srgb, var(--primary) 20%, transparent);
 	}
 
 	100% {

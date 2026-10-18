@@ -881,7 +881,7 @@ input.onboarding-select {
 .onboarding-select:focus {
 	outline: none;
 	border-color: var(--onboarding-accent);
-	box-shadow: 0 0 0 3px var(--onboarding-accent-alpha);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--onboarding-accent) 25%, transparent);
 }
 
 .onboarding-slider {

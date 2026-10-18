@@ -116,7 +116,7 @@ form {
 }
 
 .tags-input-container:focus-within {
-	outline: 2px solid var(--accent-color, #007bff);
+	outline: 2px solid var(--primary);
 	outline-offset: -1px;
 }
 
@@ -131,7 +131,7 @@ form {
 	align-items: center;
 	gap: 0.25rem;
 	padding: 0.25rem 0.5rem;
-	background: var(--accent-color, #007bff);
+	background: var(--primary);
 	color: var(--accent-fg, #fff);
 	border-radius: 1rem;
 	font-size: 0.8rem;
@@ -204,7 +204,7 @@ form {
 	border-radius: 9999px;
 	padding: 0.5rem 0.25rem;
 	font-size: 0.8rem;
-	color: var(--fg);
+	color: var(--body-fg);
 	opacity: 0.7;
 	cursor: pointer;
 	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
