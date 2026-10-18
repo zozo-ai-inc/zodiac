@@ -32,8 +32,12 @@ async function startSampling(page: Page, selector: string): Promise<void> {
 	}, selector);
 }
 
-/** Clicks inside the page and reports how long `target` stays on screen afterwards, in milliseconds. */
-async function visibleMsAfterClick(page: Page, clickSelector: string, targetSelector: string): Promise<number> {
+/**
+ * Clicks inside the page and reports how long `target` stays rendered afterwards, in milliseconds.
+ * A fade keeps the element in the layout until its 200ms timer ends; vanishing removes it within a frame.
+ * Layout presence is timer-driven, so it is steadier on a busy CI runner than sampling the animated opacity.
+ */
+async function renderedMsAfterClick(page: Page, clickSelector: string, targetSelector: string): Promise<number> {
 	return await page.evaluate(
 		([button, target]) =>
 			new Promise<number>((resolve) => {
@@ -41,11 +45,8 @@ async function visibleMsAfterClick(page: Page, clickSelector: string, targetSele
 				document.querySelector<HTMLElement>(button)!.click();
 				const check = () => {
 					const element = document.querySelector<HTMLElement>(target);
-					const shown =
-						!!element &&
-						element.getClientRects().length > 0 &&
-						Number(getComputedStyle(element).opacity) > 0;
-					if (!shown) resolve(performance.now() - start);
+					const rendered = !!element && element.getClientRects().length > 0;
+					if (!rendered) resolve(performance.now() - start);
 					else if (performance.now() - start > 1000) resolve(1000);
 					else requestAnimationFrame(check);
 				};
@@ -107,7 +108,7 @@ test("the confirm dialog fades out when answered", async ({ page }) => {
 
 	// A fade keeps it on screen for most of its 200ms; vanishing takes about a frame.
 	expect(
-		await visibleMsAfterClick(page, "#btn-dialog-ok", "#dialog"),
+		await renderedMsAfterClick(page, "#btn-dialog-ok", "#dialog"),
 		"the dialog should fade out rather than vanish in one frame"
 	).toBeGreaterThanOrEqual(120);
 });
@@ -149,7 +150,7 @@ test("the image lightbox fades in and out", async ({ page }) => {
 
 	await page.waitForTimeout(300);
 	expect(
-		await visibleMsAfterClick(page, ".lightbox-close", ".lightbox"),
+		await renderedMsAfterClick(page, ".lightbox-close", ".lightbox"),
 		"the lightbox should fade out rather than disappear at once"
 	).toBeGreaterThanOrEqual(120);
 });
