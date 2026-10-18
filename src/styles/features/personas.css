@@ -263,13 +263,7 @@
 	padding: 0.2rem 0.5rem;
 	font-size: 0.6rem;
 	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
 	border-radius: var(--radius-sm);
-}
-
-.card-add-personality:focus-visible {
-	outline: 2px solid var(--primary);
-	outline-offset: 2px;
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .tone-example-remove {

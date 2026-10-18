@@ -65,11 +65,9 @@
 	box-sizing: border-box;
 	background-color: transparent;
 	backdrop-filter: blur(0);
-	-webkit-backdrop-filter: blur(0);
 	transition:
 		background-color 0.16s ease,
-		backdrop-filter 0.16s ease,
-		-webkit-backdrop-filter 0.16s ease;
+		backdrop-filter 0.16s ease;
 }
 
 .surface-plane.surface-plane--active {
@@ -83,13 +81,11 @@
 .surface-plane.surface-plane--blurred {
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .surface-plane:has(.adaptive-sheet.surface-open) {
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .surface-plane__item {
@@ -249,7 +245,6 @@
 	padding: 1rem;
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .dialog-panel {
