@@ -24,6 +24,12 @@ export interface AuthStateChangedDetail {
 	imageGenerationRecord?: ImageGenerationRecord | null;
 }
 
+/** Sent as soon as a session and its subscription are known, before profile and credit loads. */
+export interface AuthSessionReadyDetail {
+	session: Session;
+	subscription: UserSubscription | null;
+}
+
 export interface PasswordRecoveryDetail {
 	session: Session;
 }
@@ -246,6 +252,7 @@ export interface SyncStartupSettledDetail {
 export const EventNames = {
 	// Authentication & User
 	AUTH_STATE_CHANGED: "auth-state-changed",
+	AUTH_SESSION_READY: "auth-session-ready",
 	PASSWORD_RECOVERY: "password-recovery",
 	PROFILE_UPDATED: "profile-updated",
 	PROFILE_REFRESHED: "profile-refreshed",
@@ -326,6 +333,7 @@ export type EventName = (typeof EventNames)[keyof typeof EventNames];
 export interface AppEventMap {
 	// Authentication & User
 	[EventNames.AUTH_STATE_CHANGED]: AuthStateChangedDetail;
+	[EventNames.AUTH_SESSION_READY]: AuthSessionReadyDetail;
 	[EventNames.PASSWORD_RECOVERY]: PasswordRecoveryDetail;
 	[EventNames.PROFILE_UPDATED]: ProfileUpdatedDetail;
 	[EventNames.PROFILE_REFRESHED]: ProfileRefreshedDetail;

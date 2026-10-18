@@ -129,6 +129,12 @@ test("eligible announcements render optional hero media and advance through app 
 
 	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
 	await page.evaluate(() => {
+		// Mirror hydrateAuthenticatedSession: the session event runs the sync startup check first.
+		window.dispatchEvent(
+			new CustomEvent("auth-session-ready", {
+				detail: { session: { user: { id: "user-1" } }, subscription: null }
+			})
+		);
 		window.dispatchEvent(
 			new CustomEvent("auth-state-changed", {
 				detail: {
