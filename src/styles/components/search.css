@@ -4,6 +4,23 @@
 	align-items: center;
 }
 
+/* The + beside search opens every add, import and clear action for the tab, so it is square to the field's height. */
+.sidebar-add-button {
+	align-self: stretch;
+	flex: 0 0 auto;
+	aspect-ratio: 1;
+	padding: 0;
+}
+
+.sidebar-add-button .material-symbols-outlined {
+	font-size: 1.375rem;
+}
+
+.sidebar-add-menu {
+	display: none;
+	min-width: 12rem;
+}
+
 .chat-search-wrapper {
 	flex: 1 1 auto;
 	display: flex;
@@ -20,7 +37,7 @@
 
 .chat-search-wrapper:focus-within {
 	border-color: var(--input-text-border-focus);
-	box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 95, 150, 200), 0.1);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .chat-search-icon {
@@ -87,4 +104,15 @@
 
 .chat-sort-menu.open {
 	display: flex;
+}
+
+/* The current sort order reads as chosen, matching what assistive tech announces. */
+.chat-sort-item[aria-checked="true"] {
+	font-weight: 600;
+}
+
+.chat-sort-item[aria-checked="true"]::after {
+	content: "✓";
+	margin-left: auto;
+	padding-left: 1rem;
 }

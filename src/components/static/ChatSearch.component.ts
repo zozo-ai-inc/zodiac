@@ -40,7 +40,7 @@ function performSearch(): void {
 	// If search term is empty, show all chats
 	if (searchTerm === "") {
 		chatElements.forEach((chatElement) => {
-			helpers.showElement(chatElement, true);
+			chatElement.classList.remove("hidden");
 		});
 		return;
 	}
@@ -72,9 +72,9 @@ function performSearch(): void {
 
 	chatElements.forEach((chatElement) => {
 		if (matchingElements.has(chatElement)) {
-			helpers.showElement(chatElement, true);
+			chatElement.classList.remove("hidden");
 		} else {
-			helpers.hideElement(chatElement);
+			chatElement.classList.add("hidden");
 		}
 	});
 }

@@ -17,6 +17,8 @@ function ensureContainer(): HTMLElement {
 		container = document.createElement("div");
 		container.id = TOAST_CONTAINER_ID;
 		container.classList.add("toast-container");
+		// Toasts report on work done inside sheets, so a sheet's focus trap must not make them inert.
+		container.toggleAttribute("data-above-surfaces", true);
 		document.body.appendChild(container);
 	}
 	return container;

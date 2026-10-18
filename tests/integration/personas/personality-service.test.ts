@@ -149,7 +149,6 @@ describe("Personality.service persona CRUD", () => {
 			"Created Persona"
 		);
 		expect(document.querySelector("#personalitiesDiv .card-personality:not([id])")).not.toBeNull();
-		expect(document.querySelector("#btn-add-personality")).not.toBeNull();
 	});
 
 	it("pushes persona creation through the sync boundary when cloud sync is active", async () => {

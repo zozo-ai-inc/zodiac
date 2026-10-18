@@ -18,6 +18,9 @@
 	--dropdown-menu-item-hover-bg: rgba(255, 255, 255, 0.1);
 	--dropdown-menu-item-active-bg: rgba(255, 255, 255, 0.0685);
 
+	--body-fg-muted: color-mix(in srgb, var(--body-fg) 65%, transparent);
+	--danger: #ff6b6b;
+
 	/* Dialog */
 	--dialog-bg: #461010db;
 	--dialog-shadow: 0 0 16px 5px rgb(0 0 0 / 25%);
@@ -34,15 +37,7 @@
 	/* Navbar */
 	--navbar-bg: #00000054;
 
-	/* Preserve local toast colors independently of inherited palette tokens. */
-	.toast--normal {
-		--toast-normal-bg: rgba(21, 35, 49, 0.8);
-		--toast-normal-border: rgba(136, 172, 227, 0.32);
-		--toast-normal-action-bg: rgba(136, 172, 227, 0.24);
-		--toast-normal-action-bg-hover: rgba(136, 172, 227, 0.34);
-		--toast-normal-close-hover: rgba(136, 172, 227, 0.22);
-	}
-
+	/* Normal toasts take their colours from the palette; warning and danger read the same everywhere. */
 	.toast--warning {
 		--toast-warning-bg: rgba(92, 61, 12, 0.8);
 		--toast-warning-border: rgba(255, 214, 132, 0.45);
@@ -61,6 +56,7 @@
 }
 /* Document palette defaults. Mode picker controls also carry data-mode, so these tokens must stay on the root. */
 :root[data-mode="dark"] {
+	--elevated-ui-outline: 1px solid #ffffff1f;
 	/* Neutral Modal */
 	--modal-fg: var(--onboarding-title);
 	--modal-shadow: 0 8px 24px var(--onboarding-card-shadow);

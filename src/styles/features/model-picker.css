@@ -185,9 +185,7 @@
 }
 
 .model-picker-detail-title {
-	margin: 0 auto 0 0;
-	font-size: 1.1rem;
-	font-weight: 600;
+	margin-right: auto;
 }
 
 .model-picker-mega-toggle {

@@ -34,7 +34,7 @@ test("dynamic group chat does not crash when there is no user session (BYOK mode
 	});
 
 	// Wait for the app to be fully initialized and ready
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 
 	// Create a dynamic group chat programmatically to avoid complex UI interactions
 	const { chatId, pingedPersonaId } = await page.evaluate(async () => {

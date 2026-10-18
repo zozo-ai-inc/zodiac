@@ -8,8 +8,14 @@ button {
 	transition: background-color 0.2s;
 }
 
-button:focus {
+button:focus:not(:focus-visible) {
 	outline: none;
+}
+
+/* Every button gets the same keyboard focus ring; pointer focus stays unmarked. */
+button:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
 }
 
 /* Base styled button class - opt-in for default button appearance */
@@ -69,7 +75,7 @@ button:focus {
 
 .btn-secondary {
 	background-color: var(--input-bg);
-	color: var(--text-primary);
+	color: var(--body-fg);
 	border: 1px solid var(--input-text-border);
 }
 
@@ -120,91 +126,38 @@ button:focus {
 	text-transform: uppercase;
 }
 
-/* Split Button Component */
-.split-button {
+/* Icon-only controls such as close and back share one size, shape and hover across every panel. */
+.btn-icon {
 	display: inline-flex;
-	position: relative;
-	align-items: stretch;
-}
-
-.split-button__main {
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-	border-right: 1px solid rgba(255, 255, 255, 0.2);
-	flex: 1;
-}
-
-.split-button__toggle {
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
-	padding: 0 0.5rem;
-	display: flex;
+	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	min-width: 0.5rem;
-	flex-shrink: 0;
-	flex-grow: 0;
-}
-
-.split-button__toggle .material-symbols-outlined {
-	font-size: 1.25rem;
-	line-height: 1;
-	transition: transform 0.2s ease;
-}
-
-.split-button.open .split-button__toggle .material-symbols-outlined {
-	transform: rotate(180deg);
-}
-
-.split-button__menu {
-	position: absolute;
-	top: calc(100% + var(--menu-spawn-top-offset));
-	right: 0;
-	left: 0;
-	display: flex;
-	visibility: hidden;
-	opacity: 0;
-	transition:
-		opacity 0.12s ease,
-		transform 0.12s ease,
-		visibility 0.12s linear;
-}
-
-.split-button.open > .split-button__menu {
-	visibility: visible;
-	opacity: 1;
-	transform: translateY(0);
-}
-
-.split-button__menu-item {
-	justify-content: flex-start;
-	background: transparent;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
 	border: none;
-	text-align: left;
-	padding: 0.5rem 0.75rem;
-	border-radius: 0.3rem;
-	font: inherit;
-	cursor: pointer;
+	border-radius: 0.625rem;
+	background: transparent;
 	color: inherit;
-	display: flex;
-	gap: 0.5rem;
-	align-items: center;
-	white-space: nowrap;
-	transition: background 0.1s ease;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
 }
 
-.split-button__menu-item:hover:not(:disabled),
-.split-button__menu-item:focus-visible:not(:disabled) {
-	background: var(--dropdown-menu-item-hover-bg);
+.btn-icon.material-symbols-outlined,
+.btn-icon > .material-symbols-outlined {
+	font-size: 1.25rem;
 }
 
-.split-button__menu-item:active:not(:disabled) {
-	background: var(--dropdown-menu-item-active-bg);
+.btn-icon:hover {
+	background-color: var(--navbar-tab-hover-bg);
 }
 
-.split-button__menu-item:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
+/* Fingers need a larger target than a mouse pointer. */
+@media (pointer: coarse) {
+	.btn-icon {
+		width: 2.25rem;
+		height: 2.25rem;
+	}
 }
 
 .btn-array {

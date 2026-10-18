@@ -17,7 +17,7 @@
 
 .takeout-sheet__subtitle {
 	margin-top: 0.35rem !important;
-	color: var(--secondary-text, currentColor);
+	color: var(--body-fg-muted);
 	font-size: 0.9rem;
 	opacity: 0.78;
 }

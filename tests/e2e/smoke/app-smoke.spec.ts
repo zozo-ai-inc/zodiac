@@ -53,7 +53,7 @@ test("app boots successfully", async ({ page }) => {
 	await seedLocalSettings(page);
 	await page.goto("/");
 
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 	await expect(page.locator("#messageInput")).toBeVisible();
 	await expect(page.locator("#btn-send")).toBeVisible();
 	await expect(page.locator(".navbar-tab").first()).toContainText("Chats");
@@ -65,11 +65,8 @@ test("user creates a persona", async ({ page }) => {
 	await page.goto("/");
 
 	await page.locator(".navbar-tab").nth(1).click();
-	await expect(page.locator("#btn-add-personality")).toBeVisible();
-
-	await page.locator("#btn-add-personality").click();
-	await expect(page.locator("#modal-add-persona")).toBeVisible();
-	await page.locator(".add-persona-local-btn").click();
+	await page.locator("#btn-persona-add").click();
+	await page.getByRole("menuitem", { name: "Create persona" }).click();
 
 	const form = page.locator("#form-add-personality");
 	await expect(form).toBeVisible();
