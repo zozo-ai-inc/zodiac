@@ -8,7 +8,6 @@ import {
 	fetchMarketplacePersona
 } from "./Supabase.service";
 import { info, danger } from "./Toast.service";
-import { showElement } from "../utils/helpers";
 import * as syncService from "./Sync.service";
 import { onAppEvent } from "../events";
 import * as pinningService from "./Pinning.service";
@@ -298,10 +297,6 @@ export async function reloadFromDb() {
 		console.warn("Failed to restore last selected personality", e);
 	}
 
-	// Add the "Create New" card at the end
-	const createCard = createAddPersonalityCard();
-	document.querySelector("#personalitiesDiv")?.appendChild(createCard);
-
 	window.dispatchEvent(new CustomEvent("persona-list-updated"));
 }
 
@@ -365,23 +360,33 @@ export async function getAll() {
 	return personalities.map(normalizePersonaTimestamps);
 }
 
-export async function remove(id: string) {
+/** Returns whether the persona was deleted; failures have already been reported to the user. */
+export async function remove(id: string): Promise<boolean> {
 	if (id === "-1") {
-		return;
+		return false;
 	}
 
 	if (syncService.isOnlineSyncEnabled()) {
-		if (!syncService.isSyncActive()) return;
-		const ok = await syncService.deleteSyncedPersona(id);
-		if (ok) {
-			removeCachedSyncedPersona(id);
+		if (!syncService.isSyncActive()) {
+			danger({ title: "Sync locked", text: "Unlock cloud sync before deleting personas." });
+			return false;
 		}
+		const ok = await syncService.deleteSyncedPersona(id);
+		if (!ok) {
+			danger({
+				title: "Delete failed",
+				text: "Couldn't delete the persona from the cloud. Try again when you're online."
+			});
+			return false;
+		}
+		removeCachedSyncedPersona(id);
 		await pinningService.removePersonaPin(id);
-		return;
+		return true;
 	}
 
 	await db.personalities.delete(id);
 	await pinningService.removePersonaPin(id);
+	return true;
 }
 
 function insert(personality: Personality, id: string) {
@@ -391,12 +396,6 @@ function insert(personality: Personality, id: string) {
 	}
 	const card = generateCard(personality, id);
 	personalitiesDiv.append(card);
-
-	//move the add card to be the last element
-	const addCard = document.querySelector("#btn-add-personality");
-	if (addCard) {
-		personalitiesDiv.appendChild(addCard);
-	}
 	return card;
 }
 
@@ -407,12 +406,6 @@ function insertWithSync(personality: Personality, id: string, syncInfo: SyncInfo
 	}
 	const card = generateCard(personality, id, syncInfo);
 	personalitiesDiv.append(card);
-
-	//move the add card to be the last element
-	const addCard = document.querySelector("#btn-add-personality");
-	if (addCard) {
-		personalitiesDiv.appendChild(addCard);
-	}
 	return card;
 }
 
@@ -437,67 +430,6 @@ export function share(personality: Personality & { id?: string }, explicitId?: s
 	});
 }
 
-const MARKETPLACE_URL = "https://zodiac-marketplace.com/";
-
-export function createAddPersonalityCard() {
-	const card = document.createElement("div");
-	card.classList.add("card-personality", "card-add-personality");
-	card.id = "btn-add-personality";
-	card.innerHTML = `
-        <div class="add-personality-content">
-            <span class="material-symbols-outlined add-icon">add</span>
-        </div>
-    `;
-
-	card.addEventListener("click", () => {
-		showAddPersonaModal();
-	});
-
-	return card;
-}
-
-function showAddPersonaModal() {
-	const modal = document.querySelector<HTMLElement>("#modal-add-persona");
-	const overlay = document.querySelector<HTMLElement>(".overlay");
-	if (!modal || !overlay) return;
-
-	//hide other overlay items first
-	const overlayContent = overlay.querySelector(".overlay-content");
-	if (overlayContent) {
-		Array.from(overlayContent.children).forEach((child) => {
-			if (child !== modal) {
-				child.classList.add("hidden");
-			}
-		});
-	}
-
-	//show the overlay and modal with proper animation
-	showElement(overlay, false);
-	showElement(modal, false);
-}
-
-export function initAddPersonaModalHandlers() {
-	const modal = document.querySelector<HTMLElement>("#modal-add-persona");
-	if (!modal) return;
-
-	const localBtn = modal.querySelector<HTMLButtonElement>(".add-persona-local-btn");
-	const marketplaceBtn = modal.querySelector<HTMLButtonElement>(".add-persona-marketplace-btn");
-	const overlay = document.querySelector<HTMLElement>(".overlay");
-
-	localBtn?.addEventListener("click", () => {
-		//hide this modal and show the add personality form
-		modal.classList.add("hidden");
-		overlayService.showAddPersonalityForm();
-	});
-
-	marketplaceBtn?.addEventListener("click", () => {
-		//close the overlay and open marketplace in new tab
-		modal.classList.add("hidden");
-		overlay?.classList.add("hidden");
-		window.open(MARKETPLACE_URL, "_blank");
-	});
-}
-
 export async function removeAll() {
 	if (syncService.isOnlineSyncEnabled()) {
 		if (!syncService.isSyncActive()) return;
@@ -513,7 +445,7 @@ export async function removeAll() {
 	const personalityElements = document.querySelector<HTMLDivElement>("#personalitiesDiv")!.children;
 	for (let i = personalityElements.length - 1; i >= 0; i--) {
 		const element = personalityElements[i];
-		if (element.id !== "btn-add-personality" && element.id) {
+		if (element.id) {
 			element.remove();
 		}
 	}
@@ -584,7 +516,8 @@ export async function add(personality: Personality, explicitId?: string): Promis
 	return true;
 }
 
-export async function edit(id: string, personality: Personality) {
+/** Returns whether the change was saved; failures have already been reported to the user. */
+export async function edit(id: string, personality: Personality): Promise<boolean> {
 	//check if this is a synced personality from marketplace
 	const existing = syncService.isOnlineSyncEnabled()
 		? (await fetchSyncedPersonasCached()).find((p) => p.id === id)
@@ -602,14 +535,14 @@ export async function edit(id: string, personality: Personality) {
 	if (syncService.isOnlineSyncEnabled()) {
 		if (!syncService.isSyncActive()) {
 			danger({ title: "Sync locked", text: "Unlock cloud sync before editing personas." });
-			return;
+			return false;
 		}
-		if (!existing) return;
+		if (!existing) return false;
 		const merged = normalizePersonaTimestamps({ ...(existing as DbPersonality), ...updateData, id });
 		const syncedOk = await syncService.pushPersona(merged);
 		if (!syncedOk) {
 			danger({ title: "Sync failed", text: "Failed to update persona in cloud." });
-			return;
+			return false;
 		}
 		upsertCachedSyncedPersona(merged);
 	} else {
@@ -620,6 +553,7 @@ export async function edit(id: string, personality: Personality) {
 
 	//reselect the personality if it was selected prior
 	document.querySelector(`#personality-${id}`)?.querySelector("input")?.click();
+	return true;
 }
 
 export function generateCard(personality: Personality, id: string, syncInfo?: SyncInfo) {
@@ -650,19 +584,19 @@ export function generateCard(personality: Personality, id: string, syncInfo?: Sy
             <img class="background-img" src="${personality.image}"></img>
             <input  type="radio" name="personality" value="${personality.name}">
             <div class="btn-array-personalityactions">
-                ${id ? `<button class="btn-textual btn-pin-card material-symbols-outlined" title="Pin persona">keep</button>` : ""}
+                ${id ? `<button type="button" class="btn-textual btn-pin-card material-symbols-outlined" title="Pin persona" aria-label="Pin persona">keep</button>` : ""}
                 ${
 					id
-						? `<button class="btn-textual btn-edit-card material-symbols-outlined" 
-                    id="btn-edit-personality-${personality.name}">edit</button>`
+						? `<button type="button" class="btn-textual btn-edit-card material-symbols-outlined"
+                    id="btn-edit-personality-${personality.name}" aria-label="Edit persona">edit</button>`
 						: ""
 				}
-                <button class="btn-textual btn-share-card material-symbols-outlined" 
-                    id="btn-share-personality-${personality.name}">share</button>
+                <button type="button" class="btn-textual btn-share-card material-symbols-outlined"
+                    id="btn-share-personality-${personality.name}" aria-label="Share persona">share</button>
                 ${
 					id
-						? `<button class="btn-textual btn-delete-card material-symbols-outlined"
-                    id="btn-delete-personality-${personality.name}">delete</button>`
+						? `<button type="button" class="btn-textual btn-delete-card material-symbols-outlined"
+                    id="btn-delete-personality-${personality.name}" aria-label="Delete persona">delete</button>`
 						: ""
 				}
             </div>
@@ -717,20 +651,23 @@ export function generateCard(personality: Personality, id: string, syncInfo?: Sy
 		share(personality, id);
 	});
 	if (deleteButton) {
-		deleteButton.addEventListener("click", () => {
-			//first if the personality to delete is the one currently selected, we select the default personality
-			if (input?.checked) {
-				document
-					.querySelector<HTMLInputElement>(
-						"#personalitiesDiv .card-personality:not([id]) input[name='personality']"
-					)
-					?.click();
-			}
-			if (id && id != "-1") {
-				void remove(id);
-			}
-			card.remove();
-		});
+		deleteButton.addEventListener(
+			"click",
+			() =>
+				void (async () => {
+					// Only change the card and the selection once the persona is really gone.
+					if (id && id != "-1" && !(await remove(id))) return;
+					//if the deleted personality was the selected one, fall back to the default personality
+					if (input?.checked) {
+						document
+							.querySelector<HTMLInputElement>(
+								"#personalitiesDiv .card-personality:not([id]) input[name='personality']"
+							)
+							?.click();
+					}
+					card.remove();
+				})()
+		);
 	}
 	if (editButton) {
 		editButton.addEventListener(

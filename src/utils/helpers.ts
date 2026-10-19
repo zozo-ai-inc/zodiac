@@ -5,18 +5,34 @@ import { APP_VERSION } from "../constants/App";
 
 // Description: This file contains helper functions that are used throughout the application.
 
+// One pending show or hide per element; a newer call replaces it, so a late timer cannot undo the latest intent.
+const visibilityTimers = new WeakMap<HTMLElement, number>();
+
+export function cancelVisibilityChange(element: HTMLElement): void {
+	const pending = visibilityTimers.get(element);
+	if (pending !== undefined) window.clearTimeout(pending);
+	visibilityTimers.delete(element);
+}
+
+function scheduleVisibilityChange(element: HTMLElement, change: () => void, delay: number): void {
+	cancelVisibilityChange(element);
+	visibilityTimers.set(
+		element,
+		window.setTimeout(() => {
+			visibilityTimers.delete(element);
+			change();
+		}, delay)
+	);
+}
+
 export function hideElement(element: HTMLElement, nowait?: boolean) {
 	if (!element) {
 		return;
 	}
+	cancelVisibilityChange(element);
 	element.style.transition = "opacity 0.2s";
 	element.style.opacity = "0";
-	setTimeout(
-		function () {
-			hideWithClass(element);
-		},
-		nowait ? 0 : 200
-	);
+	scheduleVisibilityChange(element, () => hideWithClass(element), nowait ? 0 : 200);
 }
 
 export function showElement(element: HTMLElement, wait: boolean) {
@@ -27,16 +43,20 @@ export function showElement(element: HTMLElement, wait: boolean) {
 	if (wait) {
 		timeToWait = 200;
 	}
-	setTimeout(function () {
-		showWithClass(element);
-		element.style.transition = "opacity 0.2s";
-		element.style.opacity = "0"; //required as certain elements arent opacity 0 despite being hidden
-		requestAnimationFrame(function () {
+	scheduleVisibilityChange(
+		element,
+		function () {
+			showWithClass(element);
+			element.style.transition = "opacity 0.2s";
+			element.style.opacity = "0"; //required as certain elements arent opacity 0 despite being hidden
 			requestAnimationFrame(function () {
-				element.style.opacity = "1";
+				requestAnimationFrame(function () {
+					element.style.opacity = "1";
+				});
 			});
-		});
-	}, timeToWait);
+		},
+		timeToWait
+	);
 }
 
 export function darkenCard(element: HTMLElement) {
@@ -334,25 +354,49 @@ export async function confirmDialog(
 		throw new Error("Dialog elements not found in the document");
 	}
 
+	const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+	dialog.classList.remove("dialog--closing");
+	dialog.classList.toggle("dialog--danger", Boolean(options.danger));
 	btnDialogOk.classList.remove("btn-danger", "btn-primary");
 	btnDialogOk.classList.add(options.danger ? "btn-danger" : "btn-primary");
 	btnDialogOk.textContent = options.okText ?? "OK";
 	btnDialogCancel.textContent = options.cancelText ?? "Cancel";
+	dialogMessage.textContent = message;
 
 	showElement(dialog, false);
+	// Cancel is the safe default for a keyboard user who presses Enter straight away. showElement reveals the
+	// dialog in a 0ms timer; queueing the focus as a timer too guarantees it runs after the dialog is displayed
+	// (an animation frame alone can fire first under load and focus nothing).
+	window.setTimeout(() => btnDialogCancel.focus({ preventScroll: true }), 0);
 
 	return new Promise((resolve) => {
-		dialogMessage.textContent = message;
-
-		btnDialogOk.onclick = () => {
-			hideElement(dialog, true);
-			resolve(true);
+		const settle = (confirmed: boolean) => {
+			window.removeEventListener("keydown", handleKeydown, true);
+			btnDialogOk.onclick = null;
+			btnDialogCancel.onclick = null;
+			// Fade out like it faded in; while it fades, clicks pass through to the app.
+			dialog.classList.add("dialog--closing");
+			hideElement(dialog);
+			if (previousFocus && document.contains(previousFocus)) previousFocus.focus({ preventScroll: true });
+			resolve(confirmed);
 		};
 
-		btnDialogCancel.onclick = () => {
-			hideElement(dialog, true);
-			resolve(false);
+		// Captured on window so the dialog answers Escape and Tab before any sheet or panel beneath it.
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				settle(false);
+			} else if (event.key === "Tab") {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				(document.activeElement === btnDialogCancel ? btnDialogOk : btnDialogCancel).focus();
+			}
 		};
+		window.addEventListener("keydown", handleKeydown, true);
+
+		btnDialogOk.onclick = () => settle(true);
+		btnDialogCancel.onclick = () => settle(false);
 	});
 }
 

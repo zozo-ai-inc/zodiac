@@ -302,9 +302,9 @@ export const messageElement = async (message: Message, index: number): Promise<H
             <h3 class="message-role">You:</h3>
             <div class="message-actions">
                 ${debugButtonMarkup}
-                <button class="btn-edit btn-textual material-symbols-outlined">edit</button>
-                <button class="btn-save btn-textual material-symbols-outlined" style="display: none;">save</button>
-                <button class="btn-refresh btn-textual material-symbols-outlined">refresh</button>
+                <button type="button" class="btn-edit btn-textual material-symbols-outlined" aria-label="Edit message">edit</button>
+                <button type="button" class="btn-save btn-textual material-symbols-outlined" aria-label="Save edit" style="display: none;">save</button>
+                <button type="button" class="btn-refresh btn-textual material-symbols-outlined" aria-label="Regenerate from here">refresh</button>
             </div>
         </div>
         <div class="message-role-api" style="display: none;">${message.role}</div>
@@ -406,10 +406,10 @@ export const messageElement = async (message: Message, index: number): Promise<H
                 </div>
                 <div class="message-actions">
                     ${debugButtonMarkup}
-                    <button class="btn-edit btn-textual material-symbols-outlined">edit</button>
-                    <button class="btn-save btn-textual material-symbols-outlined" style="display: none;">save</button>
-                    <button class="btn-clipboard btn-textual material-symbols-outlined">content_copy</button>
-                    <button class="btn-refresh btn-textual material-symbols-outlined">refresh</button>
+                    <button type="button" class="btn-edit btn-textual material-symbols-outlined" aria-label="Edit message">edit</button>
+                    <button type="button" class="btn-save btn-textual material-symbols-outlined" aria-label="Save edit" style="display: none;">save</button>
+                    <button type="button" class="btn-clipboard btn-textual material-symbols-outlined" aria-label="Copy message">content_copy</button>
+                    <button type="button" class="btn-refresh btn-textual material-symbols-outlined" aria-label="Regenerate from here">refresh</button>
                 </div>
             </div>
             <div class="message-role-api" style="display: none;">${message.role}</div>
@@ -437,10 +437,10 @@ export const messageElement = async (message: Message, index: number): Promise<H
                         <img class="generated-image" ${src ? `src="${src}"` : ""} loading="lazy" />
                         ${needsBlob ? '<span class="message-spinner blob-spinner"></span>' : ""}
                         <div class="generated-image-overlay">
-                            <button class="btn-textual btn-image-action btn-edit material-symbols-outlined" title="Edit this image">edit</button>
-                            <button class="btn-textual btn-image-action btn-attach material-symbols-outlined" title="Attach this image">attachment</button>
-                            <button class="btn-textual btn-image-action btn-download material-symbols-outlined" title="Download">download</button>
-                            <button class="btn-textual btn-image-action btn-expand material-symbols-outlined" title="Expand">open_in_full</button>
+                            <button type="button" class="btn-textual btn-image-action btn-edit material-symbols-outlined" title="Edit this image" aria-label="Edit this image">edit</button>
+                            <button type="button" class="btn-textual btn-image-action btn-attach material-symbols-outlined" title="Attach this image" aria-label="Attach this image">attachment</button>
+                            <button type="button" class="btn-textual btn-image-action btn-download material-symbols-outlined" title="Download" aria-label="Download image">download</button>
+                            <button type="button" class="btn-textual btn-image-action btn-expand material-symbols-outlined" title="Expand" aria-label="Expand image">open_in_full</button>
                         </div>
                     </div>`;
 								})
@@ -470,7 +470,9 @@ export const messageElement = async (message: Message, index: number): Promise<H
 					.querySelector<HTMLElement>(".message-grounding-rendered-content")!
 					.attachShadow({ mode: "open" });
 				shadow.innerHTML = message.groundingContent;
-				shadow.querySelector<HTMLDivElement>(".carousel")!.style.scrollbarWidth = "unset";
+				// Search suggestion markup does not always include a carousel.
+				const carousel = shadow.querySelector<HTMLDivElement>(".carousel");
+				if (carousel) carousel.style.scrollbarWidth = "unset";
 			}
 		}
 	}
@@ -1020,15 +1022,19 @@ function setupGeneratedImageInteractions(root: HTMLElement) {
                 </div>`;
 			document.body.appendChild(overlay);
 
-			const remove = () => overlay.remove();
+			const escListener = (ev: KeyboardEvent) => {
+				if (ev.key === "Escape") remove();
+			};
+			// Fade out before leaving the page, matching the fade in.
+			const remove = () => {
+				document.removeEventListener("keydown", escListener);
+				if (overlay.classList.contains("lightbox--closing")) return;
+				overlay.classList.add("lightbox--closing");
+				window.setTimeout(() => overlay.remove(), 200);
+			};
 			overlay.querySelector(".lightbox-backdrop")?.addEventListener("click", remove);
 			overlay.querySelector(".lightbox-close")?.addEventListener("click", remove);
-			document.addEventListener("keydown", function escListener(ev) {
-				if (ev.key === "Escape") {
-					remove();
-					document.removeEventListener("keydown", escListener);
-				}
-			});
+			document.addEventListener("keydown", escListener);
 		};
 
 		expandBtn?.addEventListener("click", (e) => {

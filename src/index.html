@@ -52,14 +52,6 @@
 		</div>
 
 		<div id="main-container" aria-busy="true">
-			<div id="dialog" class="dialog hidden">
-				<div id="dialog-message"></div>
-				<div id="dialog-buttons" class="btn-array">
-					<button class="btn-danger btn" id="btn-dialog-ok">OK</button>
-					<button class="btn-neutral btn" id="btn-dialog-cancel">Cancel</button>
-				</div>
-			</div>
-
 			<!-- Cloud Sync: Encryption Password Modal -->
 			<div id="sync-modal" class="dialog hidden">
 				<div id="sync-modal-content">
@@ -139,17 +131,9 @@
 				</div>
 			</div>
 
-			<div class="sidebar">
+			<div class="sidebar" id="sidebar">
 				<div class="sidebar-top-bar">
 					<div class="header">
-						<button
-							type="button"
-							class="material-symbols-outlined btn-textual"
-							id="btn-hide-sidebar"
-							aria-label="Close sidebar"
-						>
-							close
-						</button>
 						<div id="title-div">
 							<div id="zodiac-branding">
 								<!-- wordmark/zozo-chat.svg from the zozo-brand generator -->
@@ -165,38 +149,18 @@
 							<div class="navbar-tab">Personas</div>
 							<div class="navbar-tab-highlight"></div>
 						</div>
+						<button
+							type="button"
+							class="material-symbols-outlined btn-icon"
+							id="btn-hide-sidebar"
+							aria-label="Close sidebar"
+						>
+							close
+						</button>
 					</div>
 				</div>
 				<div id="sidebar-content">
 					<div class="sidebar-section">
-						<div class="btn-array">
-							<div class="split-button">
-								<button id="btn-new-chat" class="split-button__main btn btn-primary">
-									<span class="material-symbols-outlined">add</span> <span>New Chat</span>
-								</button>
-								<button
-									class="split-button__toggle btn btn-primary"
-									aria-haspopup="true"
-									aria-expanded="false"
-								>
-									<span class="material-symbols-outlined">expand_more</span>
-								</button>
-								<div class="split-button__menu dropdown-menu" role="menu">
-									<button class="split-button__menu-item" role="menuitem" id="btn-new-group-chat">
-										<span class="material-symbols-outlined">groups</span>
-										<span>Group Chat</span>
-									</button>
-									<button class="split-button__menu-item" role="menuitem" id="btn-chat-import">
-										<span class="material-symbols-outlined">upload</span>
-										<span>Import</span>
-									</button>
-								</div>
-							</div>
-							<button class="btn btn-primary" id="btn-reset-chat">
-								<span class="material-symbols-outlined">clear_all</span>Clear All
-							</button>
-						</div>
-
 						<div class="filter-group chat-filter-group">
 							<div class="chat-search-wrapper">
 								<span class="material-symbols-outlined chat-search-icon">search</span>
@@ -212,44 +176,86 @@
 									<span class="chat-sort-label" id="chat-sort-label">Created</span>
 								</button>
 							</div>
+							<button
+								type="button"
+								class="btn btn-primary sidebar-add-button"
+								id="btn-chat-add"
+								aria-label="New chat menu"
+								aria-haspopup="menu"
+								aria-expanded="false"
+								aria-controls="chat-add-menu"
+								data-sidebar-menu
+							>
+								<span class="material-symbols-outlined">add</span>
+							</button>
+							<div
+								class="dropdown-menu sidebar-add-menu"
+								id="chat-add-menu"
+								role="menu"
+								aria-label="New chat"
+							>
+								<button type="button" class="dropdown-menu-item" role="menuitem" id="btn-new-chat">
+									<span class="material-symbols-outlined" aria-hidden="true">chat_bubble</span>New
+									chat
+								</button>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-new-group-chat"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">groups</span>New group
+									chat
+								</button>
+								<button type="button" class="dropdown-menu-item" role="menuitem" id="btn-chat-import">
+									<span class="material-symbols-outlined" aria-hidden="true">upload</span>Import chats
+								</button>
+								<hr class="dropdown-menu-divider" />
+								<button
+									type="button"
+									class="dropdown-menu-item dropdown-menu-item--danger"
+									role="menuitem"
+									id="btn-reset-chat"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">clear_all</span>Clear all
+									chats…
+								</button>
+							</div>
 						</div>
 
 						<input type="radio" name="currentChat" value="none" checked />
+						<p class="empty-state hidden" id="chat-search-empty" role="status">
+							No chats match your search
+						</p>
 						<div id="chatHistorySection"></div>
+						<p class="empty-state" id="chat-list-empty">No chats yet. Start one with New Chat.</p>
 					</div>
 
 					<div class="sidebar-section hidden" id="personalitySection">
 						<!-- Marketplace Banner -->
-						<a
-							href="https://zodiac-marketplace.com"
-							target="_blank"
-							class="marketplace-banner"
-							id="marketplace-banner"
-						>
-							<div class="marketplace-banner-content">
+						<div class="marketplace-banner" id="marketplace-banner">
+							<a
+								href="https://zodiac-marketplace.com"
+								target="_blank"
+								rel="noopener"
+								class="marketplace-banner-content"
+							>
 								<span class="marketplace-banner-icon">✨</span>
 								<div class="marketplace-banner-text">
 									<span class="marketplace-banner-title">Persona Marketplace is Live!</span>
 									<span class="marketplace-banner-subtitle">Browse, rate & share personas</span>
 								</div>
-							</div>
+							</a>
 							<button
-								class="marketplace-banner-dismiss"
+								type="button"
+								class="btn-icon marketplace-banner-dismiss"
 								id="btn-dismiss-marketplace-banner"
-								aria-label="Dismiss"
+								aria-label="Dismiss marketplace banner"
 							>
 								<span class="material-symbols-outlined">close</span>
 							</button>
-						</a>
-
-						<div class="btn-array">
-							<button class="btn btn-primary" id="btn-import-personality">
-								<span class="material-symbols-outlined">upload</span>Import
-							</button>
-							<button class="btn btn-primary" id="btn-clearall-personality">
-								<span class="material-symbols-outlined">clear_all</span>Clear All
-							</button>
 						</div>
+
 						<div class="filter-group chat-filter-group">
 							<div class="chat-search-wrapper">
 								<span class="material-symbols-outlined chat-search-icon">search</span>
@@ -265,7 +271,67 @@
 									<span class="chat-sort-label" id="persona-sort-label">Added</span>
 								</button>
 							</div>
+							<button
+								type="button"
+								class="btn btn-primary sidebar-add-button"
+								id="btn-persona-add"
+								aria-label="New persona menu"
+								aria-haspopup="menu"
+								aria-expanded="false"
+								aria-controls="persona-add-menu"
+								data-sidebar-menu
+							>
+								<span class="material-symbols-outlined">add</span>
+							</button>
+							<div
+								class="dropdown-menu sidebar-add-menu"
+								id="persona-add-menu"
+								role="menu"
+								aria-label="New persona"
+							>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-create-persona"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">edit</span>Create persona
+								</button>
+								<a
+									class="dropdown-menu-item"
+									role="menuitem"
+									href="https://zodiac-marketplace.com/"
+									target="_blank"
+									rel="noopener"
+									id="btn-browse-marketplace"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">storefront</span>Browse
+									Marketplace
+								</a>
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									role="menuitem"
+									id="btn-import-personality"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">upload</span>Import from
+									file
+								</button>
+								<hr class="dropdown-menu-divider" />
+								<button
+									type="button"
+									class="dropdown-menu-item dropdown-menu-item--danger"
+									role="menuitem"
+									id="btn-clearall-personality"
+								>
+									<span class="material-symbols-outlined" aria-hidden="true">clear_all</span>Clear all
+									personas…
+								</button>
+							</div>
 						</div>
+						<p class="empty-state hidden" id="persona-search-empty" role="status">
+							No personas match your search
+						</p>
 						<div id="personalitiesDiv"></div>
 					</div>
 				</div>
@@ -333,7 +399,15 @@
 
 			<div id="mainContent">
 				<div class="header">
-					<button class="material-symbols-outlined btn-textual" id="btn-show-sidebar">menu</button>
+					<button
+						type="button"
+						class="material-symbols-outlined btn-icon"
+						id="btn-show-sidebar"
+						aria-label="Open sidebar"
+						aria-controls="sidebar"
+					>
+						menu
+					</button>
 					<div id="chat-title"></div>
 				</div>
 				<div id="scrollable-chat-container">
@@ -417,11 +491,19 @@
 									<div
 										class="navbar-tab navbar-tab-active"
 										data-roleplay-tab="dialogue"
+										role="tab"
 										aria-selected="true"
+										tabindex="0"
 									>
 										Dialogue
 									</div>
-									<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">
+									<div
+										class="navbar-tab"
+										data-roleplay-tab="actions"
+										role="tab"
+										aria-selected="false"
+										tabindex="-1"
+									>
 										Actions
 									</div>
 									<div class="navbar-tab-highlight"></div>
@@ -537,7 +619,12 @@
 									<span class="image-credits-count">—</span>
 									<span class="image-credits-type">Image Credits</span>
 								</div>
-								<button type="submit" class="btn-textual material-symbols-outlined" id="btn-send">
+								<button
+									type="submit"
+									class="btn-textual material-symbols-outlined"
+									id="btn-send"
+									aria-label="Send message"
+								>
 									send
 								</button>
 							</div>
@@ -551,16 +638,16 @@
 					<div class="header">
 						<button
 							type="button"
-							class="settings-page-back btn-textual hidden"
+							class="btn-icon hidden"
 							id="btn-settings-back"
 							aria-label="Back to settings"
 						>
 							<span class="material-symbols-outlined">arrow_back</span>
 						</button>
-						<h2 class="settings-sidebar-title" id="settings-sidebar-title">Settings</h2>
+						<h2 class="settings-sidebar-title surface-title" id="settings-sidebar-title">Settings</h2>
 						<button
 							type="button"
-							class="material-symbols-outlined btn-textual"
+							class="material-symbols-outlined btn-icon"
 							id="btn-close-settings"
 							aria-label="Close settings"
 						>
@@ -576,7 +663,7 @@
 									<button class="settings-list-item" data-settings-target="api">
 										<span class="settings-list-item-icon material-symbols-outlined">vpn_key</span>
 										<span class="settings-list-item-text">
-											<span class="settings-list-item-title">API Key</span>
+											<span class="settings-list-item-title">API Keys</span>
 											<span class="settings-list-item-subtitle"
 												>Configure your Google Gemini API key</span
 											>
@@ -600,7 +687,7 @@
 									<button class="settings-list-item" data-settings-target="groupchat">
 										<span class="settings-list-item-icon material-symbols-outlined">groups</span>
 										<span class="settings-list-item-text">
-											<span class="settings-list-item-title">Group chat Settings</span>
+											<span class="settings-list-item-title">Group Chat Settings</span>
 											<span class="settings-list-item-subtitle"
 												>Dynamic + RPG group chat options</span
 											>
@@ -661,7 +748,9 @@
 												class="input-field"
 											/>
 											<button
+												type="button"
 												class="material-symbols-outlined btn-textual"
+												aria-label="Get a Gemini API key"
 												onclick="
 													window.open('https://aistudio.google.com/app/apikey', '_blank')
 												"
@@ -683,7 +772,9 @@
 												class="input-field"
 											/>
 											<button
+												type="button"
 												class="material-symbols-outlined btn-textual"
+												aria-label="Get an OpenRouter API key"
 												onclick="window.open('https://openrouter.ai/settings/keys', '_blank')"
 											>
 												help
@@ -842,7 +933,7 @@
 							<div
 								class="settings-page"
 								data-settings-page="groupchat"
-								data-settings-title="Group chat Settings"
+								data-settings-title="Group Chat Settings"
 							>
 								<div class="settings-page-content">
 									<h4>Dynamic group chats</h4>
@@ -950,7 +1041,7 @@
 														/>
 														<button
 															id="btn-add-lora"
-															class="btn-icon btn btn-primary"
+															class="btn btn-primary"
 															aria-label="Add LoRA"
 														>
 															<span class="material-symbols-outlined">add_link</span>
@@ -1388,7 +1479,14 @@
 
 		<div class="overlay hidden" id="overlay">
 			<div class="header">
-				<button class="btn-textual" id="btn-hide-overlay">BACK</button>
+				<button
+					type="button"
+					class="material-symbols-outlined btn-icon"
+					id="btn-hide-overlay"
+					aria-label="Close"
+				>
+					close
+				</button>
 			</div>
 			<div class="overlay-content">
 				<form id="form-add-personality" class="hidden">
@@ -1398,28 +1496,36 @@
 								<!-- we match the name property of each input to the corresponding key in our personality model (Personality.service.js) -->
 								<h3>Basic Info</h3>
 								<input style="display: none" name="id" />
-								<label for="name">Name:</label>
-								<input type="text" name="name" placeholder="Mario" list="name-list" />
-								<label for="description">Description:</label>
+								<label for="persona-name">Name:</label>
+								<input id="persona-name" type="text" name="name" placeholder="Mario" />
+								<label for="persona-description">Description:</label>
 								<input
+									id="persona-description"
 									type="text"
 									name="description"
 									placeholder="A  plumber with a shroom addiction."
 								/>
-								<label for="image">Image URL:</label>
-								<input type="text" name="image" placeholder="https://example.com/mario.png" />
-								<label for="prompt">System Prompt:</label>
+								<label for="persona-image">Image URL:</label>
+								<input
+									id="persona-image"
+									type="text"
+									name="image"
+									placeholder="https://example.com/mario.png"
+								/>
+								<label for="persona-prompt">System Prompt:</label>
 								<textarea
+									id="persona-prompt"
 									type="text"
 									name="prompt"
 									placeholder="You are to act as main character from the Mario video game series..."
 									style="height: 5rem; resize: vertical"
 								></textarea>
 							</div>
-							<div class="step" id="group-chat-step-mode">
+							<div class="step">
 								<h3>Personality</h3>
-								<label for="aggressiveness">Aggressiveness:</label>
+								<label for="persona-aggressiveness">Aggressiveness:</label>
 								<input
+									id="persona-aggressiveness"
 									type="range"
 									name="aggressiveness"
 									min="0"
@@ -1433,8 +1539,9 @@
 									<option value="2">2</option>
 									<option value="3">3</option>
 								</datalist>
-								<label for="sensuality">Sensuality:</label>
+								<label for="persona-sensuality">Sensuality:</label>
 								<input
+									id="persona-sensuality"
 									type="range"
 									name="sensuality"
 									min="0"
@@ -1448,8 +1555,9 @@
 									<option value="2">2</option>
 									<option value="3">3</option>
 								</datalist>
-								<label for="independence">Independence:</label>
+								<label for="persona-independence">Independence:</label>
 								<input
+									id="persona-independence"
 									type="range"
 									name="independence"
 									min="0"
@@ -1540,7 +1648,7 @@
 								<div id="group-chat-persona-list" class="group-chat-persona-list"></div>
 							</div>
 
-							<div class="step">
+							<div class="step" id="group-chat-step-mode">
 								<h1>Mode</h1>
 								<p class="overlay-description">Choose how participants take turns.</p>
 
@@ -1715,17 +1823,20 @@
 					<h1 id="header-version">What's New in</h1>
 					<ul id="changelog">
 						<li>
-							<b>New look:</b> Redesigned sidebar, Settings in its own panel, and fresh Zozo Chat branding
+							<b>Faster unlock:</b> The Cloud Sync unlock prompt shows up sooner when you open Zozo Chat
 						</li>
 						<li>
-							<b>33 new models:</b> Claude Opus 5.5, Fable 5.1, GPT-6, Gemini 3.8 Flash, Kimi K3, and more
+							<b>Keyboard navigation:</b> Move through tabs and your chat list with the keyboard, plus
+							friendlier empty states
 						</li>
-						<li><b>Model retirement notices:</b> See ahead of time when an older model is going away</li>
 						<li>
-							<b>Data takeout:</b> Export your data, all of it or just the parts you pick, and restore it
-							later
+							<b>Polish:</b> New sidebar add menus, consistent close buttons, and a UI refresh throughout
 						</li>
-						<li><b>Polish:</b> Dismissible announcement banner, and no more theme flash on startup</li>
+						<li>
+							<b>Reliability:</b> Failed saves and syncs now recover cleanly instead of leaving things
+							stuck
+						</li>
+						<li><b>Fixed:</b> The background blur behind sheets and image previews is back</li>
 					</ul>
 				</div>
 
@@ -1760,23 +1871,6 @@
 						</div>
 					</div>
 				</section>
-
-				<!-- Add Persona Modal -->
-				<div id="modal-add-persona" class="hidden">
-					<span class="material-symbols-outlined sync-modal-icon">person_add</span>
-					<h1>Add Persona</h1>
-					<p class="overlay-description">Create a new persona locally or browse the Zodiac Marketplace.</p>
-					<div class="overlay-actions overlay-actions-vertical">
-						<button class="btn btn-primary add-persona-marketplace-btn">
-							<span class="material-symbols-outlined">storefront</span>
-							Browse Marketplace
-						</button>
-						<button class="btn btn-secondary add-persona-local-btn">
-							<span class="material-symbols-outlined">edit</span>
-							Create Local
-						</button>
-					</div>
-				</div>
 
 				<!-- Sync Update Modal -->
 				<div id="modal-sync-update" class="hidden">
@@ -2033,7 +2127,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 						<button
 							type="button"
 							id="btn-close-subscription"
-							class="subscription-close-button btn-textual"
+							class="subscription-close-button"
 							aria-label="Close plans"
 						>
 							<span class="material-symbols-outlined" aria-hidden="true">close</span>
@@ -3206,7 +3300,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 								<p
 									id="onboarding-thinking-hint"
 									class="setting-hint"
-									style="display: none; color: var(--accent-color)"
+									style="display: none; color: var(--onboarding-accent)"
 								>
 									Thinking is required for this model.
 								</p>
@@ -3389,6 +3483,25 @@ Your Max plan no longer has a monthly usage limit.</textarea
 			</div>
 		</div>
 
+		<!-- Confirmations can be raised from a sheet, so the dialog stacks above the surface plane and stays out of its focus trap. -->
+		<div
+			id="dialog"
+			class="dialog hidden"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="dialog-message"
+			data-above-surfaces
+		>
+			<div class="dialog-panel">
+				<span class="material-symbols-outlined dialog-icon" aria-hidden="true">warning</span>
+				<div id="dialog-message"></div>
+				<div id="dialog-buttons" class="btn-array">
+					<button type="button" class="btn btn-secondary" id="btn-dialog-cancel">Cancel</button>
+					<button type="button" class="btn btn-primary" id="btn-dialog-ok">OK</button>
+				</div>
+			</div>
+		</div>
+
 		<div id="surface-plane" class="surface-plane" aria-live="polite">
 			<section
 				id="domain-migration-sheet"
@@ -3455,7 +3568,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 			>
 				<div class="takeout-sheet__header">
 					<div>
-						<h1 id="takeout-export-title">Export your data</h1>
+						<h1 id="takeout-export-title" class="surface-title">Export your data</h1>
 						<p id="takeout-export-source" class="takeout-sheet__subtitle"></p>
 					</div>
 				</div>
@@ -3603,7 +3716,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 			>
 				<div class="takeout-sheet__header">
 					<div>
-						<h1 id="takeout-import-title">Import your data</h1>
+						<h1 id="takeout-import-title" class="surface-title">Import your data</h1>
 						<p id="takeout-import-instructions" class="takeout-sheet__subtitle">
 							Restore a Zozo Chat takeout or supported legacy chat and persona files.
 						</p>
@@ -3688,7 +3801,7 @@ Your Max plan no longer has a monthly usage limit.</textarea
 				role="dialog"
 				aria-labelledby="roleplay-add-modal-title"
 			>
-				<h1 id="roleplay-add-modal-title">Add</h1>
+				<h1 id="roleplay-add-modal-title" class="surface-title">Add</h1>
 				<input id="roleplay-add-modal-label-input" class="input-field hidden" type="text" />
 				<input id="roleplay-add-modal-input" class="input-field" type="text" data-surface-initial-focus />
 				<div id="roleplay-add-modal-error" class="error-message hidden">
@@ -3710,7 +3823,17 @@ Your Max plan no longer has a monthly usage limit.</textarea
 			data-dismiss-on-outside="true"
 		>
 			<div id="model-picker-families" class="model-picker-view">
-				<h1 id="model-picker-title">Select a model</h1>
+				<div class="surface-header">
+					<h1 id="model-picker-title" class="surface-title">Select a model</h1>
+					<button
+						type="button"
+						class="material-symbols-outlined btn-icon"
+						id="btn-close-model-picker"
+						aria-label="Close"
+					>
+						close
+					</button>
+				</div>
 				<div class="chat-search-wrapper model-picker-search-wrapper">
 					<span class="material-symbols-outlined chat-search-icon">search</span>
 					<input
@@ -3724,15 +3847,10 @@ Your Max plan no longer has a monthly usage limit.</textarea
 			</div>
 			<div id="model-picker-family-detail" class="model-picker-view hidden">
 				<div class="model-picker-detail-header">
-					<button
-						id="model-picker-back"
-						class="settings-page-back btn-textual"
-						type="button"
-						aria-label="Back to model families"
-					>
+					<button id="model-picker-back" class="btn-icon" type="button" aria-label="Back to model families">
 						<span class="material-symbols-outlined">arrow_back</span>
 					</button>
-					<h3 id="model-picker-family-title" class="model-picker-detail-title">Models</h3>
+					<h3 id="model-picker-family-title" class="model-picker-detail-title surface-title">Models</h3>
 					<button
 						id="model-picker-mega-toggle"
 						class="model-picker-mega-toggle"

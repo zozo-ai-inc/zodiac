@@ -16,7 +16,7 @@ async function openApp(page: Page, now: string, savedModel?: string): Promise<vo
 		await page.addInitScript((model) => localStorage.setItem("model", model), savedModel);
 	}
 	await page.goto("/");
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 }
 
 async function openChatSettings(page: Page): Promise<void> {

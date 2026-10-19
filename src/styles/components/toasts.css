@@ -1,10 +1,11 @@
+/* Bottom-right keeps toasts clear of the panel headers and their close buttons. Newest sits nearest the corner. */
 .toast-container {
 	position: fixed;
-	top: 1.5rem;
+	bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 	right: 1.5rem;
 	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
+	flex-direction: column-reverse;
+	gap: var(--space-3);
 	width: min(28rem, 90vw);
 	z-index: var(--layer-toast);
 	/* HIGHEST z-index in app - toasts must always be visible above all other UI */
@@ -16,14 +17,14 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.6rem;
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	padding: 0.9rem 1rem;
 	background: var(--toast-bg, rgba(21, 35, 49, 0.95));
 	color: var(--toast-fg, #f7fbff);
 	border: 1px solid var(--toast-border, rgba(204, 229, 255, 0.35));
 	box-shadow: 0 20px 40px rgba(2, 11, 24, 0.35);
 	opacity: 0;
-	transform: translateY(-10px);
+	transform: translateY(10px);
 	transition:
 		opacity 0.18s ease,
 		transform 0.18s ease;
@@ -37,13 +38,13 @@
 
 .toast--leaving {
 	opacity: 0;
-	transform: translateY(-10px);
+	transform: translateY(10px);
 }
 
 .toast-header {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 }
 
 .toast-title {
@@ -58,7 +59,7 @@
 	background: transparent;
 	color: inherit;
 	padding: 0.15rem;
-	border-radius: 0.4rem;
+	border-radius: var(--radius-xs);
 	font-size: 1.25rem;
 	line-height: 1;
 	min-width: 2rem;
@@ -85,19 +86,19 @@
 .toast-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: 0.25rem;
 }
 
 .toast-action {
 	border: none;
-	border-radius: 0.6rem;
+	border-radius: var(--radius-md);
 	padding: 0.45rem 0.85rem;
 	font-size: 0.85rem;
 	font-weight: 600;
 	cursor: pointer;
 	background: var(--toast-action-bg, rgba(255, 255, 255, 0.16));
-	color: var(--toast-action-fg, inherit);
+	color: inherit;
 	transition:
 		background-color 0.18s ease,
 		filter 0.18s ease;
@@ -135,6 +136,7 @@
 @media (max-width: 600px) {
 	.toast-container {
 		right: 1rem;
+		bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 		left: 1rem;
 		width: auto;
 	}

@@ -20,17 +20,14 @@ body.maintenance-banner-visible #main-container {
 	pointer-events: none;
 }
 
-/* The padding keeps the tap target at 1.75rem around the smaller icon. */
 #btn-hide-sidebar {
 	display: none;
-	padding: 0.25rem;
-	font-size: 1.25rem;
 }
 
 #main-container {
 	box-sizing: border-box;
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	width: 100dvw;
 	height: var(--vvh, 100dvh);
 	min-height: var(--vvh, 100dvh);
@@ -50,10 +47,10 @@ body.maintenance-banner-visible #main-container {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: var(--space-1);
 	padding: 0.875rem;
 	width: var(--sidebar-width);
-	border-radius: 1.25rem;
+	border-radius: var(--radius-2xl);
 	scrollbar-width: thin;
 	margin: 0.75rem;
 	z-index: var(--layer-sidebar);
@@ -79,28 +76,14 @@ body.settings-open .settings-sidebar {
 	transition-delay: 0s;
 }
 
-/* One size for the panel title, whether it names the panel or the open settings page. */
 .settings-sidebar-title {
 	margin-right: auto;
-	font-size: 1.1rem;
-	font-weight: 600;
-	line-height: 1.75rem;
-}
-
-#btn-settings-back {
-	display: flex;
-}
-
-/* The padding keeps the tap target at 1.75rem around the smaller icon. */
-#btn-close-settings {
-	padding: 0.25rem;
-	font-size: 1.25rem;
 }
 
 .sidebar-top-bar {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: var(--space-1);
 	/*
 	 * With the sidebar's own padding and the negative margins, this leaves the row's right-hand control 0.625rem
 	 * from the top and right edges. That gap plus the control's 0.625rem radius equals the sidebar's 1.25rem
@@ -110,7 +93,7 @@ body.settings-open .settings-sidebar {
 	margin-inline: -8px;
 	margin-top: -8px;
 	margin-bottom: 0.75rem;
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 }
 
 #zodiac-branding {
@@ -151,7 +134,7 @@ body.settings-open .settings-sidebar {
 .sidebar-footer {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: 0.25rem;
 	padding-top: 0.625rem;
 	border-top: 1px solid var(--sidebar-chrome-border);
@@ -161,10 +144,10 @@ body.settings-open .settings-sidebar {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	min-width: 0;
 	padding: 0.25rem 0.75rem 0.25rem 0.25rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	font-size: 0.875rem;
 	font-weight: 600;
 	cursor: pointer;
@@ -179,7 +162,7 @@ body.settings-open .settings-sidebar {
 .sidebar-footer-actions {
 	display: flex;
 	align-items: center;
-	gap: 0.25rem;
+	gap: var(--space-1);
 	margin-left: auto;
 }
 
@@ -217,8 +200,7 @@ body.settings-open .settings-sidebar {
 }
 
 .sidebar-account:focus-visible,
-.sidebar-footer-button:focus-visible,
-#btn-close-settings:focus-visible {
+.sidebar-footer-button:focus-visible {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
@@ -256,7 +238,7 @@ body.settings-open .settings-sidebar {
 	align-items: center;
 	font-size: 2rem;
 	font-weight: 800;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	width: 100%;
 	padding-bottom: 0.25rem;
 }
@@ -309,10 +291,15 @@ body.settings-open .settings-sidebar {
 	line-height: 1.125rem;
 }
 
-/* Below 24.25rem the title and switcher no longer fit on one row, so the switcher takes its own. */
+/* Below 24.25rem the title and switcher no longer fit on one row, so the switcher takes its own below the close button. */
 @media (max-width: 24.25rem) {
 	.sidebar-top-bar .navbar {
 		flex: 1 0 100%;
+		order: 1;
+	}
+
+	#btn-hide-sidebar {
+		margin-left: auto;
 	}
 }
 
@@ -395,12 +382,7 @@ body.settings-open .settings-sidebar {
 	}
 
 	#btn-hide-sidebar {
-		display: block;
-	}
-
-	/* The close button sits before the wordmark here, and the row's gap already separates them. */
-	#zodiac-branding {
-		margin-left: 0;
+		display: inline-flex;
 	}
 
 	#mainContent {
@@ -418,6 +400,6 @@ body.settings-open .settings-sidebar {
 	}
 
 	#btn-show-sidebar {
-		display: block;
+		display: inline-flex;
 	}
 }

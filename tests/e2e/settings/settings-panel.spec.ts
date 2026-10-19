@@ -28,7 +28,7 @@ test("RPG settings button opens settings on the group chat page", async ({ page 
 	await stubExternalTraffic(page, []);
 	await seedLocalSettings(page);
 	await page.goto("/");
-	await expect(page.locator("#btn-new-chat")).toBeVisible();
+	await expect(page.locator("#btn-chat-add")).toBeVisible();
 
 	// Seed the chat through the services; the button under test is the real entry point.
 	await page.evaluate(async () => {
@@ -70,7 +70,7 @@ test("closing settings on mobile returns to the sidebar", async ({ page }) => {
 
 	// The sidebar is usable again, not just present underneath.
 	await page.locator(".sidebar .navbar-tab", { hasText: "Personas" }).click();
-	await expect(page.locator("#btn-import-personality")).toBeVisible();
+	await expect(page.locator("#btn-persona-add")).toBeVisible();
 });
 
 test("an open settings page takes over the panel title and offers the way back", async ({ page }) => {

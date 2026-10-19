@@ -10,9 +10,9 @@
 	--tone-example-remove-hover: rgba(17, 64, 27, 0.12);
 	--tone-example-remove-active: rgba(17, 64, 27, 0.18);
 
-	--primary: #4a9960;
-	--primary-hover: #3f8751;
-	--primary-active: #357543;
+	--primary: #3e7f50;
+	--primary-hover: #336d41;
+	--primary-active: #295b34;
 
 	/* Body */
 	--body-bg: #f0faf0;
@@ -31,15 +31,15 @@
 	--navbar-tab-highlight-bg: #bdf39e;
 
 	/* Buttons */
-	--button-bg: #4a9960;
+	--button-bg: #3e7f50;
 	--button-fg: #ebffeb;
-	--button-hover-bg: #3f8751;
-	--button-active-bg: #357543;
+	--button-hover-bg: #336d41;
+	--button-active-bg: #295b34;
 	--button-toggled-bg: #a0ebafb0;
 
 	/* Tone example remove */
 	--tone-example-remove-fg: #235a48;
-	--tone-example-remove-hover-fg: #132c4d;
+	--tone-example-remove-hover-fg: #134d23;
 
 	/* Toasts */
 	--toast-fg: #0b1221;
@@ -69,16 +69,16 @@
 	--card-lora-bg: #e8fff1;
 	--card-lora-border: 1px solid rgba(57, 130, 87, 0.15);
 	--card-lora-shadow: 0 10px 22px rgba(20, 64, 34, 0.08);
-	--lora-card-meta-fg: #446c7f;
+	--lora-card-meta-fg: #447f54;
 	--lora-card-toggle-fg: #295c49;
 	--lora-card-trigger-bg: #d2ffe6;
 	--lora-card-trigger-border: rgba(57, 130, 87, 0.35);
-	--lora-card-trigger-fg: #133a68;
+	--lora-card-trigger-fg: #13682b;
 	--lora-card-trigger-hover-bg: #c0fcda;
 	--lora-card-trigger-copied-bg: #93fdc5;
 	--lora-card-trigger-copied-border: #3bf682;
 	--lora-card-trigger-copied-fg: #0b3f1f;
-	--lora-card-empty-fg: #446c7f;
+	--lora-card-empty-fg: #447f54;
 	--lora-card-delete-bg: rgba(169, 234, 156, 0.6);
 	--lora-card-delete-border: rgba(95, 190, 86, 0.45);
 	--lora-card-delete-fg: #166323;
@@ -92,7 +92,7 @@
 	--badge-active-bg: #8ce2b4;
 	--badge-border: 1px solid rgba(27, 87, 57, 0.508);
 	--badge-border-hover: rgba(27, 87, 57, 0.7);
-	--badge-fg: #344c5c;
+	--badge-fg: #345c3f;
 
 	/* Current chat radio */
 	--input-radio-checked-bg: #9deaa6;
@@ -145,11 +145,11 @@
 	--onboarding-list-neutral-bg: rgba(188, 223, 198, 0.45);
 	--onboarding-list-neutral-icon: #3c7a47;
 	--onboarding-badge-bg: rgba(76, 140, 90, 0.15);
-	--onboarding-badge-text: #2f5a8c;
+	--onboarding-badge-text: #2f8c49;
 	--onboarding-recommended-border: rgba(76, 140, 90, 0.4);
 	--onboarding-recommended-badge: linear-gradient(135deg, #4cbe4c 0%, #3c7a47 100%);
 	--onboarding-hook-bg: rgba(76, 140, 90, 0.08);
-	--onboarding-hook-text: #2f5a8c;
+	--onboarding-hook-text: #2f8c49;
 	--onboarding-bullet: #4cbe4c;
 	--onboarding-instructions-bg: rgba(188, 223, 198, 0.35);
 	--onboarding-step-number-bg: #4cbe4c;
@@ -159,14 +159,14 @@
 	--onboarding-input-border: rgba(76, 140, 90, 0.3);
 	--onboarding-input-border-focus: #4cbe4c;
 	--onboarding-input-focus-shadow: rgba(76, 140, 90, 0.15);
-	--onboarding-input-placeholder: rgba(45, 74, 110, 0.4);
+	--onboarding-input-placeholder: rgba(45, 110, 63, 0.4);
 	--onboarding-status-loading-bg: rgba(76, 140, 90, 0.12);
-	--onboarding-status-loading-text: #2f5a8c;
+	--onboarding-status-loading-text: #2f8c49;
 	--onboarding-error-bg: rgba(226, 254, 226, 0.8);
-	--onboarding-accent: #4cbe4c;
-	--onboarding-btn-primary-bg: #4cbe4c;
-	--onboarding-btn-primary-text: #edf8f1;
-	--onboarding-btn-primary-hover: #3c7a47;
+	--onboarding-accent: #3e7f50;
+	--onboarding-btn-primary-bg: #3e7f50;
+	--onboarding-btn-primary-text: #ebffeb;
+	--onboarding-btn-primary-hover: #336d41;
 	--onboarding-btn-shadow: rgba(22, 58, 32, 0.2);
 	--onboarding-btn-secondary-text: #2d5e4a;
 	--onboarding-btn-secondary-border: rgba(76, 140, 90, 0.35);

@@ -518,13 +518,24 @@ btnSyncNow?.addEventListener(
 			btnSyncNow!.disabled = true;
 			btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Syncing…';
 
-			await syncService.pushAll();
-			await chatsService.initialize();
-			await personalityService.reloadFromDb();
+			let chatsRefreshed = false;
+			try {
+				await syncService.pushAll();
+				chatsRefreshed = await chatsService.initialize();
+				await personalityService.reloadFromDb();
+			} finally {
+				// Never leave the button stuck on "Syncing…" after a failure.
+				btnSyncNow!.disabled = false;
+				btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync Now';
+			}
 
-			btnSyncNow!.disabled = false;
-			btnSyncNow!.innerHTML = '<span class="material-symbols-outlined">sync</span> Sync Now';
-
+			if (!chatsRefreshed) {
+				danger({
+					title: "Sync incomplete",
+					text: "Couldn't load your chats from the cloud. Your chat list was left as it was."
+				});
+				return;
+			}
 			info({ title: "Sync complete", text: "All data has been synchronized." });
 		})()
 );
@@ -599,44 +610,51 @@ function updateStatusIndicator(status: SyncStatus) {
 
 // ── Event Listeners ────────────────────────────────────────────────────────
 
-// Auth state: check if user is Pro/Max and show/hide sync section
+// Signed out: hide sync section, reset state
 onAppEvent(
 	"auth-state-changed",
 	(event) =>
 		void (async () => {
-			const { loggedIn, subscription, session } = event.detail;
+			if (event.detail.loggedIn) return;
+			if (startupPresentation.migrationActive) await startupPresentation.ready;
+			syncStartupUserId = null;
+			cloudSyncSection?.classList.add("hidden");
+			cryptoService.clearCachedKey();
+		})()
+);
+
+// Session ready: show/hide sync section by tier and run the startup check.
+// This fires before the profile and credit loads so the unlock modal is not held behind them.
+onAppEvent(
+	"auth-session-ready",
+	(event) =>
+		void (async () => {
+			const { session, subscription } = event.detail;
 			if (startupPresentation.migrationActive) await startupPresentation.ready;
 
-			if (!loggedIn) {
-				// Hide sync section, reset state
-				syncStartupUserId = null;
-				cloudSyncSection?.classList.add("hidden");
-				cryptoService.clearCachedKey();
-				return;
-			}
-
-			const startupUserId = session?.user.id;
-			if (!startupUserId) return;
+			const startupUserId = session.user.id;
 			// Supabase can emit the same authenticated session again while its first
 			// startup check is still loading. Keep one unlock flow active per user so
 			// a slower duplicate cannot reopen the modal after the user dismisses it.
 			if (syncStartupUserId === startupUserId) return;
 			syncStartupUserId = startupUserId;
 
-			const tier = getSubscriptionTier(subscription ?? null);
+			const tier = getSubscriptionTier(subscription);
 			const isPaid = tier === "pro" || tier === "pro_plus" || tier === "max";
 
 			try {
+				const prefs = await syncService.fetchSyncPreferences();
 				if (isPaid) {
 					cloudSyncSection?.classList.remove("hidden");
 					syncUpgradeHint?.classList.add("hidden");
 					syncToggle?.removeAttribute("disabled");
-
-					const prefs = await syncService.fetchSyncPreferences();
 					updateSettingsUI(prefs?.syncEnabled ?? false);
 
 					if (prefs?.syncEnabled) {
-						await syncService.fetchSyncQuota();
+						// The quota bar is not part of the startup decision, so let it load in the background.
+						syncService
+							.fetchSyncQuota()
+							.catch((error) => console.error("Cloud sync quota fetch failed:", error));
 					}
 				} else {
 					cloudSyncSection?.classList.remove("hidden");
@@ -651,7 +669,7 @@ onAppEvent(
 					return;
 				}
 
-				const result = await syncService.checkSyncOnLogin();
+				const result = syncService.checkSyncOnLogin(subscription, prefs);
 				if (result === "ready") settleSyncStartup(startupUserId);
 			} catch (error) {
 				console.error("Cloud sync startup check failed:", error);

@@ -42,6 +42,13 @@ async function hydrateAuthenticatedSession(session: Session): Promise<void> {
 	document.querySelectorAll(".logged-out-component").forEach((el) => {
 		(el as HTMLElement).classList.add("hidden");
 	});
+	// Cloud Sync startup only needs the subscription, so release it before the profile and credit loads.
+	const sub = await getUserSubscription(session);
+	try {
+		dispatchAppEvent("auth-session-ready", { session, subscription: sub });
+	} catch (e) {
+		console.error(e);
+	}
 	//initial profile load
 	const profile = await getUserProfile();
 	if (profile.avatar) {
@@ -50,7 +57,6 @@ async function hydrateAuthenticatedSession(session: Session): Promise<void> {
 	}
 	document.querySelector<HTMLInputElement>("#profile-preferred-name")!.value = profile.preferredName;
 	document.querySelector<HTMLTextAreaElement>("#profile-system-prompt")!.defaultValue = profile.systemPromptAddition;
-	const sub = await getUserSubscription(session);
 	const imageGenRecord = await getImageGenerationRecord();
 	await updateSubscriptionUI(session, sub, imageGenRecord);
 	try {

@@ -43,6 +43,12 @@ for (const tabGroup of tabGroups) {
 	tabHighlight!.style.left = highlightInset;
 	//set the first tab as active
 	tabs[0].classList.add("navbar-tab-active");
+	tabGroup.setAttribute("role", "tablist");
+	tabs.forEach((tab, index) => {
+		tab.setAttribute("role", "tab");
+		tab.setAttribute("aria-selected", String(index === 0));
+		tab.tabIndex = index === 0 ? 0 : -1;
+	});
 
 	const t: TabView = {
 		setActiveTab: (targetIndex: number) => {
@@ -52,9 +58,13 @@ for (const tabGroup of tabGroups) {
 			const currentTab = t.tabs[t.activeTabIndex];
 			const currentView = t.views[t.activeTabIndex];
 			currentTab.classList.remove("navbar-tab-active");
+			currentTab.setAttribute("aria-selected", "false");
+			currentTab.tabIndex = -1;
 			const targetView = t.views[targetIndex];
 			const targetTab = t.tabs[targetIndex];
 			targetTab.classList.add("navbar-tab-active");
+			targetTab.setAttribute("aria-selected", "true");
+			targetTab.tabIndex = 0;
 			tabHighlight!.style.left = `calc(${highlightInset} + ((${availableWidth} / ${tabs.length}) * ${targetIndex}))`;
 			helpers.hideElement(currentView);
 			t.activeTabIndex = targetIndex;
@@ -75,3 +85,21 @@ for (const tabGroup of tabGroups) {
 
 	t.setActiveTab(0);
 }
+
+// Keyboard support for every tab strip, including the manually driven ones, which switch on click.
+document.addEventListener("keydown", (event) => {
+	const tab = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('.navbar [role="tab"]') : null;
+	if (!tab) return;
+	const tabs = Array.from(tab.parentElement!.querySelectorAll<HTMLElement>(':scope > [role="tab"]'));
+	const index = tabs.indexOf(tab);
+	let next: HTMLElement | undefined;
+	if (event.key === "ArrowRight") next = tabs[(index + 1) % tabs.length];
+	else if (event.key === "ArrowLeft") next = tabs[(index - 1 + tabs.length) % tabs.length];
+	else if (event.key === "Home") next = tabs[0];
+	else if (event.key === "End") next = tabs.at(-1);
+	else if (event.key === "Enter" || event.key === " ") next = tab;
+	if (!next) return;
+	event.preventDefault();
+	next.click();
+	next.focus();
+});

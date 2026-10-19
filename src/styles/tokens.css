@@ -8,17 +8,40 @@
 	--elevated-ui-outline: 1px solid rgba(0, 0, 0, 0.1);
 	--menu-spawn-top-offset: 4px;
 
+	/* Corner radii. Nested corners use the outer radius less the gap between them, so a few stay computed. */
+	--radius-xs: 0.375rem;
+	--radius-sm: 0.5rem;
+	--radius-md: 0.625rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.25rem;
+	--radius-3xl: 1.5rem;
+	--radius-pill: 999px;
+
+	/* Spacing steps for gaps between items. */
+	--space-1: 0.25rem;
+	--space-1-5: 0.375rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+
 	/* App-level stacking. Local children keep their own small stacking indices. */
 	--layer-composer: 10;
 	--layer-sidebar: 11;
 	--layer-dropdown: 20;
 	--layer-maintenance-banner: 100;
-	--layer-lightbox: 1000;
+	--layer-onboarding: 9990;
 	--layer-mentions: 1200;
 	--layer-credits-popover: 9999;
 	--layer-overlay: 10000;
-	--layer-dialog: 10001;
 	--layer-surface: 10020;
+	--layer-dialog: 10025;
 	--layer-dropdown-portal: 10030;
+	/* The lightbox is opened from inside chats while menus or popovers may still be open, so it covers them. */
+	--layer-lightbox: 10035;
+	--layer-tooltip: 10040;
 	--layer-toast: 99999;
 }

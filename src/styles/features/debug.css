@@ -14,7 +14,7 @@
 	overflow-y: auto;
 	box-sizing: border-box;
 	border: 1px solid var(--card-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	background: var(--modal-bg);
 	box-shadow: var(--modal-shadow);
 }
@@ -27,29 +27,29 @@
 .debug-announcement-action-fields {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 0.75rem;
+	gap: var(--space-3);
 }
 
 .debug-announcement-action-fields > div {
 	display: flex;
 	flex-direction: column;
-	gap: 0.4rem;
+	gap: var(--space-1-5);
 }
 
 .message-debug-summary {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: 0.25rem;
 }
 
 .message-debug-row {
 	display: flex;
 	justify-content: space-between;
-	gap: 1rem;
+	gap: var(--space-4);
 	padding: 0.7rem 0.85rem;
 	border: 1px solid var(--input-text-border);
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	background: var(--input-bg);
 }
 
@@ -69,7 +69,7 @@
 .message-debug-payload {
 	margin: 1rem 0 0;
 	padding: 0.95rem;
-	border-radius: 0.85rem;
+	border-radius: var(--radius-lg);
 	border: 1px solid var(--input-text-border);
 	background: var(--input-bg);
 	color: var(--body-fg);

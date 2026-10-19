@@ -72,6 +72,7 @@ import { dispatchAppEvent } from "../events";
 import {
 	startGeneration,
 	endGeneration,
+	endGenerationIfCurrent,
 	insertMessage,
 	persistMessagesToChat,
 	appendRequestSlugToStoredMessage,
@@ -127,91 +128,96 @@ export async function sendGroupChatRpg(args: RpgInputArgs): Promise<HTMLElement 
 	const ctx = await buildRpgContext(args);
 	if (!ctx) return;
 
-	const { abortController: currentAbortController, currentRoundIndex, narratorEnabled } = ctx;
+	// Every early return below ends the generation, but a save that throws would skip them all.
+	try {
+		const { abortController: currentAbortController, currentRoundIndex, narratorEnabled } = ctx;
 
-	// Narrator before first round
-	if (narratorEnabled && !currentAbortController?.signal.aborted) {
-		await handleNarratorBeforeFirst(ctx);
-	}
+		// Narrator before first round
+		if (narratorEnabled && !currentAbortController?.signal.aborted) {
+			await handleNarratorBeforeFirst(ctx);
+		}
 
-	// Refresh working chat
-	const workingChat = await getChatForWrite(ctx.chatId);
-	if (!workingChat) {
-		endGeneration(ctx.chatId);
-		return;
-	}
-	ctx.workingChat = workingChat;
-
-	let userElm: HTMLElement | undefined = undefined;
-
-	// Insert user message if provided
-	if (args.msg) {
-		userElm = await insertUserMessage(ctx);
-		if (!userElm) {
+		// Refresh working chat
+		const workingChat = await getChatForWrite(ctx.chatId);
+		if (!workingChat) {
 			endGeneration(ctx.chatId);
 			return;
 		}
+		ctx.workingChat = workingChat;
+
+		let userElm: HTMLElement | undefined = undefined;
+
+		// Insert user message if provided
+		if (args.msg) {
+			userElm = await insertUserMessage(ctx);
+			if (!userElm) {
+				endGeneration(ctx.chatId);
+				return;
+			}
+		}
+
+		// Calculate next participants
+		const { nextParticipants, stoppedForUser, startsNewRound, nextSpeakerId } = calculateNextParticipants(ctx);
+
+		// Build metadata for participants
+		const participantMeta = await buildParticipantMeta(nextParticipants);
+
+		// Execute AI turns
+		let executedAiTurns = 0;
+		for (const meta of participantMeta) {
+			if (currentAbortController?.signal.aborted) {
+				endGeneration(ctx.chatId);
+				return userElm;
+			}
+
+			// 5% chance of mid-round narrator interjection
+			if (narratorEnabled && Math.random() < 0.05) {
+				await handleNarratorInterjection(ctx);
+			}
+
+			const result = await executeParticipantTurn({ ctx, meta, participantMeta });
+
+			if (!result.continueLoop) {
+				endGeneration(ctx.chatId);
+				return userElm;
+			}
+
+			executedAiTurns += 1;
+
+			const updatedChat = await getChatForWrite(ctx.chatId);
+			if (!updatedChat) {
+				endGeneration(ctx.chatId);
+				return userElm;
+			}
+			ctx.workingChat = updatedChat;
+		}
+
+		// Narrator after round: only when the round actually completes
+		// (i.e. after the last participant speaks and the next turn would start a new round).
+		const userCompletedTurn = !!args.msg || !!args.skipTurn;
+		const completedAiTurnThisCall = executedAiTurns > 0;
+		const roundHasAiTurns = hasAiTurnInRound(ctx.workingChat, currentRoundIndex);
+		const aiCycleCompleted = completedAiTurnThisCall && startsNewRound;
+		const userClosedRound = userCompletedTurn && startsNewRound && roundHasAiTurns;
+		if (narratorEnabled && (aiCycleCompleted || userClosedRound) && !currentAbortController?.signal.aborted) {
+			await handleNarratorAfterRound(ctx);
+		}
+
+		// Dispatch round state for UI
+		dispatchRoundState({
+			chatId: ctx.chatId,
+			userCompletedTurn,
+			currentRoundIndex,
+			stoppedForUser,
+			startsNewRound,
+			nextSpeakerId
+		});
+
+		endGeneration(ctx.chatId);
+		return userElm;
+	} finally {
+		endGenerationIfCurrent(ctx.chatId, ctx.abortController);
 	}
-
-	// Calculate next participants
-	const { nextParticipants, stoppedForUser, startsNewRound, nextSpeakerId } = calculateNextParticipants(ctx);
-
-	// Build metadata for participants
-	const participantMeta = await buildParticipantMeta(nextParticipants);
-
-	// Execute AI turns
-	let executedAiTurns = 0;
-	for (const meta of participantMeta) {
-		if (currentAbortController?.signal.aborted) {
-			endGeneration(ctx.chatId);
-			return userElm;
-		}
-
-		// 5% chance of mid-round narrator interjection
-		if (narratorEnabled && Math.random() < 0.05) {
-			await handleNarratorInterjection(ctx);
-		}
-
-		const result = await executeParticipantTurn({ ctx, meta, participantMeta });
-
-		if (!result.continueLoop) {
-			endGeneration(ctx.chatId);
-			return userElm;
-		}
-
-		executedAiTurns += 1;
-
-		const updatedChat = await getChatForWrite(ctx.chatId);
-		if (!updatedChat) {
-			endGeneration(ctx.chatId);
-			return userElm;
-		}
-		ctx.workingChat = updatedChat;
-	}
-
-	// Narrator after round: only when the round actually completes
-	// (i.e. after the last participant speaks and the next turn would start a new round).
-	const userCompletedTurn = !!args.msg || !!args.skipTurn;
-	const completedAiTurnThisCall = executedAiTurns > 0;
-	const roundHasAiTurns = hasAiTurnInRound(ctx.workingChat, currentRoundIndex);
-	const aiCycleCompleted = completedAiTurnThisCall && startsNewRound;
-	const userClosedRound = userCompletedTurn && startsNewRound && roundHasAiTurns;
-	if (narratorEnabled && (aiCycleCompleted || userClosedRound) && !currentAbortController?.signal.aborted) {
-		await handleNarratorAfterRound(ctx);
-	}
-
-	// Dispatch round state for UI
-	dispatchRoundState({
-		chatId: ctx.chatId,
-		userCompletedTurn,
-		currentRoundIndex,
-		stoppedForUser,
-		startsNewRound,
-		nextSpeakerId
-	});
-
-	endGeneration(ctx.chatId);
-	return userElm;
 }
 
 // ================================================================================
@@ -249,41 +255,47 @@ async function buildRpgContext(args: RpgInputArgs): Promise<RpgContext | null> {
 
 	const chatId = workingChat.id;
 	const abortController = startGeneration(chatId);
-	const userName = await getUserDisplayName();
-	const { participantPersonas, speakerNameById } = await buildParticipantData(participants);
-	const allParticipantNames = participantPersonas.map((p) => p.name);
+	// Until the context reaches its caller, nothing else will end this generation if building it throws.
+	try {
+		const userName = await getUserDisplayName();
+		const { participantPersonas, speakerNameById } = await buildParticipantData(participants);
+		const allParticipantNames = participantPersonas.map((p) => p.name);
 
-	const rosterSystemPrompt = buildGroupChatRosterSystemPrompt({
-		participantPersonas,
-		userName,
-		scenarioPrompt,
-		narratorEnabled
-	});
+		const rosterSystemPrompt = buildGroupChatRosterSystemPrompt({
+			participantPersonas,
+			userName,
+			scenarioPrompt,
+			narratorEnabled
+		});
 
-	return {
-		msg: args.msg,
-		chatId,
-		attachmentFiles: args.attachmentFiles,
-		isInternetSearchEnabled: args.isInternetSearchEnabled,
-		isPremiumEndpointPreferred: args.isPremiumEndpointPreferred,
-		skipTurn: !!args.skipTurn,
-		settings,
-		shouldEnforceThoughtSignaturesInHistory,
-		workingChat,
-		currentRoundIndex,
-		rootUserMessageIndex: undefined,
-		rootUserMessageRef: undefined,
-		turnOrder,
-		scenarioPrompt,
-		narratorEnabled,
-		participants,
-		participantPersonas,
-		speakerNameById,
-		allParticipantNames,
-		userName,
-		rosterSystemPrompt,
-		abortController
-	};
+		return {
+			msg: args.msg,
+			chatId,
+			attachmentFiles: args.attachmentFiles,
+			isInternetSearchEnabled: args.isInternetSearchEnabled,
+			isPremiumEndpointPreferred: args.isPremiumEndpointPreferred,
+			skipTurn: !!args.skipTurn,
+			settings,
+			shouldEnforceThoughtSignaturesInHistory,
+			workingChat,
+			currentRoundIndex,
+			rootUserMessageIndex: undefined,
+			rootUserMessageRef: undefined,
+			turnOrder,
+			scenarioPrompt,
+			narratorEnabled,
+			participants,
+			participantPersonas,
+			speakerNameById,
+			allParticipantNames,
+			userName,
+			rosterSystemPrompt,
+			abortController
+		};
+	} catch (error) {
+		endGenerationIfCurrent(chatId, abortController);
+		throw error;
+	}
 }
 
 function isViewingChat(chatId: string): boolean {

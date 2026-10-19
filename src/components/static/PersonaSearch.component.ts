@@ -1,10 +1,11 @@
 import * as helpers from "../../utils/helpers";
 
 const personaSearchInput = document.querySelector<HTMLInputElement>("#persona-search-input");
+const personaSearchEmpty = document.querySelector<HTMLElement>("#persona-search-empty");
 
 let personaSearchDebounceTimer: number;
 
-if (!personaSearchInput) {
+if (!personaSearchInput || !personaSearchEmpty) {
 	console.error("PersonaSearch component is missing the search input element. Please check the HTML structure.");
 	throw new Error("PersonaSearch component is not properly initialized.");
 }
@@ -32,8 +33,9 @@ function performSearch(): void {
 	const personalityCards = personalitiesDiv.querySelectorAll<HTMLElement>(".card-personality");
 
 	if (searchTerm === "") {
+		personaSearchEmpty?.classList.add("hidden");
 		personalityCards.forEach((card) => {
-			helpers.showElement(card, true);
+			card.classList.remove("hidden");
 		});
 		return;
 	}
@@ -41,10 +43,6 @@ function performSearch(): void {
 	const cardsWithScores: Array<{ element: HTMLElement; score: number }> = [];
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality") {
-			return;
-		}
-
 		const personalityName = card.querySelector(".personality-title")?.textContent;
 		if (!personalityName) {
 			return;
@@ -58,12 +56,13 @@ function performSearch(): void {
 
 	cardsWithScores.sort((a, b) => b.score - a.score);
 	const matchingCards = new Set(cardsWithScores.map((item) => item.element));
+	personaSearchEmpty?.classList.toggle("hidden", matchingCards.size > 0);
 
 	personalityCards.forEach((card) => {
-		if (card.id === "btn-add-personality" || matchingCards.has(card)) {
-			helpers.showElement(card, true);
+		if (matchingCards.has(card)) {
+			card.classList.remove("hidden");
 		} else {
-			helpers.hideElement(card);
+			card.classList.add("hidden");
 		}
 	});
 }

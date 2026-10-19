@@ -13,7 +13,7 @@ body.ime-open #messageInput {
 .message-container {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: var(--space-4);
 	flex-grow: 1;
 	align-items: center;
 	max-width: 50rem;
@@ -44,9 +44,9 @@ body.full-width-chat .message-container {
 	gap: 0.6rem;
 	margin-bottom: 0.5rem;
 	padding: 0.4rem 0.85rem;
-	border-radius: 999px;
+	border-radius: var(--radius-pill);
 	outline: var(--turn-control-outline, var(--elevated-ui-outline));
-	background: var(--turn-control-bg, var(--message-box-bg, var(--card-bg, rgba(0, 0, 0, 0.05))));
+	background: var(--message-box-bg);
 	box-shadow: var(--elevated-ui-shadow);
 	backdrop-filter: blur(12px);
 	width: fit-content;
@@ -71,12 +71,12 @@ body.full-width-chat .message-container {
 .message-text .mention-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.3rem;
+	gap: var(--space-1);
 	padding: 0.08rem 0.45rem;
 	margin: 0 0.1rem;
-	border-radius: 999px;
-	background: rgba(var(--accent-color, 76, 124, 190), 0.18);
-	color: var(--accent-fg, inherit);
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--primary) 18%, transparent);
+	color: inherit;
 	font-weight: 650;
 	line-height: 1.25;
 	cursor: default;
@@ -87,19 +87,19 @@ body.full-width-chat .message-container {
 }
 
 .message-text .mention-chip:hover {
-	background: rgba(var(--accent-color, 76, 124, 190), 0.3);
+	background: color-mix(in srgb, var(--primary) 30%, transparent);
 	transform: translateY(-1px);
 }
 
 #messageInput .mention-chip-input {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.3rem;
+	gap: var(--space-1);
 	padding: 0.06rem 0.45rem;
 	margin: 0 0.1rem;
-	border-radius: 999px;
-	background: rgba(var(--accent-color, 76, 124, 190), 0.22);
-	color: var(--accent-fg, inherit);
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--primary) 22%, transparent);
+	color: inherit;
 	font-weight: 650;
 	line-height: 1.25;
 	user-select: none;
@@ -113,7 +113,7 @@ body.full-width-chat .message-container {
 	max-height: 14rem;
 	overflow-y: auto;
 	padding: 0.35rem;
-	border-radius: 0.85rem;
+	border-radius: var(--radius-lg);
 	background: var(--card-bg, rgba(0, 0, 0, 0.9));
 	border: 1px solid var(--card-border, rgba(255, 255, 255, 0.12));
 	box-shadow: var(--elevated-ui-shadow);
@@ -133,7 +133,7 @@ body.full-width-chat .message-container {
 	color: inherit;
 	text-align: left;
 	padding: 0.45rem 0.6rem;
-	border-radius: 0.6rem;
+	border-radius: var(--radius-md);
 	cursor: pointer;
 	font-size: 0.9rem;
 	transition: background 0.15s ease;
@@ -141,7 +141,7 @@ body.full-width-chat .message-container {
 
 .mention-suggestion-item:hover,
 .mention-suggestion-item.active {
-	background: rgba(var(--accent-color, 76, 124, 190), 0.18);
+	background: color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .mention-suggestion-empty {
@@ -181,7 +181,7 @@ body.full-width-chat .message-container {
 .code-block-wrapper {
 	position: relative;
 	margin: 1.25rem 0;
-	border-radius: 0.75rem;
+	border-radius: var(--radius-lg);
 	border: 1px solid var(--code-block-border, rgba(255, 255, 255, 0.12));
 	background: var(--code-block-bg, rgba(14, 20, 28, 0.8));
 	overflow: hidden;
@@ -205,7 +205,7 @@ body.full-width-chat .message-container {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	padding: 0.55rem 0.95rem;
 	background: var(--code-toolbar-bg, rgba(255, 255, 255, 0.05));
 	border-top: 1px solid var(--code-block-border, rgba(255, 255, 255, 0.12));
@@ -229,7 +229,7 @@ body.full-width-chat .message-container {
 	align-items: center;
 	justify-content: center;
 	padding: 0.15rem 0.35rem;
-	border-radius: 0.4rem;
+	border-radius: var(--radius-xs);
 	font-size: 1.2rem;
 	cursor: pointer;
 	transition:
@@ -261,14 +261,14 @@ body.full-width-chat .message-container {
 	padding: 0.4rem 0.6rem 0.4rem 0.75rem;
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	font-size: 0.8rem;
 	line-height: 1.35;
 	opacity: 0.85;
 	white-space: pre-wrap;
 	word-break: break-word;
 	background: var(--thinking-bg, rgba(0, 0, 0, 0.04));
-	border-radius: 0.4rem;
+	border-radius: var(--radius-xs);
 }
 
 .message-thinking .thinking-toggle {
@@ -291,7 +291,7 @@ body.full-width-chat .message-container {
 .message-thinking .thought-images {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-top: 0.5rem;
 }
 
@@ -299,7 +299,7 @@ body.full-width-chat .message-container {
 	display: inline-flex;
 	max-width: min(16rem, 100%);
 	background: #00000018;
-	border-radius: 0.4rem;
+	border-radius: var(--radius-xs);
 	overflow: hidden;
 }
 
@@ -324,7 +324,7 @@ body.full-width-chat .message-container {
 }
 
 .message {
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	padding: 1rem;
 	position: relative;
 	box-sizing: border-box;
@@ -372,7 +372,7 @@ body.ime-open #bottom-ui-container {
 	position: relative;
 	flex-direction: column;
 	flex-shrink: 0;
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	box-sizing: border-box;
 	overflow: hidden;
 	width: calc(100% - 2rem - var(--scroll-bar-width, 0px));
@@ -403,7 +403,7 @@ body.full-width-chat #message-box {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	padding: 0.8rem;
 }
 
@@ -423,7 +423,7 @@ body.full-width-chat #message-box {
 .update-notice-actions {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	margin-left: auto;
 }
 
@@ -445,7 +445,7 @@ body.full-width-chat #message-box {
 	max-height: 10rem;
 	overflow: auto;
 	flex-grow: 1;
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	padding: 0.8rem;
 	overscroll-behavior: contain;
 	-webkit-overflow-scrolling: touch;
@@ -477,7 +477,7 @@ body.full-width-chat #message-box {
 	display: flex;
 	gap: 0.625rem;
 	padding: 0.5rem 0.625rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	cursor: pointer;
 	transition:
 		background-color 0.15s ease,
@@ -526,6 +526,13 @@ body.full-width-chat #message-box {
 	line-height: 1;
 }
 
+@media (pointer: coarse) {
+	.chat-actions-button {
+		min-width: 2.25rem;
+		min-height: 2.25rem;
+	}
+}
+
 .chat-actions-menu {
 	position: absolute;
 	top: 100%;
@@ -557,12 +564,12 @@ body.full-width-chat #message-box {
 	border: none;
 	text-align: left;
 	padding: 0.4rem 0.6rem;
-	border-radius: 0.375rem;
+	border-radius: var(--radius-xs);
 	font: inherit;
 	cursor: pointer;
 	color: inherit;
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: center;
 	white-space: nowrap;
 	transition: background-color 0.1s ease;
@@ -612,7 +619,7 @@ body.full-width-chat #message-box {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	padding: 0.3rem 0.5rem 0.3rem 0.3rem;
 }
 
@@ -620,7 +627,7 @@ body.full-width-chat #message-box {
 	display: flex;
 	align-items: center;
 	flex-wrap: nowrap;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	min-width: 0;
 }
 
@@ -659,7 +666,7 @@ body.full-width-chat #message-box {
 
 #message-box-actions > #btn-image.btn-toggled,
 #message-box-actions > #btn-edit.btn-toggled {
-	gap: 0.3rem;
+	gap: var(--space-1);
 }
 
 #message-box-actions > #btn-image.btn-toggled .composer-action-label,
@@ -671,9 +678,9 @@ body.full-width-chat #message-box {
 .composer-action-menu-item {
 	width: 100%;
 	justify-content: flex-start;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.4rem 0.6rem;
-	border-radius: 0.375rem;
+	border-radius: var(--radius-xs);
 	font: inherit;
 	font-weight: inherit;
 	text-transform: none;
@@ -708,6 +715,12 @@ body.full-width-chat #message-box {
 	pointer-events: none;
 }
 
+/* Out of turn in an RPG round the composer ignores typing, so it should look it. */
+#messageInput.disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
 #message-box-buttons button.generating {
 	color: var(--danger);
 }
@@ -715,7 +728,7 @@ body.full-width-chat #message-box {
 .message-box-right {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	flex-shrink: 0;
 }
 
@@ -727,13 +740,13 @@ body.full-width-chat #message-box {
 	font-weight: inherit;
 	line-height: 1.2;
 	padding: 0.25rem 0.6rem;
-	border-radius: 999px;
-	border: 1px solid var(--badge-border);
+	border-radius: var(--radius-pill);
+	border: var(--badge-border);
 	background: var(--badge-bg);
 	color: var(--badge-fg);
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: var(--space-1-5);
 	flex-shrink: 0;
 	white-space: nowrap;
 	min-height: 0;
@@ -787,7 +800,7 @@ body.full-width-chat #message-box {
 	width: 320px;
 	background: var(--card-bg);
 	border: 1px solid var(--card-border);
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 	z-index: var(--layer-credits-popover);
 	opacity: 0;
@@ -824,7 +837,7 @@ body.full-width-chat #message-box {
 	margin: 0;
 	font-size: 0.95rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .image-credits-popover-close {
@@ -841,16 +854,16 @@ body.full-width-chat #message-box {
 	padding: 12px 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: var(--space-2);
 }
 
 .credit-breakdown-item {
 	display: grid;
 	grid-template-columns: 24px 1fr auto;
 	align-items: center;
-	gap: 12px;
+	gap: var(--space-3);
 	padding: 8px;
-	border-radius: 6px;
+	border-radius: var(--radius-xs);
 	background: var(--input-bg);
 }
 
@@ -861,24 +874,24 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-item .credit-description {
 	font-size: 0.875rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-item .credit-amount {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-note {
 	display: flex;
 	align-items: flex-start;
-	gap: 8px;
+	gap: var(--space-2);
 	padding: 8px;
 	font-size: 0.8rem;
-	color: var(--text-secondary);
+	color: var(--body-fg-muted);
 	background: var(--input-bg);
-	border-radius: 6px;
+	border-radius: var(--radius-xs);
 }
 
 .credit-breakdown-note .material-symbols-outlined {
@@ -909,7 +922,7 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-total .credit-total-label {
 	font-size: 0.9rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-total .credit-total-amount {
@@ -929,11 +942,11 @@ body.full-width-chat #message-box {
 }
 
 .credit-breakdown-remaining .credit-remaining-label {
-	color: var(--text-secondary);
+	color: var(--body-fg-muted);
 }
 
 .credit-breakdown-remaining .credit-remaining-amount {
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-simple-item {
@@ -941,19 +954,19 @@ body.full-width-chat #message-box {
 	justify-content: space-between;
 	align-items: center;
 	padding: 10px 12px;
-	border-radius: 6px;
+	border-radius: var(--radius-xs);
 	background: var(--input-bg);
 }
 
 .credit-breakdown-simple-item .credit-simple-label {
 	font-size: 0.875rem;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-simple-item .credit-simple-value {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: var(--text-primary);
+	color: var(--body-fg);
 }
 
 .credit-breakdown-shortage {
@@ -976,7 +989,7 @@ body.full-width-chat #message-box {
 	border-top: 1px solid var(--card-border);
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: var(--space-2);
 }
 
 .credit-breakdown-action button {
@@ -987,7 +1000,7 @@ body.full-width-chat #message-box {
 	background-color: var(--primary);
 	color: var(--button-fg);
 	border: none;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
@@ -1006,7 +1019,7 @@ body.full-width-chat #message-box {
 
 .credit-breakdown-action .btn-neutral {
 	background-color: var(--input-bg);
-	color: var(--text-primary);
+	color: var(--body-fg);
 	border: 1px solid var(--card-border);
 }
 
@@ -1030,7 +1043,7 @@ body.full-width-chat #message-box {
 .message-header {
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: var(--space-4);
 
 	h3 {
 		flex-grow: 1;
@@ -1058,8 +1071,20 @@ body.full-width-chat #message-box {
 
 .message-actions {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: center;
+}
+
+/* The icons stay their size; only the touch area around them grows. */
+@media (pointer: coarse) {
+	.message-actions {
+		gap: 0;
+	}
+
+	.message-actions > button {
+		min-width: 2.25rem;
+		min-height: 2.25rem;
+	}
 }
 
 .btn-message-debug {
@@ -1069,13 +1094,13 @@ body.full-width-chat #message-box {
 .message-text[contenteditable="true"] {
 	outline: 1px dashed rgba(128, 128, 128, 0.5);
 	padding: 0.5rem;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 }
 
 #chatHistorySection {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--space-1);
 	overflow: auto;
 	flex-grow: 1;
 	padding-right: 2px;
@@ -1085,7 +1110,7 @@ body.full-width-chat #message-box {
 	margin: 0.45rem 0.2rem 0.25rem;
 	display: flex;
 	align-items: center;
-	gap: 0.55rem;
+	gap: var(--space-2);
 	font-size: 0.65rem;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
@@ -1101,8 +1126,23 @@ body.full-width-chat #message-box {
 	opacity: 0.35;
 }
 
+/* Hidden from view but still focusable, so the chat list works with Tab and the arrow keys. */
 .input-radio-currentchat {
-	display: none;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+	opacity: 0;
+}
+
+.input-radio-currentchat:focus-visible + label {
+	outline: 2px solid var(--primary);
+	outline-offset: -2px;
 }
 
 .input-radio-currentchat:checked + label {
@@ -1116,6 +1156,19 @@ input[name="currentChat"][value="none"] {
 	display: none;
 }
 
+/* The list's own contents decide this, so every path that adds or removes chats keeps it right. */
+#chat-list-empty {
+	display: none;
+}
+
+#chatHistorySection:not(:has(.label-currentchat)) {
+	flex-grow: 0;
+}
+
+#chatHistorySection:not(:has(.label-currentchat)) + #chat-list-empty {
+	display: block;
+}
+
 #chatHistorySection > label > button.edit-chat-button {
 	margin-left: auto;
 }
@@ -1126,7 +1179,7 @@ input[name="currentChat"][value="none"] {
 
 .attachment-preview-container {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.5rem;
 	align-items: center;
 	overflow: auto;
@@ -1161,7 +1214,7 @@ input[name="currentChat"][value="none"] {
 	align-items: center;
 	height: 3rem;
 	min-width: fit-content;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	overflow: hidden;
 }
 
@@ -1186,12 +1239,12 @@ input[name="currentChat"][value="none"] {
 }
 
 .editable-attachment {
-	border: 2px dashed rgba(var(--accent-color), 0.3);
+	border: 2px dashed color-mix(in srgb, var(--primary) 30%, transparent);
 	transition: border-color 0.2s ease;
 }
 
 .editable-attachment:hover {
-	border-color: rgba(var(--accent-color), 0.6);
+	border-color: color-mix(in srgb, var(--primary) 60%, transparent);
 }
 
 .editable-attachment .btn-remove-attachment {
@@ -1207,14 +1260,14 @@ input[name="currentChat"][value="none"] {
 /* History Image Preview */
 .history-image-preview {
 	position: relative;
-	border: 2px solid rgba(var(--accent-color), 0.5);
-	box-shadow: 0 0 8px rgba(var(--accent-color), 0.3);
+	border: 2px solid color-mix(in srgb, var(--primary) 50%, transparent);
+	box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 30%, transparent);
 	transition: all 0.2s ease;
 }
 
 .history-image-preview:hover {
-	border-color: rgba(var(--accent-color), 0.8);
-	box-shadow: 0 0 12px rgba(var(--accent-color), 0.5);
+	border-color: color-mix(in srgb, var(--primary) 80%, transparent);
+	box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 50%, transparent);
 	transform: scale(1.02);
 }
 
@@ -1222,7 +1275,7 @@ input[name="currentChat"][value="none"] {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(135deg, rgba(var(--accent-color), 0.1), transparent);
+	background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, transparent), transparent);
 	pointer-events: none;
 }
 
@@ -1268,11 +1321,11 @@ input[name="currentChat"][value="none"] {
 	}
 
 	10% {
-		background-color: rgba(var(--accent-color), 0.2);
+		background-color: color-mix(in srgb, var(--primary) 20%, transparent);
 	}
 
 	90% {
-		background-color: rgba(var(--accent-color), 0.2);
+		background-color: color-mix(in srgb, var(--primary) 20%, transparent);
 	}
 
 	100% {
@@ -1297,7 +1350,7 @@ input[name="currentChat"][value="none"] {
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .message-text:focus-visible {
-	outline: 1px solid var(--focus-outline);
+	outline: var(--focus-outline);
 }
 
 [data-mode="dark"] #messageInput {
@@ -1306,7 +1359,7 @@ input[name="currentChat"][value="none"] {
 
 :is([data-mode="dark"], [data-mode="light"]) .attachment-container {
 	background-color: var(--attachment-container-bg);
-	outline: 1px solid var(--attachment-container-outline);
+	outline: var(--attachment-container-outline);
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .message-thinking pre {
@@ -1318,7 +1371,7 @@ input[name="currentChat"][value="none"] {
 }
 
 [data-mode="light"] :has(> #messageInput:focus-visible) {
-	border: 1px solid var(--focus-border);
+	border: var(--focus-border);
 }
 
 [data-mode="light"] .hljs {

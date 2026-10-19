@@ -573,7 +573,7 @@ function createRoleplayIconButton(args: {
 function appendCustomCategoryControls(wrapper: HTMLDivElement, category: CustomActionCategoryId): void {
 	const editButton = document.createElement("button");
 	editButton.type = "button";
-	editButton.className = "btn-textual material-symbols-outlined roleplay-category-control";
+	editButton.className = "material-symbols-outlined roleplay-category-control";
 	editButton.textContent = "edit";
 	editButton.title = `Rename ${getCategoryLabel(category)}`;
 	editButton.setAttribute("aria-label", editButton.title);
@@ -581,8 +581,7 @@ function appendCustomCategoryControls(wrapper: HTMLDivElement, category: CustomA
 
 	const deleteButton = document.createElement("button");
 	deleteButton.type = "button";
-	deleteButton.className =
-		"btn-textual material-symbols-outlined roleplay-category-control roleplay-category-control--danger";
+	deleteButton.className = "material-symbols-outlined roleplay-category-control roleplay-category-control--danger";
 	deleteButton.textContent = "delete";
 	deleteButton.title = `Delete ${getCategoryLabel(category)}`;
 	deleteButton.setAttribute("aria-label", deleteButton.title);
@@ -1005,7 +1004,7 @@ function renderSuggestions(): void {
 
 	if (isGeneratingSuggestions) {
 		const emptyState = document.createElement("div");
-		emptyState.className = "roleplay-empty-state";
+		emptyState.className = "empty-state";
 		const text = document.createElement("span");
 		text.textContent = "Generating suggestions...";
 		emptyState.append(text);
@@ -1015,7 +1014,7 @@ function renderSuggestions(): void {
 
 	if (suggestionOptions.length === 0) {
 		const emptyState = document.createElement("div");
-		emptyState.className = "roleplay-empty-state";
+		emptyState.className = "empty-state";
 		emptyState.textContent = "Refresh to generate four quick roleplay replies.";
 		ensuredRoleplaySuggestions.append(emptyState);
 		return;

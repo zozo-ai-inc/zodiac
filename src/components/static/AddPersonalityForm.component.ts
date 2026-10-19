@@ -162,13 +162,27 @@ formEl.querySelectorAll<HTMLInputElement>("input").forEach((input) => {
 		if (e.key === "Enter") {
 			e.preventDefault(); // Prevent form submission on Enter key
 		}
-		if (e.key === "Escape") {
-			overlayService.closeOverlay(); // Close the overlay on Escape key
-		}
 	});
 });
 
+let isSaving = false;
+
 async function handleFormSubmit() {
+	// A second submit while the first save is running would create the persona twice.
+	if (isSaving) return;
+	isSaving = true;
+	const submitButtons = Array.from(formEl.querySelectorAll<HTMLButtonElement>('button[type="submit"]'));
+	submitButtons.forEach((button) => (button.disabled = true));
+	try {
+		// The services report their own failures; keep the form and its input when the save did not land.
+		if (await savePersonaFromForm()) overlayService.closeOverlay();
+	} finally {
+		isSaving = false;
+		submitButtons.forEach((button) => (button.disabled = false));
+	}
+}
+
+async function savePersonaFromForm(): Promise<boolean> {
 	//turn all the form data into a personality object
 	const personality: Personality = {
 		name: "",
@@ -217,18 +231,16 @@ async function handleFormSubmit() {
 	const idRaw = data.get("id");
 	const id = typeof idRaw === "string" ? idRaw : "";
 	if (id && id.trim().length > 0) {
-		await personalityService.edit(id, personality);
-	} else {
-		const added = await personalityService.add(personality);
-		if (added) {
-			toastService.info({
-				title: "Persona created",
-				text: `Created "${personality.name}".`
-			});
-		}
+		return await personalityService.edit(id, personality);
 	}
-
-	overlayService.closeOverlay();
+	const added = await personalityService.add(personality);
+	if (added) {
+		toastService.info({
+			title: "Persona created",
+			text: `Created "${personality.name}".`
+		});
+	}
+	return added;
 }
 
 formEl.addEventListener(

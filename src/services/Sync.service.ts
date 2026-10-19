@@ -24,7 +24,7 @@ import type { DbChat } from "../types/Chat";
 import type { Message, GeneratedImage } from "../types/Message";
 import type { DbPersonality } from "../types/Personality";
 import { isBlobReference, type BlobReference } from "../types/BlobReference";
-import type { SubscriptionTier } from "../types/Supabase";
+import type { SubscriptionTier, UserSubscription } from "../types/Supabase";
 import { fileToBase64 } from "../utils/helpers";
 import { resolveAttachmentFile, resolveGeneratedImageSrc, resolveThoughtSignature } from "../utils/blobResolver";
 import { SETTINGS_STORAGE_KEYS, SYNCABLE_SETTINGS_KEYS } from "../constants/SettingsStorageKeys";
@@ -787,7 +787,8 @@ async function fetchAllSyncedPersonasPaged(userId: string): Promise<Array<{
 	return rows;
 }
 
-export async function fetchSyncedChatsMetadata(): Promise<DbChat[]> {
+/** Returns null when the chats could not be read, so callers can tell a failure from an account with no chats. */
+export async function fetchSyncedChatsMetadata(): Promise<DbChat[] | null> {
 	if (!isSyncActive()) return [];
 
 	const user = await getCurrentUser();
@@ -797,7 +798,7 @@ export async function fetchSyncedChatsMetadata(): Promise<DbChat[]> {
 	const data = await fetchAllSyncedChatsPaged(user.id);
 	if (!data) {
 		console.error("fetchSyncedChatsMetadata failed to read synced chats");
-		return [];
+		return null;
 	}
 
 	const activeRows = data.filter((row) => !row.deleted);
@@ -2862,30 +2863,25 @@ function attachDexieHooks(): void {
 }
 
 /**
- * Called after auth state change when user is logged in.
- * Checks sync preferences and emits unlock-required event if needed.
+ * Called once a logged-in session is known, with the subscription and sync
+ * preferences the caller already fetched. Emits unlock-required if needed.
  */
 export type SyncLoginCheckResult = "ready" | "interaction-required";
 
-export async function checkSyncOnLogin(): Promise<SyncLoginCheckResult> {
-	const user = await getCurrentUser();
-	if (!user) return "ready";
-
-	// Check subscription tier
-	const sub = await getUserSubscription();
-	const tier = getSubscriptionTier(sub);
+export function checkSyncOnLogin(
+	subscription: UserSubscription | null,
+	prefs: SyncPreferences | null
+): SyncLoginCheckResult {
+	const tier = getSubscriptionTier(subscription);
 	if (tier !== "pro" && tier !== "pro_plus" && tier !== "max") {
 		// Downgraded users get one final recovery flow:
 		// unlock once, restore an unencrypted local copy, then disable/revoke sync.
-		const prefs = await fetchSyncPreferences();
 		if (prefs?.syncEnabled) {
 			dispatchAppEvent("sync-unlock-required", { isFirstSetup: false, mode: "final-download" });
 			return "interaction-required";
 		}
 		return "ready";
 	}
-
-	const prefs = await fetchSyncPreferences();
 
 	if (!prefs) {
 		// No preferences row — user has never set up sync.

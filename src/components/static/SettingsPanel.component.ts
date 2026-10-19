@@ -65,6 +65,7 @@ settingsSidebar.addEventListener("keydown", (event) => {
 	if (event.key !== "Escape" || event.defaultPrevented) return;
 	// Escape in a field abandons the edit, not the panel.
 	if (isTextEntry(event.target)) return;
+	event.preventDefault();
 	closeSettings();
 });
 

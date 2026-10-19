@@ -186,6 +186,12 @@ export function abortGeneration(chatId?: string): void {
 
 	abortController.abort();
 	abortControllerByChatId.delete(targetChatId);
+	// The aborted handler may fail to save before it can announce the end, so announce it here.
+	dispatchAppEvent("generation-state-changed", {
+		chatId: targetChatId,
+		isGenerating: false,
+		anyGenerating: getAnyGenerating()
+	});
 }
 
 export function getIsGenerating(chatId?: string | null): boolean {
@@ -266,6 +272,14 @@ function startGeneration(chatId: string): AbortController {
 	abortControllerByChatId.set(chatId, currentAbortController);
 	dispatchAppEvent("generation-state-changed", { chatId, isGenerating: true, anyGenerating: true });
 	return currentAbortController;
+}
+
+/**
+ * Ends a generation only if it is still the chat's current one, so a late cleanup cannot cut off a newer reply.
+ * Send paths call this from `finally`, which covers handlers that throw before they reach their own endGeneration.
+ */
+function endGenerationIfCurrent(chatId: string, abortController: AbortController): void {
+	if (abortControllerByChatId.get(chatId) === abortController) endGeneration(chatId);
 }
 
 function endGeneration(chatId?: string | null): void {
@@ -1253,6 +1267,7 @@ export async function send(msg: string, options: SendOptions = {}): Promise<HTML
 	let releaseSendLockKey: string | null = targetChatId ?? null;
 	if (isSendInFlight(targetChatId) || getIsGenerating(targetChatId)) return;
 	setSendInFlight(true, sendLockKey);
+	let ctx: SendContext | null = null;
 
 	try {
 		const validation = await performEarlyValidation(msg, options);
@@ -1291,7 +1306,7 @@ export async function send(msg: string, options: SendOptions = {}): Promise<HTML
 			});
 		}
 
-		const ctx = await buildSendContext(msg, validation, options);
+		ctx = await buildSendContext(msg, validation, options);
 		if (!ctx) return;
 		releaseSendLockKey = ctx.chatId;
 
@@ -1304,6 +1319,8 @@ export async function send(msg: string, options: SendOptions = {}): Promise<HTML
 		}
 		return await handleTextChat(ctx);
 	} finally {
+		// A handler that throws while saving never reaches its own endGeneration; never leave the chat stuck.
+		if (ctx) endGenerationIfCurrent(ctx.chatId, ctx.abortController);
 		setSendInFlight(false, sendLockKey);
 		if (releaseSendLockKey) {
 			setSendInFlight(false, releaseSendLockKey);
@@ -1921,65 +1938,71 @@ async function buildSendContext(
 
 	moveSendInFlight(NEW_CHAT_SEND_LOCK_KEY, chatId);
 	const abortController = startGeneration(chatId);
-	const userMessageElement = isViewingChat(chatId)
-		? await insertMessage(userMessage, persistedIndices.startIndex)
-		: await messageElement(userMessage, persistedIndices.startIndex);
-	if (isViewingChat(chatId)) {
-		hljs.highlightAll();
-		helpers.messageContainerScrollToBottom(true);
-	}
-
-	const responseElement = isViewingChat(chatId)
-		? await insertMessage(modelPlaceholder, persistedIndices.startIndex + 1)
-		: await messageElement(modelPlaceholder, persistedIndices.startIndex + 1);
-	if (isViewingChat(chatId)) {
-		helpers.messageContainerScrollToBottom(true);
-	}
-
-	const ctx: SendContext = {
-		chatId,
-		userIndex: persistedIndices.startIndex,
-		modelIndex: persistedIndices.startIndex + 1,
-		msg,
-		userMessage,
-		modelPlaceholder,
-		userMessageElement,
-		responseElement,
-		selectedPersonalityId,
-		settings,
-		config,
-		ai,
-		chatHistory,
-		pinnedHistoryIndices,
-		attachmentFiles,
-		historyImageDataUri,
-		isPremiumEndpointPreferred,
-		isImagePremiumEndpointPreferred,
-		imageRoute,
-		shouldUseSkipThoughtSignature,
-		abortController,
-		messageContent: responseElement.querySelector(".message-text .message-text-content")!,
-		groundingRendered: responseElement.querySelector(".message-grounding-rendered-content")!,
-		thinkingWrapper: responseElement.querySelector<HTMLElement>(".message-thinking"),
-		thinkingContentElm: responseElement.querySelector<HTMLElement>(".thinking-content"),
-		ensureThinkingElements: () => {}
-	};
-
-	ctx.ensureThinkingElements = () => {
-		rebindResponseElement(ctx);
-		ctx.thinkingWrapper ??= ctx.responseElement.querySelector<HTMLElement>(".message-thinking");
-		ctx.thinkingContentElm ??= ctx.responseElement.querySelector<HTMLElement>(".thinking-content");
-
-		if (!ctx.thinkingWrapper || !ctx.thinkingContentElm) {
-			const header = ctx.responseElement.querySelector(".message-header");
-			const { wrapper, content } = createThinkingUiElements();
-			ctx.thinkingWrapper = wrapper;
-			ctx.thinkingContentElm = content;
-			header?.insertAdjacentElement("afterend", ctx.thinkingWrapper);
+	// Until the context reaches send(), nothing else will end this generation if building it throws.
+	try {
+		const userMessageElement = isViewingChat(chatId)
+			? await insertMessage(userMessage, persistedIndices.startIndex)
+			: await messageElement(userMessage, persistedIndices.startIndex);
+		if (isViewingChat(chatId)) {
+			hljs.highlightAll();
+			helpers.messageContainerScrollToBottom(true);
 		}
-	};
 
-	return ctx;
+		const responseElement = isViewingChat(chatId)
+			? await insertMessage(modelPlaceholder, persistedIndices.startIndex + 1)
+			: await messageElement(modelPlaceholder, persistedIndices.startIndex + 1);
+		if (isViewingChat(chatId)) {
+			helpers.messageContainerScrollToBottom(true);
+		}
+
+		const ctx: SendContext = {
+			chatId,
+			userIndex: persistedIndices.startIndex,
+			modelIndex: persistedIndices.startIndex + 1,
+			msg,
+			userMessage,
+			modelPlaceholder,
+			userMessageElement,
+			responseElement,
+			selectedPersonalityId,
+			settings,
+			config,
+			ai,
+			chatHistory,
+			pinnedHistoryIndices,
+			attachmentFiles,
+			historyImageDataUri,
+			isPremiumEndpointPreferred,
+			isImagePremiumEndpointPreferred,
+			imageRoute,
+			shouldUseSkipThoughtSignature,
+			abortController,
+			messageContent: responseElement.querySelector(".message-text .message-text-content")!,
+			groundingRendered: responseElement.querySelector(".message-grounding-rendered-content")!,
+			thinkingWrapper: responseElement.querySelector<HTMLElement>(".message-thinking"),
+			thinkingContentElm: responseElement.querySelector<HTMLElement>(".thinking-content"),
+			ensureThinkingElements: () => {}
+		};
+
+		ctx.ensureThinkingElements = () => {
+			rebindResponseElement(ctx);
+			ctx.thinkingWrapper ??= ctx.responseElement.querySelector<HTMLElement>(".message-thinking");
+			ctx.thinkingContentElm ??= ctx.responseElement.querySelector<HTMLElement>(".thinking-content");
+
+			if (!ctx.thinkingWrapper || !ctx.thinkingContentElm) {
+				const header = ctx.responseElement.querySelector(".message-header");
+				const { wrapper, content } = createThinkingUiElements();
+				ctx.thinkingWrapper = wrapper;
+				ctx.thinkingContentElm = content;
+				header?.insertAdjacentElement("afterend", ctx.thinkingWrapper);
+			}
+		};
+
+		return ctx;
+	} catch (error) {
+		endGenerationIfCurrent(chatId, abortController);
+		throw error;
+	}
 }
 
 // ================================================================================
@@ -2826,6 +2849,7 @@ async function handleImageEditing(ctx: SendContext): Promise<HTMLElement | undef
 export {
 	startGeneration,
 	endGeneration,
+	endGenerationIfCurrent,
 	persistMessages,
 	createModelPlaceholderMessage,
 	createModelErrorMessage,

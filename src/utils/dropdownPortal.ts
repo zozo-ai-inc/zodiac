@@ -43,12 +43,24 @@ export function openDropdownPortal(
 		menu.classList.toggle("dropdown-menu--above", openAbove);
 	}
 
+	// Captured so Escape closes only the menu, not the sidebar, sheet or panel it opened from.
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key !== "Escape") return;
+		event.preventDefault();
+		event.stopPropagation();
+		close();
+		// A split button anchors on its wrapper, so hand focus to the toggle inside it.
+		const toggle = anchor.matches("button") ? anchor : anchor.querySelector<HTMLElement>("button[aria-expanded]");
+		(toggle ?? anchor).focus({ preventScroll: true });
+	}
+
 	function close() {
 		if (isClosed) return;
 		isClosed = true;
 		if (closeActivePortal === close) closeActivePortal = null;
 		window.removeEventListener("resize", position);
 		window.removeEventListener("scroll", close, true);
+		document.removeEventListener("keydown", handleKeydown, true);
 		menu.classList.remove("dropdown-menu--portal", "dropdown-menu--above");
 		menu.style.removeProperty("--dropdown-menu-left");
 		menu.style.removeProperty("--dropdown-menu-top");
@@ -69,6 +81,7 @@ export function openDropdownPortal(
 	position();
 	window.addEventListener("resize", position);
 	window.addEventListener("scroll", close, true);
+	document.addEventListener("keydown", handleKeydown, true);
 	closeActivePortal = close;
 
 	return { close, position };

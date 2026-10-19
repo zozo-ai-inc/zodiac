@@ -1,6 +1,6 @@
 .card {
 	box-sizing: border-box;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-sm);
 	text-align: center;
 	text-decoration: none;
 	padding: 1rem;

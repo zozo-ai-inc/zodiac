@@ -158,3 +158,11 @@ topUp70Button.addEventListener(
 			}
 		})()
 );
+
+// Back from checkout can restore this page from the back/forward cache with the buttons still disabled.
+window.addEventListener("pageshow", (event) => {
+	if (!event.persisted) return;
+	topUp10Button.disabled = false;
+	topUp30Button.disabled = false;
+	topUp70Button.disabled = false;
+});

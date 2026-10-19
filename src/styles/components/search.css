@@ -1,7 +1,24 @@
 .chat-filter-group {
 	display: flex;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	align-items: center;
+}
+
+/* The + beside search opens every add, import and clear action for the tab, so it is square to the field's height. */
+.sidebar-add-button {
+	align-self: stretch;
+	flex: 0 0 auto;
+	aspect-ratio: 1;
+	padding: 0;
+}
+
+.sidebar-add-button .material-symbols-outlined {
+	font-size: 1.375rem;
+}
+
+.sidebar-add-menu {
+	display: none;
+	min-width: 12rem;
 }
 
 .chat-search-wrapper {
@@ -9,7 +26,7 @@
 	display: flex;
 	align-items: center;
 	padding: 0.375rem 0.625rem;
-	border-radius: 0.625rem;
+	border-radius: var(--radius-md);
 	background-color: var(--input-bg);
 	border: 1px solid var(--input-text-border);
 	position: relative;
@@ -20,7 +37,7 @@
 
 .chat-search-wrapper:focus-within {
 	border-color: var(--input-text-border-focus);
-	box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 95, 150, 200), 0.1);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
 .chat-search-icon {
@@ -58,7 +75,7 @@
 	align-items: center;
 	padding: 0.25rem 0.4rem;
 	text-transform: capitalize;
-	border-radius: 0.4rem;
+	border-radius: var(--radius-xs);
 	opacity: 0.7;
 	transition:
 		opacity 0.2s ease,
@@ -87,4 +104,15 @@
 
 .chat-sort-menu.open {
 	display: flex;
+}
+
+/* The current sort order reads as chosen, matching what assistive tech announces. */
+.chat-sort-item[aria-checked="true"] {
+	font-weight: 600;
+}
+
+.chat-sort-item[aria-checked="true"]::after {
+	content: "✓";
+	margin-left: auto;
+	padding-left: 1rem;
 }

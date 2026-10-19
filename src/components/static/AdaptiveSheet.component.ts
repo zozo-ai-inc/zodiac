@@ -17,6 +17,7 @@ type AdaptiveSheetDragState = {
 };
 
 let dragState: AdaptiveSheetDragState | null = null;
+let handleClickSuppressed = false;
 const heightAnimationTimers = new WeakMap<HTMLElement, number>();
 
 function readSheetHeight(sheet: HTMLElement): number {
@@ -126,6 +127,8 @@ function finishDrag(event: MouseEvent | PointerEvent): void {
 
 	const { sheet, handle, startY, currentY, pointerId } = dragState;
 	dragState = null;
+	// A real drag also ends in a click on the handle; only a tap should close through that click.
+	handleClickSuppressed = Math.abs(currentY - startY) > 6;
 	if (pointerId !== undefined && handle.hasPointerCapture(pointerId)) {
 		handle.releasePointerCapture(pointerId);
 	}
@@ -145,7 +148,7 @@ function prepareSheet(sheet: HTMLElement): void {
 		handle = document.createElement("button");
 		handle.type = "button";
 		handle.className = "adaptive-sheet__handle";
-		handle.setAttribute("aria-label", "Drag down to close");
+		handle.setAttribute("aria-label", "Close");
 		sheet.prepend(handle);
 	}
 
@@ -164,6 +167,14 @@ function prepareSheet(sheet: HTMLElement): void {
 		beginDrag(sheet, handle, event.clientY);
 	});
 
+	handle.addEventListener("click", () => {
+		if (handleClickSuppressed) {
+			handleClickSuppressed = false;
+			return;
+		}
+		if (sheet.dataset.surfaceBusy === "true") return;
+		surfaceService.close(sheet.id);
+	});
 	handle.addEventListener("pointermove", handleDragMove);
 	handle.addEventListener("pointerup", finishDrag);
 	handle.addEventListener("pointercancel", finishDrag);

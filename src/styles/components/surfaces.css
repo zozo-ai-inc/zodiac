@@ -48,7 +48,7 @@
 
 .overlay-actions {
 	display: flex;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	justify-content: flex-end;
 	margin-top: 1rem;
 }
@@ -65,11 +65,9 @@
 	box-sizing: border-box;
 	background-color: transparent;
 	backdrop-filter: blur(0);
-	-webkit-backdrop-filter: blur(0);
 	transition:
 		background-color 0.16s ease,
-		backdrop-filter 0.16s ease,
-		-webkit-backdrop-filter 0.16s ease;
+		backdrop-filter 0.16s ease;
 }
 
 .surface-plane.surface-plane--active {
@@ -83,13 +81,11 @@
 .surface-plane.surface-plane--blurred {
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .surface-plane:has(.adaptive-sheet.surface-open) {
 	background-color: rgb(0 0 0 / 12%);
 	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .surface-plane__item {
@@ -123,14 +119,14 @@
 .adaptive-sheet {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: var(--space-3);
 	width: min(32rem, calc(100dvw - 2rem));
 	max-height: min(80dvh, 40rem);
 	/* Sheets clip their animated shell; overflowing sheet content needs an inner scroll container. */
 	overflow: hidden;
 	padding: 2rem;
 	border: var(--elevated-ui-outline);
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	background: var(--sidebar-bg, var(--modal-bg, var(--body-bg)));
 	box-shadow: var(--elevated-ui-shadow);
 	box-sizing: border-box;
@@ -140,6 +136,24 @@
 		max-height 0.18s ease,
 		opacity 0.16s ease,
 		transform 0.18s ease;
+}
+
+/* Every panel and sheet titles itself at one size, whatever heading level it uses. */
+.surface-title {
+	margin-block: 0;
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1.75rem;
+}
+
+.surface-header {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.surface-header > .surface-title {
+	margin-right: auto;
 }
 
 .adaptive-sheet__handle {
@@ -172,8 +186,15 @@
 	transition: all 0.2s;
 }
 
-#btn-hide-overlay {
-	padding: 2rem;
+.overlay.overlay--closing,
+#dialog.dialog--closing {
+	pointer-events: none;
+}
+
+/* The overlay's close control sits top-right, like the sidebar's and settings'. */
+.overlay > .header {
+	justify-content: flex-end;
+	padding: 1rem;
 }
 
 .overlay-actions-vertical {
@@ -185,7 +206,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5rem;
+	gap: var(--space-2);
 	padding: 0.75rem 1rem;
 }
 
@@ -205,7 +226,7 @@
 
 .overlay-actions-vertical .btn-secondary {
 	background: rgba(128, 128, 128, 0.15);
-	color: var(--text-primary);
+	color: var(--body-fg);
 	border: 1px solid rgba(128, 128, 128, 0.3);
 }
 
@@ -213,47 +234,60 @@
 	background: rgba(128, 128, 128, 0.25);
 }
 
+/* The dialog's scrim matches the adaptive sheets' so stacked layers read as one system. */
 #dialog {
 	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	inset: 0;
 	z-index: var(--layer-dialog);
 	display: flex;
-	flex-direction: column;
-	gap: 2rem;
-	width: 25rem;
-	max-width: 90%;
-	background-color: var(--dialog-bg);
-	box-shadow: var(--dialog-shadow);
-	border-radius: 1rem;
-	overflow: hidden;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	background-color: rgb(0 0 0 / 12%);
+	backdrop-filter: blur(10px);
 }
 
-#main-container:has(#dialog:not(.hidden))::before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	z-index: var(--layer-overlay);
-	backdrop-filter: blur(24px);
+.dialog-panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-5);
+	width: 25rem;
+	max-width: 100%;
+	max-height: min(80dvh, 32rem);
+	padding: 1.5rem;
+	border: var(--elevated-ui-outline);
+	border-radius: var(--radius-xl);
+	background: var(--modal-bg);
+	color: var(--modal-fg);
+	box-shadow: var(--modal-shadow);
+	box-sizing: border-box;
 }
 
 #dialog-message {
 	flex-grow: 1;
-	padding: 2rem 2rem 0 2rem;
 	overflow-y: auto;
-	scrollbar-gutter: stable;
+	line-height: 1.5;
 }
 
 #dialog-buttons {
-	padding: 1.5rem;
-	background-color: #00000049;
+	justify-content: flex-end;
+}
+
+#dialog-buttons > .btn {
+	flex: 0 0 auto;
+}
+
+/* Only destructive confirmations carry the warning colour. */
+.dialog-icon {
+	display: none;
+	font-size: 1.75rem;
+	color: var(--danger);
+}
+
+.dialog--danger .dialog-icon {
+	display: block;
 }
 
 :is([data-mode="dark"], [data-mode="light"]) .overlay {
 	background-color: var(--overlay-bg);
-}
-
-[data-mode="light"] #dialog-message {
-	color: white;
 }

@@ -1001,9 +1001,16 @@ sendMessageButton.addEventListener(
 				}
 
 				const message = serializeMessageInput();
+				const draftHtml = messageInput.innerHTML;
 				messageInput.innerHTML = "";
 				closeMentionMenu();
-				await messageService.send(message);
+				const sentMessage = await messageService.send(message);
+				// send() resolves with nothing when it refuses the message (no API key, a reply already running,
+				// a failed save). Hand the draft back unless the user has already started typing a new one.
+				if (!sentMessage && message.trim() && !messageInput.textContent?.trim()) {
+					messageInput.innerHTML = draftHtml;
+					messageInput.dispatchEvent(new Event("input", { bubbles: true }));
+				}
 			} catch (error: any) {
 				toastService.danger({
 					title: "Error sending message",
