@@ -80,7 +80,7 @@ npm run sync-db-types  # Sync Supabase types to src/types/database.types.ts
 - Open the continuously maintained draft GitHub Release before creating the release branch. Its categorized entries are the release-note candidates collected since the previous published release.
 - Create `release/vX.Y.Z` from `main`, then use the draft entries as scope candidates for two distinct deliverables: concise user-facing in-app copy and more technical GitHub release notes.
 - Update the user-facing changelog in [src/index.html](src/index.html) under the `#whats-new` section.
-- Update the version string in [src/utils/helpers.ts](src/utils/helpers.ts) so the badge and changelog header display the new version.
+- Update the version string in [src/constants/App.ts](src/constants/App.ts) so the badge and changelog header display the new version.
 - Open the `release/*` pull request into `main` with `skip-changelog`, present the exact in-app changelog and version changes to the user, and wait for the user to merge it manually.
 - After the user merges it, wait for Release Drafter's final `main` update before replacing its generated PR titles with the prepared GitHub release notes.
 - Open the `main` pull request into `production`, report its checks, and wait for the user to merge it manually. After that merge, verify the Cloudflare deployment, record the exact deployed production commit SHA, and pin the draft target to that SHA.
@@ -107,7 +107,7 @@ npm run sync-db-types  # Sync Supabase types to src/types/database.types.ts
 
 - Release Drafter creates and maintains the upcoming GitHub Release as a draft; do not create a second release manually.
 - Publish the existing draft only after the user manually merges `main` into `production`, the Cloudflare deployment has been verified, and the user explicitly approves the exact final draft and all proposed edits.
-- Pin the draft target from `main` to the exact verified deployed production commit SHA, then confirm that its version tag matches the version in [src/utils/helpers.ts](src/utils/helpers.ts).
+- Pin the draft target from `main` to the exact verified deployed production commit SHA, then confirm that its version tag matches the version in [src/constants/App.ts](src/constants/App.ts).
 - Title the release to match that version tag (for example, `v1.8.5`).
 - The GitHub Release notes and in-app changelog cover the same approved release scope but are separate deliverables and should not be assumed to use the same wording.
 - GitHub Release notes may be more technical and specific. They can describe concrete changes such as old-to-new copy, layout changes, and affected systems, while the in-app changelog should summarize the user-facing outcome.

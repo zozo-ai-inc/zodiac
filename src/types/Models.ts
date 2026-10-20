@@ -600,6 +600,19 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsImageOutput: false
 	},
 	{
+		id: "experiential/deepseek-v4.1-flash-uncensored",
+		label: "DeepSeek V4.1 Flash Uncensored",
+		provider: "openrouter",
+		mega: false,
+		modelPickerGroup: "Flash",
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
 		id: "google/gemma-4-31b-it",
 		label: "Gemma 4 31B",
 		provider: "openrouter",
@@ -676,6 +689,19 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 	{
 		id: "z-ai/glm-5.3-flashx",
 		label: "GLM 5.3 FlashX",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "experiential/glm-5.3-flash-uncensored",
+		label: "GLM 5.3 Flash Uncensored",
 		provider: "openrouter",
 		mega: false,
 		roleplayModeSuggester: true,
@@ -916,6 +942,32 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		supportsThinking: true,
 		supportsTemperature: true,
 		supportsImageInput: true,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "aion-labs/aion-3.5",
+		label: "Aion 3.5",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "aion-labs/aion-3.5-mini",
+		label: "Aion 3.5 Mini",
+		provider: "openrouter",
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: true,
+		requiresThinking: true,
+		supportsTemperature: true,
+		supportsImageInput: false,
 		supportsFileInput: false,
 		supportsImageOutput: false
 	}
