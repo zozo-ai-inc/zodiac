@@ -56,7 +56,7 @@ vi.mock("../../../src/services/Settings.service", () => ({
 		temperature: "60",
 		streamResponses: false,
 		enableThinking: false,
-		thinkingBudget: 0,
+		reasoningEffort: "high",
 		safetySettings: [],
 		rpgGroupChatsProgressAutomatically: false,
 		allowPersonaPinging: true,
@@ -121,6 +121,7 @@ vi.mock("../../../src/types/Models", () => ({
 	isOpenRouterModel: vi.fn(() => true),
 	modelRequiresThinking: vi.fn(() => false),
 	getRoleplaySuggestionThinkingCap: vi.fn(() => undefined),
+	REASONING_EFFORTS: ["minimal", "low", "medium", "high", "xhigh", "max"],
 	modelSupportsTemperature: vi.fn(() => true)
 }));
 
@@ -380,7 +381,7 @@ describe("Roleplay composer suggestion workflow", () => {
 			temperature: "60",
 			streamResponses: false,
 			enableThinking: false,
-			thinkingBudget: 0,
+			reasoningEffort: "high",
 			safetySettings: [],
 			rpgGroupChatsProgressAutomatically: false,
 			allowPersonaPinging: true,
@@ -422,7 +423,7 @@ describe("Roleplay composer suggestion workflow", () => {
 			temperature: "60",
 			streamResponses: false,
 			enableThinking: false,
-			thinkingBudget: 0,
+			reasoningEffort: "high",
 			safetySettings: [],
 			rpgGroupChatsProgressAutomatically: false,
 			allowPersonaPinging: true,
@@ -460,14 +461,13 @@ describe("Roleplay composer suggestion workflow", () => {
 
 		const models = await import("../../../src/types/Models");
 		vi.mocked(models.modelRequiresThinking).mockReturnValue(true);
-		vi.mocked(models.getRoleplaySuggestionThinkingCap).mockReturnValue(128);
 
 		await enableRoleplayComposerAndRefresh();
 		await waitForSuggestions();
 
 		expect(testState.builtRequests).toHaveLength(1);
 		expect(testState.builtRequests[0].enableThinking).toBe(true);
-		expect(testState.builtRequests[0].thinkingBudget).toBe(128);
+		expect(testState.builtRequests[0].reasoningEffort).toBe("minimal");
 	});
 
 	it("includes custom roleplay action settings in the cloud-sync settings blob", () => {

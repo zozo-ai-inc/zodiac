@@ -29,7 +29,7 @@ function bootstrapSettingsDom(): void {
 		<input id="autoscroll" type="checkbox">
 		<input id="streamResponses" type="checkbox">
 		<select id="enableThinkingSelect"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select>
-		<input id="thinkingBudget" value="500">
+		<div id="reasoning-effort-setting"><select id="reasoningEffort"></select></div>
 		<input id="rpgGroupChatsProgressAutomatically" type="checkbox">
 		<input id="allowPersonaPinging" type="checkbox">
 		<input id="dynamicGroupChatPingOnly" type="checkbox">

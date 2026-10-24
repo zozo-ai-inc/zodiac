@@ -33,7 +33,7 @@ vi.mock("../../../src/services/Settings.service", () => ({
 		temperature: "60",
 		streamResponses: false,
 		enableThinking: false,
-		thinkingBudget: 0,
+		reasoningEffort: "high",
 		safetySettings: []
 	})),
 	formatRoleplayDialogue: vi.fn((text: string) => text),
