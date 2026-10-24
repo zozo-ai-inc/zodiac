@@ -2,7 +2,13 @@ import type { Content } from "@google/genai";
 import { HarmBlockThreshold, HarmCategory } from "@google/genai";
 import * as supabaseService from "./Supabase.service";
 import type { User } from "../types/User";
-import { getDefaultChatModel, getValidChatModel } from "../types/Models";
+import {
+	DEFAULT_REASONING_EFFORT,
+	getDefaultChatModel,
+	getValidChatModel,
+	isReasoningEffort,
+	type ReasoningEffort
+} from "../types/Models";
 import { DEFAULT_IMAGE_EDIT_MODEL, DEFAULT_IMAGE_MODEL, IMAGE_MODELS } from "../constants/ImageModels";
 import * as syncService from "./Sync.service";
 import { SETTINGS_STORAGE_KEYS } from "../constants/SettingsStorageKeys";
@@ -17,7 +23,7 @@ const imageModelSelect = document.querySelector("#selectedImageModel") as HTMLSe
 const autoscrollToggle = document.querySelector("#autoscroll") as HTMLInputElement;
 const streamResponsesToggle = document.querySelector("#streamResponses") as HTMLInputElement;
 const enableThinkingSelect = document.querySelector("#enableThinkingSelect") as HTMLSelectElement;
-const thinkingBudgetInput = document.querySelector("#thinkingBudget") as HTMLInputElement;
+const reasoningEffortSelect = document.querySelector("#reasoningEffort") as HTMLSelectElement;
 const imageEditModelSelector = document.querySelector<HTMLSelectElement>(
 	"#selectedImageEditingModel"
 ) as HTMLSelectElement;
@@ -50,7 +56,7 @@ if (
 	!autoscrollToggle ||
 	!streamResponsesToggle ||
 	!enableThinkingSelect ||
-	!thinkingBudgetInput ||
+	!reasoningEffortSelect ||
 	!imageEditModelSelector ||
 	!roleplaySuggestionModelSelect ||
 	!rpgGroupChatsProgressAutomaticallyToggle ||
@@ -166,6 +172,12 @@ const NOVEL_DELIMITER_INSTRUCTIONS: DelimiterInstructions = {
 	action: "Actions should be expressed between asterisks.",
 	thought: "Thoughts should be narrated naturally in plain prose without special markers."
 };
+
+//the user's preferred level; requests move it to the nearest level the model takes
+export function getStoredReasoningEffort(): ReasoningEffort {
+	const stored = localStorage.getItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT);
+	return isReasoningEffort(stored) ? stored : DEFAULT_REASONING_EFFORT;
+}
 
 function getStoredDelimiterPreset(): DelimiterPreset {
 	const stored = localStorage.getItem(SETTINGS_STORAGE_KEYS.DELIMITER_PRESET);
@@ -354,7 +366,12 @@ export function initialize() {
 	fullWidthChatToggle.addEventListener("change", saveSettings);
 	enableThinkingSelect.addEventListener("change", saveSettings);
 	uiScaleInput.addEventListener("input", saveSettings);
-	thinkingBudgetInput.addEventListener("input", saveSettings);
+	//saved on its own: the select shows the preference moved to the selected model's nearest level,
+	//so saving it with the other settings would overwrite the preference whenever the model changes
+	reasoningEffortSelect.addEventListener("change", () => {
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT, reasoningEffortSelect.value);
+		debouncedSyncPush();
+	});
 	imageEditModelSelector.addEventListener("change", saveSettings);
 	roleplaySuggestionModelSelect.addEventListener("change", saveSettings);
 	delimiterPresetSelect.addEventListener("change", () => {
@@ -403,7 +420,6 @@ export function loadSettings() {
 		enableThinkingSelect.value = enableThinking ? "enabled" : "disabled";
 		const uiScale = getStoredUiScale();
 		uiScaleInput.value = getUiScaleInputValue(uiScale);
-		thinkingBudgetInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.THINKING_BUDGET) || "500";
 		delimiterPresetSelect.value = getStoredDelimiterPreset();
 
 		const customDelimiterInstructions = getStoredCustomDelimiterInstructions();
@@ -463,7 +479,6 @@ export function saveSettings() {
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.FULL_WIDTH_CHAT, fullWidthChatToggle.checked.toString());
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING, (enableThinkingSelect.value === "enabled").toString());
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.UI_SCALE, getUiScaleFromInputValue(uiScaleInput.value).toString());
-	localStorage.setItem(SETTINGS_STORAGE_KEYS.THINKING_BUDGET, thinkingBudgetInput.value);
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.DELIMITER_PRESET, delimiterPresetSelect.value);
 	localStorage.setItem(
 		SETTINGS_STORAGE_KEYS.CUSTOM_DIALOGUE_INSTRUCTION,
@@ -511,7 +526,7 @@ export function getSettings() {
 		fullWidthChat: fullWidthChatToggle.checked,
 		enableThinking: enableThinkingSelect.value === "enabled",
 		uiScale: getUiScaleFromInputValue(uiScaleInput.value),
-		thinkingBudget: parseInt(thinkingBudgetInput.value),
+		reasoningEffort: getStoredReasoningEffort(),
 		delimiterPreset: getStoredDelimiterPreset(),
 		customDelimiterInstructions: getStoredCustomDelimiterInstructions()
 	};

@@ -14,7 +14,7 @@
  */
 
 import type { Content, GenerateContentConfig } from "@google/genai";
-import { GoogleGenAI, createPartFromUri, BlockedReason, FinishReason } from "@google/genai";
+import { GoogleGenAI, createPartFromUri, BlockedReason, FinishReason, type ThinkingLevel } from "@google/genai";
 import hljs from "highlight.js";
 
 import type { Message, GeneratedImage, MessageDebugInfo, MessageDebugMode } from "../types/Message";
@@ -30,7 +30,10 @@ import {
 	modelRequiresThinking,
 	modelSupportsThinking,
 	modelSupportsTemperature,
-	requiresThoughtSignaturesInHistory
+	REASONING_EFFORTS,
+	requiresThoughtSignaturesInHistory,
+	resolveReasoningEffort,
+	type ReasoningEffort
 } from "../types/Models";
 import type { PremiumEndpoint } from "../types/PremiumEndpoint";
 
@@ -565,7 +568,7 @@ function buildMessageDebugInfo(args: {
 			temperature: parseInt(args.settings.temperature, 10) / 100,
 			streamResponses: args.settings.streamResponses,
 			thinkingEnabled: args.settings.enableThinking,
-			thinkingBudget: args.settings.thinkingBudget
+			reasoningEffort: args.settings.reasoningEffort
 		},
 		modeSettings
 	};
@@ -703,26 +706,34 @@ function showGeminiProhibitedContentToast(args: { finishReason?: unknown; detail
 	});
 }
 
-function generateThinkingConfig(model: string, enableThinking: boolean, settings: any) {
-	if (modelRequiresThinking(model)) {
-		const thinkingBudget =
-			Number.isFinite(settings.thinkingBudget) && settings.thinkingBudget > 0 ? settings.thinkingBudget : 128;
-		return {
-			includeThoughts: enableThinking,
-			thinkingBudget
-		};
-	}
-
-	if (!enableThinking) {
+function generateThinkingConfig(
+	model: string,
+	enableThinking: boolean,
+	settings: { reasoningEffort: ReasoningEffort }
+): PremiumEndpoint.ThinkingConfig {
+	if (!enableThinking && !modelRequiresThinking(model)) {
 		return {
 			includeThoughts: false,
 			thinkingBudget: 0
 		};
 	}
 
+	//a model that cannot turn thinking off runs at its lowest level while thinking is off
+	const requestedEffort = enableThinking ? settings.reasoningEffort : REASONING_EFFORTS[0];
+	const effort = resolveReasoningEffort(model, requestedEffort);
+
+	//Gemini models here go to the local Gemini SDK, which takes thinkingLevel and rejects unknown fields;
+	//every other model goes to the premium endpoint, which takes reasoningEffort
+	if (isGeminiModel(model)) {
+		return effort
+			? { includeThoughts: enableThinking, thinkingLevel: effort.toUpperCase() as ThinkingLevel }
+			: { includeThoughts: enableThinking, thinkingBudget: -1 };
+	}
+
+	//models without levels still get an effort, which tells the premium endpoint to turn thinking on at the model's default
 	return {
-		includeThoughts: true,
-		thinkingBudget: settings.thinkingBudget
+		includeThoughts: enableThinking,
+		reasoningEffort: effort ?? requestedEffort
 	};
 }
 
@@ -1180,7 +1191,7 @@ async function createChatIfAbsentOpenRouter(apiKey: string, msg: string): Promis
 			maxTokens: 100,
 			temperature: 0.9,
 			enableThinking: false,
-			thinkingBudget: 0,
+			reasoningEffort: REASONING_EFFORTS[0],
 			isInternetSearchEnabled: false
 		})
 	});
@@ -2393,7 +2404,7 @@ async function handleTextChatOpenRouter(ctx: SendContext, state: TextChatRespons
 		maxTokens: parseInt(ctx.settings.maxTokens),
 		temperature: parseInt(ctx.settings.temperature) / 100,
 		enableThinking: ctx.settings.enableThinking,
-		thinkingBudget: ctx.settings.thinkingBudget,
+		reasoningEffort: ctx.settings.reasoningEffort,
 		isInternetSearchEnabled:
 			document.querySelector<HTMLButtonElement>("#btn-internet")?.classList.contains("btn-toggled") ?? false
 	});

@@ -21,6 +21,10 @@ import {
 	getValidChatModel,
 	modelRequiresThinking,
 	modelSupportsThinking,
+	DEFAULT_REASONING_EFFORT,
+	getChatModelDefinition,
+	REASONING_EFFORT_LABELS,
+	resolveReasoningEffort,
 	type ChatModelDefinition,
 	type ChatModelAccess
 } from "../../types/Models";
@@ -134,7 +138,8 @@ const advancedTemperatureValue = document.querySelector<HTMLSpanElement>("#onboa
 const advancedMaxOutputTokens = document.querySelector<HTMLInputElement>("#onboarding-max-output-tokens");
 const advancedThinkingEnabled = document.querySelector<HTMLInputElement>("#onboarding-thinking-enabled");
 const advancedThinkingHint = document.querySelector<HTMLParagraphElement>("#onboarding-thinking-hint");
-const advancedThinkingBudget = document.querySelector<HTMLInputElement>("#onboarding-thinking-budget");
+const advancedReasoningEffortGroup = document.querySelector<HTMLDivElement>("#onboarding-reasoning-effort-group");
+const advancedReasoningEffort = document.querySelector<HTMLSelectElement>("#onboarding-reasoning-effort");
 const advancedAutoscroll = document.querySelector<HTMLInputElement>("#onboarding-autoscroll");
 const advancedStreamResponses = document.querySelector<HTMLInputElement>("#onboarding-stream-responses");
 const advancedRpgGroupChatsProgressAutomatically = document.querySelector<HTMLInputElement>(
@@ -234,7 +239,8 @@ const requiredElements = {
 	advancedMaxOutputTokens,
 	advancedThinkingEnabled,
 	advancedThinkingHint,
-	advancedThinkingBudget,
+	advancedReasoningEffortGroup,
+	advancedReasoningEffort,
 	advancedAutoscroll,
 	advancedStreamResponses,
 	advancedRpgGroupChatsProgressAutomatically,
@@ -1236,7 +1242,7 @@ async function applyEasyPathSettings(): Promise<void> {
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.MODEL, getDefaultChatModel(access));
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.MAX_TOKENS, "1000");
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING, "true");
-	localStorage.setItem(SETTINGS_STORAGE_KEYS.THINKING_BUDGET, "500");
+	localStorage.setItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT, DEFAULT_REASONING_EFFORT);
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.TEMPERATURE, "60"); // Temperature is stored as 0-100, 0.6 = 60
 
 	// Reload settings to apply changes to UI
@@ -1673,31 +1679,7 @@ async function hydrateRemoteSettingsForOnboarding(): Promise<boolean> {
  * Advanced settings step handlers (Power User Path)
  */
 function setupAdvancedSettings(): void {
-	let hasCustomThinkingBudget = false;
 	let maxOutputTokensValidationTimer: ReturnType<typeof setTimeout> | null = null;
-	let thinkingBudgetValidationTimer: ReturnType<typeof setTimeout> | null = null;
-
-	const calculateRecommendedThinkingBudget = (maxOutputTokens: number): number => {
-		return Math.max(128, Math.floor(maxOutputTokens * 0.5));
-	};
-
-	const applyRecommendedThinkingBudgetFromCurrentOutput = (options?: { clampOutput?: boolean }) => {
-		if (options?.clampOutput) {
-			clampMaxOutputTokens();
-		}
-
-		if (hasCustomThinkingBudget) {
-			return;
-		}
-
-		const parsedMaxOutputTokens = parseInt(advancedMaxOutputTokens!.value, 10);
-		if (isNaN(parsedMaxOutputTokens)) {
-			return;
-		}
-
-		const recommendedThinkingBudget = calculateRecommendedThinkingBudget(parsedMaxOutputTokens);
-		advancedThinkingBudget!.value = recommendedThinkingBudget.toString();
-	};
 
 	const clampMaxOutputTokens = () => {
 		const parsedValue = parseInt(advancedMaxOutputTokens!.value, 10);
@@ -1724,25 +1706,6 @@ function setupAdvancedSettings(): void {
 		advancedMaxOutputTokens!.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.MAX_TOKENS) || "1000";
 		clampMaxOutputTokens();
 		advancedThinkingEnabled!.checked = localStorage.getItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING) !== "false";
-		const maxOutputTokens = parseInt(advancedMaxOutputTokens!.value, 10);
-		const recommendedThinkingBudget = calculateRecommendedThinkingBudget(maxOutputTokens);
-		const storedThinkingBudget = localStorage.getItem(SETTINGS_STORAGE_KEYS.THINKING_BUDGET);
-		if (storedThinkingBudget === null) {
-			advancedThinkingBudget!.value = recommendedThinkingBudget.toString();
-			hasCustomThinkingBudget = false;
-		} else {
-			const parsedThinkingBudget = parseInt(storedThinkingBudget, 10);
-			const isValidThinkingBudget =
-				!isNaN(parsedThinkingBudget) && (parsedThinkingBudget >= 128 || parsedThinkingBudget === -1);
-
-			if (!isValidThinkingBudget) {
-				advancedThinkingBudget!.value = recommendedThinkingBudget.toString();
-				hasCustomThinkingBudget = false;
-			} else {
-				advancedThinkingBudget!.value = parsedThinkingBudget.toString();
-				hasCustomThinkingBudget = parsedThinkingBudget !== recommendedThinkingBudget;
-			}
-		}
 		advancedAutoscroll!.checked = localStorage.getItem(SETTINGS_STORAGE_KEYS.AUTOSCROLL) !== "false";
 		advancedStreamResponses!.checked = localStorage.getItem(SETTINGS_STORAGE_KEYS.STREAM_RESPONSES) !== "false";
 		advancedRpgGroupChatsProgressAutomatically!.checked =
@@ -1754,7 +1717,6 @@ function setupAdvancedSettings(): void {
 
 		// Trigger model change to set thinking restrictions
 		updateThinkingRestrictions();
-		updateThinkingBudgetState();
 	};
 
 	// Update temperature display
@@ -1783,21 +1745,25 @@ function setupAdvancedSettings(): void {
 			advancedThinkingHint!.style.display = "none";
 		}
 
-		// Update thinking budget state after changing checkbox
-		updateThinkingBudgetState();
+		renderReasoningEffortOptions();
+		updateReasoningEffortState();
 	};
 
-	// Update thinking budget input state based on checkbox
-	const updateThinkingBudgetState = () => {
-		advancedThinkingBudget!.disabled = !advancedThinkingEnabled!.checked;
+	// Offer only the selected model's levels (mirroring ReasoningEffortSelect.component.ts)
+	const renderReasoningEffortOptions = () => {
+		const selectedModel = advancedModelSelect!.value;
+		const efforts = getChatModelDefinition(selectedModel)?.reasoningEfforts ?? [];
+		advancedReasoningEffortGroup!.style.display = efforts.length > 0 ? "" : "none";
+		advancedReasoningEffort!.replaceChildren(
+			...efforts.map((effort) => new Option(REASONING_EFFORT_LABELS[effort], effort))
+		);
+		const selected = resolveReasoningEffort(selectedModel, settingsService.getStoredReasoningEffort());
+		if (selected) advancedReasoningEffort!.value = selected;
 	};
 
-	// Validate thinking budget input
-	const validateThinkingBudget = () => {
-		const value = parseInt(advancedThinkingBudget!.value);
-		if (isNaN(value) || (value < 128 && value !== -1)) {
-			advancedThinkingBudget!.value = "128";
-		}
+	// Update reasoning effort select state based on checkbox
+	const updateReasoningEffortState = () => {
+		advancedReasoningEffort!.disabled = !advancedThinkingEnabled!.checked;
 	};
 
 	// Temperature slider handler
@@ -1805,14 +1771,12 @@ function setupAdvancedSettings(): void {
 
 	// Max output tokens handlers
 	advancedMaxOutputTokens!.addEventListener("input", () => {
-		applyRecommendedThinkingBudgetFromCurrentOutput();
-
 		if (maxOutputTokensValidationTimer) {
 			clearTimeout(maxOutputTokensValidationTimer);
 		}
 
 		maxOutputTokensValidationTimer = setTimeout(() => {
-			applyRecommendedThinkingBudgetFromCurrentOutput({ clampOutput: true });
+			clampMaxOutputTokens();
 			maxOutputTokensValidationTimer = null;
 		}, 1000);
 	});
@@ -1823,39 +1787,14 @@ function setupAdvancedSettings(): void {
 			maxOutputTokensValidationTimer = null;
 		}
 
-		applyRecommendedThinkingBudgetFromCurrentOutput({ clampOutput: true });
+		clampMaxOutputTokens();
 	});
 
 	// Model selector handler
 	advancedModelSelect!.addEventListener("change", updateThinkingRestrictions);
 
 	// Thinking checkbox handler
-	advancedThinkingEnabled!.addEventListener("change", updateThinkingBudgetState);
-
-	// Thinking budget validation
-	advancedThinkingBudget!.addEventListener("input", () => {
-		hasCustomThinkingBudget = true;
-
-		if (thinkingBudgetValidationTimer) {
-			clearTimeout(thinkingBudgetValidationTimer);
-		}
-
-		thinkingBudgetValidationTimer = setTimeout(() => {
-			validateThinkingBudget();
-			thinkingBudgetValidationTimer = null;
-		}, 1000);
-	});
-
-	advancedThinkingBudget!.addEventListener("change", () => {
-		hasCustomThinkingBudget = true;
-
-		if (thinkingBudgetValidationTimer) {
-			clearTimeout(thinkingBudgetValidationTimer);
-			thinkingBudgetValidationTimer = null;
-		}
-
-		validateThinkingBudget();
-	});
+	advancedThinkingEnabled!.addEventListener("change", updateReasoningEffortState);
 
 	// Continue button (page 1) - proceed to behavior settings
 	advancedPrimaryContinueButton!.addEventListener("click", () => {
@@ -1869,20 +1808,17 @@ function setupAdvancedSettings(): void {
 			maxOutputTokensValidationTimer = null;
 		}
 
-		if (thinkingBudgetValidationTimer) {
-			clearTimeout(thinkingBudgetValidationTimer);
-			thinkingBudgetValidationTimer = null;
-		}
-
 		clampMaxOutputTokens();
-		validateThinkingBudget();
 
 		// Save all settings to localStorage
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.MODEL, advancedModelSelect!.value);
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.TEMPERATURE, advancedTemperature!.value);
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.MAX_TOKENS, advancedMaxOutputTokens!.value);
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING, advancedThinkingEnabled!.checked.toString());
-		localStorage.setItem(SETTINGS_STORAGE_KEYS.THINKING_BUDGET, advancedThinkingBudget!.value);
+		// Models without levels leave the stored preference alone
+		if (advancedReasoningEffort!.value) {
+			localStorage.setItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT, advancedReasoningEffort!.value);
+		}
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.AUTOSCROLL, advancedAutoscroll!.checked.toString());
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.STREAM_RESPONSES, advancedStreamResponses!.checked.toString());
 		localStorage.setItem(

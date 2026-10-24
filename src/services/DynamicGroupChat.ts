@@ -427,7 +427,7 @@ async function respondAsPersona(args: {
 						maxTokens: parseInt(settings.maxTokens),
 						temperature: parseInt(settings.temperature) / 100,
 						enableThinking: settings.enableThinking,
-						thinkingBudget: settings.thinkingBudget,
+						reasoningEffort: settings.reasoningEffort,
 						isInternetSearchEnabled: args.isInternetSearchEnabled
 					})
 				});

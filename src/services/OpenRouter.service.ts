@@ -11,7 +11,14 @@ import type {
 	Response as OpenRouterResponse,
 	StreamingChoice
 } from "../types/OpenRouterTypes";
-import { getChatModelDefinition, modelSupportsTemperature, type ChatModelDefinition } from "../types/Models";
+import {
+	getChatModelDefinition,
+	modelSupportsTemperature,
+	REASONING_EFFORTS,
+	resolveReasoningEffort,
+	type ChatModelDefinition,
+	type ReasoningEffort
+} from "../types/Models";
 import type { GeneratedImage, Message, ReasoningDetailMetadata } from "../types/Message";
 import * as helpers from "../utils/helpers";
 
@@ -428,7 +435,7 @@ export async function buildOpenRouterRequestMessages(args: {
 export function buildOpenRouterReasoning(args: {
 	model: string;
 	enableThinking: boolean;
-	thinkingBudget: number;
+	reasoningEffort: ReasoningEffort;
 }): OpenRouterRequest["reasoning"] | undefined {
 	const definition = getChatModelDefinition(args.model);
 	if (!definition?.supportsThinking) {
@@ -442,9 +449,14 @@ export function buildOpenRouterReasoning(args: {
 		};
 	}
 
-	if (args.thinkingBudget > 0) {
+	//a model that cannot turn thinking off runs at its lowest level while thinking is off
+	const effort = resolveReasoningEffort(
+		args.model,
+		args.enableThinking ? args.reasoningEffort : REASONING_EFFORTS[0]
+	);
+	if (effort) {
 		return {
-			max_tokens: args.thinkingBudget,
+			effort,
 			exclude: false
 		};
 	}
@@ -470,7 +482,7 @@ export function buildOpenRouterRequest(args: {
 	maxTokens: number;
 	temperature: number;
 	enableThinking: boolean;
-	thinkingBudget: number;
+	reasoningEffort: ReasoningEffort;
 	isInternetSearchEnabled: boolean;
 	responseFormat?: OpenRouterRequest["response_format"];
 }): OpenRouterRequest {
@@ -485,7 +497,7 @@ export function buildOpenRouterRequest(args: {
 		reasoning: buildOpenRouterReasoning({
 			model: args.model,
 			enableThinking: args.enableThinking,
-			thinkingBudget: args.thinkingBudget
+			reasoningEffort: args.reasoningEffort
 		}),
 		plugins: buildOpenRouterPlugins({ isInternetSearchEnabled: args.isInternetSearchEnabled }),
 		response_format: args.responseFormat,

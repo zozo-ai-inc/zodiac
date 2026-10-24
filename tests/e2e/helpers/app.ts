@@ -90,7 +90,6 @@ export async function seedLocalSettings(page: Page): Promise<void> {
 		localStorage.setItem("TEMPERATURE", "50");
 		localStorage.setItem("streamResponses", "false");
 		localStorage.setItem("enableThinking", "false");
-		localStorage.setItem("thinkingBudget", "0");
 		localStorage.setItem("autoscroll", "true");
 	});
 }

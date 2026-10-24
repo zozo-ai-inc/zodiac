@@ -875,25 +875,18 @@
 												Required when using Pro model
 											</div>
 										</div>
-										<div>
-											<label class="setting-label" for="thinkingBudget">
+										<div id="reasoning-effort-setting">
+											<label class="setting-label" for="reasoningEffort">
 												<span class="material-symbols-outlined">speed</span>
-												<span>Thinking Budget</span>
+												<span>Reasoning Effort</span>
 												<span
 													class="material-symbols-outlined tooltip"
 													style="font-size: 0.885rem; opacity: 0.6; cursor: default"
-													info="Number of output tokens allocated for the model's internal reasoning. Higher values may improve quality but increase latency. Set to -1 to enable dynamic thinking budget."
+													info="How much the model reasons before answering. Higher levels may improve quality but increase latency. Only the levels the selected model supports are listed."
 													>info</span
 												>
 											</label>
-											<input
-												type="number"
-												id="thinkingBudget"
-												class="input-field"
-												min="-1"
-												max="200000"
-												value="500"
-											/>
+											<select id="reasoningEffort" class="input-field"></select>
 										</div>
 										<div>
 											<label class="setting-label" for="temperature">
@@ -3295,23 +3288,16 @@ Your Max plan no longer has a monthly usage limit.</textarea
 								</p>
 							</div>
 
-							<!-- Thinking Budget -->
-							<div class="onboarding-setting-group">
-								<label for="onboarding-thinking-budget" class="setting-label">
+							<!-- Reasoning Effort -->
+							<div id="onboarding-reasoning-effort-group" class="onboarding-setting-group">
+								<label for="onboarding-reasoning-effort" class="setting-label">
 									<span class="material-symbols-outlined setting-icon">speed</span>
-									Thinking Budget (tokens)
+									Reasoning Effort
 								</label>
-								<input
-									type="number"
-									id="onboarding-thinking-budget"
-									class="onboarding-select"
-									min="-1"
-									step="1"
-									value="500"
-								/>
+								<select id="onboarding-reasoning-effort" class="onboarding-select"></select>
 								<p class="setting-hint">
-									Max tokens used for reasoning - 50% of the output tokens is recommended. Use -1 for
-									a dynamic budgeting.
+									How much the model reasons before answering. Higher levels may improve quality but
+									take longer.
 								</p>
 							</div>
 						</div>
