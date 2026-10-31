@@ -19,7 +19,8 @@ concurrency:
 
 jobs:
     verify:
-        runs-on: ubuntu-latest
+        # Pinned because Playwright 1.60 has no Chromium build for Ubuntu 26.04, which ubuntu-latest now uses.
+        runs-on: ubuntu-24.04
 
         steps:
             - name: Checkout repository
