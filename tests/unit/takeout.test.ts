@@ -249,6 +249,48 @@ describe("Zozo Chat takeout format", () => {
 	});
 });
 
+describe("takeout export of unreadable media", () => {
+	const deadRef = { __blob: true as const, blobId: "dead", mimeType: "image/png", size: 4, iv: "00" };
+
+	it("leaves dead media out of an otherwise complete takeout and names the chat it came from", async () => {
+		const placeholder = new File([], "gone.png", { type: "image/png" });
+		(placeholder as File & { _blobRef?: unknown })._blobRef = deadRef;
+		const damaged = makeChat({
+			id: "damaged",
+			title: "Damaged",
+			content: [
+				makeUserMessage("kept text", {
+					parts: [{ text: "kept text", attachments: [placeholder] }],
+					generatedImages: [{ mimeType: "image/png", base64: "", _blobRef: deadRef }]
+				})
+			]
+		});
+		const healthy = makeChat({
+			id: "healthy",
+			title: "Healthy",
+			content: [makeUserMessage("fine", { generatedImages: [{ mimeType: "image/png", base64: "iVBORw==" }] })]
+		});
+
+		const takeout = await createTakeoutDocument(
+			takeoutArgs({ categories: ["chats", "media"], chats: [damaged, healthy] })
+		);
+
+		const parsed = await parseImportText(JSON.stringify(takeout), "takeout.json");
+		expect(parsed.payload.chats?.map((chat) => chat.content[0].parts[0].text)).toEqual(["kept text", "fine"]);
+		expect(parsed.payload.chats?.[0].content[0].parts[0].attachments).toBeUndefined();
+		expect(parsed.payload.chats?.[0].content[0].generatedImages).toBeUndefined();
+		expect(parsed.payload.chats?.[1].content[0].generatedImages).toHaveLength(1);
+		expect(takeout.manifest.missingMedia).toEqual([{ chat: "Damaged", count: 2 }]);
+	});
+
+	it("does not mention missing media when nothing is missing", async () => {
+		const takeout = await createTakeoutDocument(
+			takeoutArgs({ categories: ["chats", "media"], chats: [makeChat()] })
+		);
+		expect(takeout.manifest).not.toHaveProperty("missingMedia");
+	});
+});
+
 describe("legacy chat export import", () => {
 	const blobRef = (blobId: string) => ({ __blob: true, blobId, mimeType: "image/png", size: 4, iv: "00" });
 

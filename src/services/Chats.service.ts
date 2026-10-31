@@ -15,7 +15,7 @@ import * as pinningService from "./Pinning.service";
 import { openDropdownPortal, type DropdownPortal } from "../utils/dropdownPortal";
 import type { BlobReference } from "../types/BlobReference";
 import type { TakeoutDocument } from "../types/Takeout";
-import { createTakeoutDocument } from "../utils/takeout";
+import { createTakeoutDocument, describeMediaCount } from "../utils/takeout";
 
 /**
  * `structuredClone` clones `File` objects but silently drops expando properties
@@ -1665,7 +1665,7 @@ export async function exportChat(id: string): Promise<void> {
 			settings: {}
 		});
 	} catch (error) {
-		// Writing nothing beats a file that looks complete with its media missing.
+		// Lost media doesn't reach here, so this failure is retryable and worth more than a misleading file.
 		console.error("Failed to export chat", error);
 		toastService.danger({
 			title: "Export Failed",
@@ -1690,6 +1690,15 @@ export async function exportChat(id: string): Promise<void> {
 	a.click();
 	document.body.removeChild(a);
 	URL.revokeObjectURL(url);
+
+	const missingMedia = exportedTakeout.manifest.missingMedia?.[0]?.count ?? 0;
+	if (missingMedia > 0) {
+		toastService.warn({
+			title: "Chat exported",
+			text: `Exported \"${chatForExport.title || "chat"}\", but ${describeMediaCount(missingMedia)} no longer exist and could not be included.`
+		});
+		return;
+	}
 
 	toastService.info({
 		title: "Chat exported",
