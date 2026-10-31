@@ -14,6 +14,7 @@ import type {
 } from "../types/Takeout";
 import { createTakeoutDocument, parseImportText, planTakeoutImport } from "../utils/takeout";
 import * as chatsService from "./Chats.service";
+import { assertCloudExportReady } from "./CloudExport.service";
 import { db } from "./Db.service";
 import * as loraService from "./Lora.service";
 import * as personalityService from "./Personality.service";
@@ -117,19 +118,6 @@ function readLocalPortableSettings(): Record<string, string> {
 		if (value !== null) settings[key] = value;
 	}
 	return settings;
-}
-
-function assertCloudExportReady(): void {
-	if (!syncService.isSyncActive()) {
-		throw new Error("Unlock Cloud Sync before exporting a complete takeout.");
-	}
-	const status = syncService.getSyncStatus();
-	if (status === "offline") throw new Error("Cloud Sync is offline. Reconnect and sync before exporting.");
-	if (status === "syncing") throw new Error("Cloud Sync is still syncing. Wait for it to finish before exporting.");
-	if (status === "error") throw new Error("Cloud Sync has an error. Resolve it before exporting.");
-	if (syncService.getPendingSyncOperationCount() > 0) {
-		throw new Error("Cloud Sync has pending changes. Sync them before exporting.");
-	}
 }
 
 function report(onProgress: ((progress: TakeoutProgress) => void) | undefined, progress: TakeoutProgress): void {

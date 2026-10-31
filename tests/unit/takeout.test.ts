@@ -249,6 +249,62 @@ describe("Zozo Chat takeout format", () => {
 	});
 });
 
+describe("legacy chat export import", () => {
+	const blobRef = (blobId: string) => ({ __blob: true, blobId, mimeType: "image/png", size: 4, iv: "00" });
+
+	async function planLegacyChat(chat: unknown) {
+		const parsed = await parseImportText(JSON.stringify(chat), "chat_export.json");
+		return planTakeoutImport({
+			payload: parsed.payload,
+			existingChats: [],
+			existingPersonas: [],
+			resolution: "copy",
+			createId: () => "imported-chat"
+		});
+	}
+
+	it("imports a chat whose FileList attachments were exported as an index-keyed object", async () => {
+		// The exact output of JSON.stringify on a two-file FileList in Chromium.
+		const plan = await planLegacyChat({
+			title: "Attachments",
+			timestamp: 1,
+			content: [{ role: "user", parts: [{ text: "see attached", attachments: { "0": {}, "1": {} } }] }]
+		});
+
+		const [part] = plan.chats[0].content[0].parts;
+		expect(part.text).toBe("see attached");
+		expect(part.attachments).toBeUndefined();
+		expect(plan.warnings).toEqual([expect.stringMatching(/“Attachments”.*2 attachments or images/)]);
+	});
+
+	it("drops cloud blob references so an import cannot dangle or share blobs with its original", async () => {
+		const plan = await planLegacyChat({
+			title: "Cloud chat",
+			timestamp: 1,
+			content: [
+				{
+					role: "user",
+					parts: [{ text: "photo", attachments: [{ _blobRef: blobRef("attachment-blob") }] }]
+				},
+				{
+					role: "model",
+					parts: [{ text: "here", _thoughtSignatureRef: blobRef("signature-blob") }],
+					generatedImages: [
+						{ mimeType: "image/png", base64: "", _blobRef: blobRef("image-blob") },
+						{ mimeType: "image/png", base64: "iVBORw==", _blobRef: blobRef("cached-image-blob") }
+					]
+				}
+			]
+		});
+
+		const [userMessage, modelMessage] = plan.chats[0].content;
+		expect(JSON.stringify(plan.chats[0])).not.toContain("-blob");
+		expect(userMessage.parts[0].attachments).toBeUndefined();
+		expect(modelMessage.generatedImages).toEqual([{ mimeType: "image/png", base64: "iVBORw==" }]);
+		expect(plan.warnings).toEqual([expect.stringMatching(/“Cloud chat”.*2 attachments or images/)]);
+	});
+});
+
 describe("takeout import planning", () => {
 	it("preserves logical IDs when the destination has no conflicts", () => {
 		const persona = makePersona({ id: "persona-source" });
