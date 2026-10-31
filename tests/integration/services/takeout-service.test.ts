@@ -289,6 +289,25 @@ describe("Takeout service source and destination routing", () => {
 		expect(result.partial).toBe(false);
 	});
 
+	it("inspects a cloud import without reading chats the file cannot conflict with", async () => {
+		supabaseServiceMock.getCurrentUser.mockResolvedValue({ id: "user" });
+		supabaseServiceMock.getUserSubscription.mockResolvedValue({});
+		supabaseServiceMock.getSubscriptionTier.mockReturnValue("pro");
+		syncServiceMock.isOnlineSyncEnabled.mockReturnValue(true);
+		syncServiceMock.isSyncActive.mockReturnValue(true);
+		syncServiceMock.fetchSyncedChatsMetadata.mockResolvedValue([makeChat({ id: "unrelated-chat", content: [] })]);
+		syncServiceMock.fetchSyncedPersonas.mockResolvedValue([]);
+		syncServiceMock.fetchSyncedSettingsObject.mockResolvedValue({});
+		const file = new File([JSON.stringify({ title: "New chat", timestamp: 1, content: [] })], "chat.json");
+
+		const { inspectTakeoutImport } = await import("../../../src/services/Takeout.service");
+		const inspection = await inspectTakeoutImport([file], "cloud");
+
+		expect(syncServiceMock.fetchAllSyncedChatMessages).not.toHaveBeenCalled();
+		expect(syncServiceMock.materializeMessagesForPortableExport).not.toHaveBeenCalled();
+		expect(inspection.existingChats.map((chat) => chat.id)).toEqual(["unrelated-chat"]);
+	});
+
 	it("reports and skips a cloud chat whose imported persona dependency failed", async () => {
 		const persona = makePersona({ id: "dependent-persona" });
 		const chat = makeChat({

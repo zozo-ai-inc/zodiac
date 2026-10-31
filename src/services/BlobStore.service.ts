@@ -224,6 +224,10 @@ export async function downloadDecryptedBlob(ref: BlobReference): Promise<{ data:
 	const path = storagePath(user.id, ref.blobId);
 	const { data, error } = await supabase.storage.from(BUCKET_NAME).download(path);
 
+	// Storage answers a missing object with HTTP 400 and a 404 inside the body, so the status can't be used.
+	if (error && ((error as { statusCode?: string }).statusCode === "404" || error.message === "Object not found")) {
+		throw new BlobNotFoundError(ref.blobId);
+	}
 	if (error || !data) {
 		throw new Error(`BlobStore: download failed for ${ref.blobId}: ${error?.message ?? "no data"}`);
 	}
@@ -236,6 +240,14 @@ export async function downloadDecryptedBlob(ref: BlobReference): Promise<{ data:
 	cachePut(ref.blobId, decrypted, ref.mimeType);
 
 	return { data: decrypted, mimeType: ref.mimeType };
+}
+
+/** The blob itself is gone, as opposed to a download that failed and could succeed later. */
+export class BlobNotFoundError extends Error {
+	constructor(blobId: string) {
+		super(`BlobStore: blob ${blobId} no longer exists`);
+		this.name = "BlobNotFoundError";
+	}
 }
 
 // ── Delete ─────────────────────────────────────────────────────────────────

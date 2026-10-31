@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db } from "../../../src/services/Db.service";
 import { exportChat } from "../../../src/services/Chats.service";
+import * as blobStore from "../../../src/services/BlobStore.service";
 import * as syncService from "../../../src/services/Sync.service";
 import * as toastService from "../../../src/services/Toast.service";
 import type { DbChat } from "../../../src/types/Chat";
 import type { Message } from "../../../src/types/Message";
-import { resolveAttachmentFile, resolveGeneratedImageSrc } from "../../../src/utils/blobResolver";
 import { deserializeTakeoutChat, parseImportText, planTakeoutImport } from "../../../src/utils/takeout";
 import { makeChat } from "../../fixtures/chats";
-import { makeImageFile, makeTextFile } from "../../fixtures/files";
+import { makeTextFile } from "../../fixtures/files";
 import { makeUserMessage } from "../../fixtures/messages";
 
 // Only the network edge is faked: materializeMessagesForPortableExport stays real, so these tests
@@ -24,10 +24,9 @@ vi.mock("../../../src/services/Sync.service", async (importOriginal) => ({
 	fetchSyncedChatMetadata: vi.fn(),
 	fetchAllSyncedChatMessages: vi.fn()
 }));
-vi.mock("../../../src/utils/blobResolver", () => ({
-	resolveAttachmentFile: vi.fn(),
-	resolveGeneratedImageSrc: vi.fn(),
-	resolveThoughtSignature: vi.fn()
+vi.mock("../../../src/services/BlobStore.service", async (importOriginal) => ({
+	...(await importOriginal<typeof blobStore>()),
+	downloadDecryptedBlob: vi.fn()
 }));
 vi.mock("../../../src/services/Toast.service", () => ({ info: vi.fn(), warn: vi.fn(), danger: vi.fn() }));
 // These query the full app shell at import time and take no part in exporting.
@@ -56,8 +55,10 @@ function enableCloudSync(chatId: string): void {
 	vi.mocked(syncService.isChatSnapshotFullyHydrated).mockReturnValue(true);
 	vi.mocked(syncService.fetchSyncedChatMetadata).mockResolvedValue(makeChat({ id: chatId, content: [] }));
 	vi.mocked(syncService.fetchAllSyncedChatMessages).mockResolvedValue([makeSyncedMessage()]);
-	vi.mocked(resolveAttachmentFile).mockResolvedValue(makeImageFile("photo.png"));
-	vi.mocked(resolveGeneratedImageSrc).mockResolvedValue("data:image/png;base64,iVBORw==");
+	vi.mocked(blobStore.downloadDecryptedBlob).mockResolvedValue({
+		data: new Uint8Array([137, 80, 78, 71]),
+		mimeType: "image/png"
+	});
 }
 
 async function exportedText(chatId: string): Promise<string> {
@@ -137,11 +138,27 @@ describe("exportChat", () => {
 		expect(plan.conflicts.chats).toBe(0);
 	});
 
-	it("reports a failure instead of writing a file with media missing", async () => {
+	it("exports the rest of a chat and names what is gone when a blob no longer exists", async () => {
 		enableCloudSync("lost-blob-chat");
-		vi.mocked(resolveAttachmentFile).mockResolvedValue(new File([], "photo.png"));
+		vi.mocked(blobStore.downloadDecryptedBlob).mockRejectedValue(new blobStore.BlobNotFoundError("image-blob"));
 
-		await exportChat("lost-blob-chat");
+		const text = await exportedText("lost-blob-chat");
+
+		const [message] = (await restore(text)).content;
+		expect(message.parts[0].text).toBe("here");
+		expect(message.parts[0].attachments ?? []).toHaveLength(0);
+		expect(message.generatedImages ?? []).toHaveLength(0);
+		expect(toastService.warn).toHaveBeenCalledWith(expect.objectContaining({ title: "Chat exported" }));
+		expect(toastService.warn).toHaveBeenCalledWith(
+			expect.objectContaining({ text: expect.stringMatching(/2 attachments or images/) })
+		);
+	});
+
+	it("refuses to export when media cannot be downloaded right now", async () => {
+		enableCloudSync("offline-blob-chat");
+		vi.mocked(blobStore.downloadDecryptedBlob).mockRejectedValue(new Error("BlobStore: download failed"));
+
+		await exportChat("offline-blob-chat");
 
 		expect(URL.createObjectURL).not.toHaveBeenCalled();
 		expect(toastService.danger).toHaveBeenCalledWith(expect.objectContaining({ title: "Export Failed" }));

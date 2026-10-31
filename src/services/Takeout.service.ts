@@ -248,11 +248,17 @@ async function parseImportFiles(files: readonly File[]): Promise<ParsedTakeout> 
 	return { kind: "legacy", categories: [...categories], payload };
 }
 
-async function readCompleteCloudChats(): Promise<DbChat[]> {
+async function readCloudChatsForImport(importedIds: ReadonlySet<string | undefined>): Promise<DbChat[]> {
 	const metadata = await syncService.fetchSyncedChatsMetadata();
 	if (metadata === null) throw new Error("Failed to read your cloud chats.");
 	const chats: DbChat[] = [];
 	for (const chat of metadata) {
+		// Metadata is enough to keep IDs unique. Only a conflict compares content, and reading the rest would
+		// download the user's whole media library and fail the import on any unrelated chat's problem.
+		if (!importedIds.has(chat.id)) {
+			chats.push(chat);
+			continue;
+		}
 		const messages = await syncService.fetchAllSyncedChatMessages(chat.id);
 		if (messages === null) throw new Error(`Failed to inspect cloud chat “${chat.title || chat.id}”.`);
 		if (!syncService.isChatSnapshotFullyHydrated(chat.id, messages.length)) {
@@ -281,7 +287,10 @@ export async function inspectTakeoutImport(
 	await assertImportDestinationReady(destination);
 	report(onProgress, { phase: "validating", completed: 0, total: files.length, message: "Validating import…" });
 	const parsed = await parseImportFiles(files);
-	const existingChats = destination === "cloud" ? await readCompleteCloudChats() : await db.chats.toArray();
+	const existingChats =
+		destination === "cloud"
+			? await readCloudChatsForImport(new Set(parsed.payload.chats?.map((chat) => chat.id)))
+			: await db.chats.toArray();
 	const existingPersonas =
 		destination === "cloud" ? await syncService.fetchSyncedPersonas() : await db.personalities.toArray();
 	const existingSettings =

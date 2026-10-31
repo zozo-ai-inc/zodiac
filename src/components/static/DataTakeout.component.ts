@@ -11,6 +11,7 @@ import * as surfaceService from "../../services/Surface.service";
 import * as syncService from "../../services/Sync.service";
 import * as toastService from "../../services/Toast.service";
 import { confirmDialogDanger } from "../../utils/helpers";
+import { describeMediaCount } from "../../utils/takeout";
 import { prepareSheets, transitionSheetHeight } from "./AdaptiveSheet.component";
 
 function must<T extends Element>(selector: string): T {
@@ -192,6 +193,9 @@ function formatExportResult(result: takeoutService.BuildTakeoutExportResult): st
 		details.push(
 			`Media: ${plural(counts.attachments, "attachment")}, ${plural(counts.generatedImages, "generated image")}`
 		);
+	}
+	for (const { chat, count } of result.document.manifest.missingMedia ?? []) {
+		details.push(`Not included: ${describeMediaCount(count)} from “${chat}”, which no longer exist`);
 	}
 	if (categories.has("personas")) details.push(`Personas: ${plural(counts.personas, "persona")}`);
 	if (categories.has("settings")) details.push(`Settings: ${plural(counts.settings, "value")}`);
