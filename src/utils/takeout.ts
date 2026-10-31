@@ -456,8 +456,10 @@ function comparable(value: unknown): string {
 function cloneChatForImport(chat: DbChat | TakeoutChat): DbChat {
 	const candidate = chat as TakeoutChat;
 	const hasPortableAttachment = candidate.content?.some((message) =>
-		message.parts?.some((part) =>
-			part.attachments?.some((attachment) => isObject(attachment) && attachment.__takeoutAttachment === true)
+		message.parts?.some(
+			(part) =>
+				Array.isArray(part.attachments) &&
+				part.attachments.some((attachment) => isObject(attachment) && attachment.__takeoutAttachment === true)
 		)
 	);
 	const cloned = hasPortableAttachment ? deserializeTakeoutChat(candidate) : structuredClone(chat as DbChat);
@@ -470,15 +472,40 @@ function cloneChatForImport(chat: DbChat | TakeoutChat): DbChat {
 		const parsedLastModified = rawLastModified instanceof Date ? rawLastModified : new Date(rawLastModified);
 		cloned.lastModified = Number.isNaN(parsedLastModified.getTime()) ? undefined : parsedLastModified;
 	}
-	for (const message of cloned.content || []) {
+	return cloned;
+}
+
+/**
+ * Old per-chat exports never held media bytes: a FileList became `{"0":{}}`, a File `{}` or a bare `_blobRef`,
+ * and a cloud image an empty base64 beside its `_blobRef`. Every blob reference goes too, even with bytes
+ * present, because Sync keeps existing refs: an imported copy would share blobs with its original, and
+ * deleting either chat would destroy them for both.
+ */
+function dropUnrestorableMedia(chat: DbChat): number {
+	let dropped = 0;
+	for (const message of chat.content || []) {
+		if (message.generatedImages) {
+			const images = message.generatedImages.filter((image) => image.base64);
+			dropped += message.generatedImages.length - images.length;
+			for (const image of images) {
+				delete image._blobRef;
+				delete image._thoughtSignatureRef;
+			}
+			if (images.length > 0) message.generatedImages = images;
+			else delete message.generatedImages;
+		}
 		for (const part of message.parts || []) {
-			if (!Array.isArray(part.attachments)) continue;
-			const validFiles = part.attachments.filter((attachment): attachment is File => attachment instanceof File);
+			delete part._thoughtSignatureRef;
+			if (!part.attachments) continue;
+			// Object.values reads arrays, real FileLists, and their serialized `{"0":{}}` form alike.
+			const attachments: unknown[] = Object.values(part.attachments);
+			const validFiles = attachments.filter((attachment): attachment is File => attachment instanceof File);
+			dropped += attachments.length - validFiles.length;
 			if (validFiles.length > 0) part.attachments = validFiles;
 			else delete part.attachments;
 		}
 	}
-	return cloned;
+	return dropped;
 }
 
 function normalizePersonaForImport(
@@ -730,7 +757,18 @@ export function planTakeoutImport(args: PlanTakeoutImportArgs): TakeoutImportPla
 		personas.push({ ...normalized, id: targetId });
 	}
 
-	const candidateChats = (args.payload.chats || []).map(cloneChatForImport);
+	const warnings: string[] = [];
+	const candidateChats = (args.payload.chats || []).map((source) => {
+		const chat = cloneChatForImport(source);
+		const dropped = dropUnrestorableMedia(chat);
+		if (dropped > 0) {
+			const media = dropped === 1 ? "1 attachment or image" : `${dropped} attachments or images`;
+			warnings.push(
+				`Chat “${chat.title || chat.id}” is missing ${media} because its export file never contained them.`
+			);
+		}
+		return chat;
+	});
 	const plannedChatInputs: Array<{ chat: DbChat; sourceId?: string; targetId: string }> = [];
 	const usedChatIds = new Set(args.existingChats.map((chat) => chat.id));
 	for (const chat of candidateChats) {
@@ -761,7 +799,6 @@ export function planTakeoutImport(args: PlanTakeoutImportArgs): TakeoutImportPla
 		...personas.map((persona) => persona.id),
 		...Object.values(personaIdMap)
 	]);
-	const warnings: string[] = [];
 	for (const chat of chats) {
 		for (const personaId of chatPersonaReferences(chat)) {
 			if (knownPersonaIds.has(personaId)) continue;

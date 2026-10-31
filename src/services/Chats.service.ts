@@ -8,11 +8,14 @@ import type { Message } from "../types/Message";
 import { dispatchAppEvent } from "../events";
 import hljs from "highlight.js";
 import { v4 as uuidv4 } from "uuid";
+import { assertCloudExportReady } from "./CloudExport.service";
 import * as syncService from "./Sync.service";
 import * as toastService from "./Toast.service";
 import * as pinningService from "./Pinning.service";
 import { openDropdownPortal, type DropdownPortal } from "../utils/dropdownPortal";
 import type { BlobReference } from "../types/BlobReference";
+import type { TakeoutDocument } from "../types/Takeout";
+import { createTakeoutDocument } from "../utils/takeout";
 
 /**
  * `structuredClone` clones `File` objects but silently drops expando properties
@@ -1627,24 +1630,51 @@ export async function exportChat(id: string): Promise<void> {
 	}
 
 	let chatForExport: DbChat = chat;
-	if (syncService.isOnlineSyncEnabled()) {
-		const syncedMessages = await syncService.fetchAllSyncedChatMessages(chat.id);
-		if (syncedMessages === null) {
-			toastService.danger({
-				title: "Export Failed",
-				text: "Failed to fetch chat messages from cloud sync."
-			});
-			return;
+	let exportedTakeout: TakeoutDocument;
+	try {
+		const syncEnabled = syncService.isOnlineSyncEnabled();
+		if (syncEnabled) {
+			// Unsynced local edits would otherwise be missing from a file that looks complete.
+			assertCloudExportReady();
+			const syncedMessages = await syncService.fetchAllSyncedChatMessages(chat.id);
+			if (syncedMessages === null) {
+				toastService.danger({
+					title: "Export Failed",
+					text: "Failed to fetch chat messages from cloud sync."
+				});
+				return;
+			}
+			if (!syncService.isChatSnapshotFullyHydrated(chat.id, syncedMessages.length)) {
+				throw new Error("Failed to read this chat's complete message history.");
+			}
+			chatForExport = {
+				...chat,
+				content: await syncService.materializeMessagesForPortableExport(syncedMessages)
+			};
 		}
-		chatForExport = {
-			...chat,
-			content: syncedMessages
-		};
+
+		// Uses the takeout format so the file embeds media bytes: synced media is otherwise only a reference
+		// to a blob that deleting the chat destroys. The id stays out so an import is always a new chat, which
+		// never conflicts with or overwrites the original.
+		const { id: _omit, ...portableChat } = chatForExport;
+		exportedTakeout = await createTakeoutDocument({
+			source: syncEnabled ? "cloud" : "local",
+			categories: ["chats", "media"],
+			chats: [portableChat as DbChat],
+			personas: [],
+			settings: {}
+		});
+	} catch (error) {
+		// Writing nothing beats a file that looks complete with its media missing.
+		console.error("Failed to export chat", error);
+		toastService.danger({
+			title: "Export Failed",
+			text: error instanceof Error ? error.message : "Failed to read this chat's attachments and images."
+		});
+		return;
 	}
 
-	// Exclude the id so imported chats get a new one (mirrors exportAllChats behavior)
-	const { id: _omit, ...rest } = chatForExport;
-	const blob = new Blob([JSON.stringify(rest, null, 2)], { type: "application/json" });
+	const blob = new Blob([JSON.stringify(exportedTakeout, null, 2)], { type: "application/json" });
 	// Derive a safe filename from the chat title
 	const safeTitle = (chatForExport.title || "chat")
 		.toLowerCase()
