@@ -46,7 +46,7 @@ function bootstrapSettingsDom(): void {
 		<input id="streamResponses" type="checkbox">
 		<select id="enableThinkingSelect"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select>
 		<div id="thinking-required-hint" style="display: none"></div>
-		<input id="thinkingBudget" value="500">
+		<div id="reasoning-effort-setting"><select id="reasoningEffort"></select></div>
 		<input id="rpgGroupChatsProgressAutomatically" type="checkbox">
 		<input id="allowPersonaPinging" type="checkbox">
 		<input id="dynamicGroupChatPingOnly" type="checkbox">
@@ -157,20 +157,20 @@ describe("premium endpoint synced settings", () => {
 
 		await import("../../../src/components/static/ModelSelector.component");
 		await import("../../../src/components/static/ThinkingSelector.component");
-		await import("../../../src/components/static/ThinkingBudgetInput.component");
+		await import("../../../src/components/static/ReasoningEffortSelect.component");
 		const settingsService = await import("../../../src/services/Settings.service");
 
 		settingsService.loadSettings();
 
 		const modelSelect = document.querySelector<HTMLSelectElement>("#selectedModel");
 		const thinkingSelect = document.querySelector<HTMLSelectElement>("#enableThinkingSelect");
-		const thinkingBudget = document.querySelector<HTMLInputElement>("#thinkingBudget");
+		const reasoningEffort = document.querySelector<HTMLSelectElement>("#reasoningEffort");
 		const thinkingHint = document.querySelector<HTMLDivElement>("#thinking-required-hint");
 
 		expect(modelSelect?.value).toBe("gemini-3-flash-preview");
 		expect(thinkingSelect?.value).toBe("disabled");
 		expect(thinkingSelect?.disabled).toBe(false);
-		expect(thinkingBudget?.disabled).toBe(true);
+		expect(reasoningEffort?.disabled).toBe(true);
 
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.MODEL, "gemini-3.1-pro-preview");
 		localStorage.setItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING, "false");
@@ -180,8 +180,38 @@ describe("premium endpoint synced settings", () => {
 		expect(modelSelect?.value).toBe("gemini-3.1-pro-preview");
 		expect(thinkingSelect?.value).toBe("enabled");
 		expect(thinkingSelect?.disabled).toBe(true);
-		expect(thinkingBudget?.disabled).toBe(false);
+		expect(reasoningEffort?.disabled).toBe(false);
 		expect(thinkingHint?.style.display).toBe("");
 		expect(thinkingHint?.textContent).toBe("Thinking is required for the selected model.");
+	});
+
+	// Covers frontend rehydration only: the sync boundary is mocked because the reasoning effort syncs as a plain
+	// settings key, like the others in SYNCABLE_SETTINGS_KEYS. If its remote storage ever changes (its own column,
+	// a server-side default or validation, a migration from the old thinkingBudget key), add a live Supabase test
+	// for the sync layer as well.
+	it("shows a synced reasoning effort at the selected model's nearest level without rewriting the preference", async () => {
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.API_KEY, "local-gemini-key");
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.MODEL, "gemini-3-flash-preview");
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT, "low");
+
+		await import("../../../src/components/static/ModelSelector.component");
+		await import("../../../src/components/static/ThinkingSelector.component");
+		await import("../../../src/components/static/ReasoningEffortSelect.component");
+		const settingsService = await import("../../../src/services/Settings.service");
+		settingsService.loadSettings();
+
+		const reasoningEffort = document.querySelector<HTMLSelectElement>("#reasoningEffort");
+		const optionValues = () => Array.from(reasoningEffort?.options ?? []).map((option) => option.value);
+
+		expect(reasoningEffort?.value).toBe("low");
+
+		// synced settings from another device replace the model and the preference, then reload the UI
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.MODEL, "gemini-3.1-pro-preview");
+		localStorage.setItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT, "max");
+		settingsService.loadSettings();
+
+		expect(optionValues()).toEqual(["low", "medium", "high"]);
+		expect(reasoningEffort?.value).toBe("high");
+		expect(localStorage.getItem(SETTINGS_STORAGE_KEYS.REASONING_EFFORT)).toBe("max");
 	});
 });

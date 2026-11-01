@@ -19,6 +19,7 @@ import type {
 	TakeoutDocument,
 	TakeoutImportPlan,
 	TakeoutMessage,
+	TakeoutMissingMedia,
 	TakeoutPayload,
 	TakeoutSource
 } from "../types/Takeout";
@@ -80,7 +81,15 @@ function cloneWithoutRuntimeFields<T extends object>(value: T, runtimeFields: re
 	return clone;
 }
 
-async function serializeMessage(message: Message, includeMedia: boolean): Promise<TakeoutMessage> {
+export function describeMediaCount(count: number): string {
+	return count === 1 ? "1 attachment or image" : `${count} attachments or images`;
+}
+
+async function serializeMessage(
+	message: Message,
+	includeMedia: boolean,
+	onMissingMedia: () => void
+): Promise<TakeoutMessage> {
 	const serialized = cloneWithoutRuntimeFields(message, ["parts", "generatedImages"]);
 	const parts = [];
 
@@ -89,24 +98,22 @@ async function serializeMessage(message: Message, includeMedia: boolean): Promis
 		if (!includeMedia) {
 			delete portablePart.inlineData;
 		} else {
-			const attachments = Array.from(part.attachments || []);
+			// A blob ref with no bytes is media this device doesn't hold, so leaving it out loses nothing here.
+			const attachments = Array.from(part.attachments || []).filter((attachment) => {
+				const unresolved = !!(attachment as File & { _blobRef?: unknown })._blobRef && attachment.size === 0;
+				if (unresolved) onMissingMedia();
+				return !unresolved;
+			});
 			if (attachments.length > 0) {
 				portablePart.attachments = await Promise.all(
-					attachments.map(async (attachment) => {
-						if ((attachment as File & { _blobRef?: unknown })._blobRef && attachment.size === 0) {
-							throw new Error(
-								`Attachment ${attachment.name} still has an unresolved cloud blob reference.`
-							);
-						}
-						return {
-							__takeoutAttachment: true as const,
-							name: attachment.name,
-							mimeType: attachment.type || "application/octet-stream",
-							size: attachment.size,
-							lastModified: attachment.lastModified,
-							base64: await fileToBase64(attachment)
-						};
-					})
+					attachments.map(async (attachment) => ({
+						__takeoutAttachment: true as const,
+						name: attachment.name,
+						mimeType: attachment.type || "application/octet-stream",
+						size: attachment.size,
+						lastModified: attachment.lastModified,
+						base64: await fileToBase64(attachment)
+					}))
 				);
 			}
 		}
@@ -115,22 +122,35 @@ async function serializeMessage(message: Message, includeMedia: boolean): Promis
 
 	serialized.parts = parts;
 	if (includeMedia && Array.isArray(message.generatedImages)) {
-		serialized.generatedImages = message.generatedImages.map((image) => {
-			if (image._blobRef && !image.base64) {
-				throw new Error(`Generated image still has an unresolved cloud blob reference.`);
-			}
-			return cloneWithoutRuntimeFields(image, ["_blobRef", "_thoughtSignatureRef"]);
+		const images = message.generatedImages.filter((image) => {
+			const unresolved = !!image._blobRef && !image.base64;
+			if (unresolved) onMissingMedia();
+			return !unresolved;
 		});
+		if (images.length > 0) {
+			serialized.generatedImages = images.map((image) =>
+				cloneWithoutRuntimeFields(image, ["_blobRef", "_thoughtSignatureRef"])
+			);
+		}
 	}
 
 	return serialized as TakeoutMessage;
 }
 
-async function serializeChat(chat: DbChat, includeMedia: boolean): Promise<TakeoutChat> {
+async function serializeChat(
+	chat: DbChat,
+	includeMedia: boolean,
+	missingMedia: TakeoutMissingMedia[]
+): Promise<TakeoutChat> {
+	let missing = 0;
+	const content = await Promise.all(
+		(chat.content || []).map((message) => serializeMessage(message, includeMedia, () => missing++))
+	);
+	if (missing > 0) missingMedia.push({ chat: chat.title || chat.id, count: missing });
 	return {
 		...cloneWithoutRuntimeFields(chat, ["content", "lastModified"]),
 		id: chat.id,
-		content: await Promise.all((chat.content || []).map((message) => serializeMessage(message, includeMedia))),
+		content,
 		lastModified: chat.lastModified ? new Date(chat.lastModified).toISOString() : undefined
 	};
 }
@@ -216,7 +236,10 @@ export async function createTakeoutDocument(args: CreateTakeoutDocumentArgs): Pr
 	const categories = TAKEOUT_CATEGORIES.filter((category) => categorySet.has(category));
 	const includeChats = categorySet.has("chats");
 	const includeMedia = includeChats && categorySet.has("media");
-	const chats = includeChats ? await Promise.all(args.chats.map((chat) => serializeChat(chat, includeMedia))) : [];
+	const missingMedia: TakeoutMissingMedia[] = [];
+	const chats = includeChats
+		? await Promise.all(args.chats.map((chat) => serializeChat(chat, includeMedia, missingMedia)))
+		: [];
 	const personas = categorySet.has("personas") ? structuredClone(args.personas) : [];
 	const settings = collectSettings(args.settings, categorySet);
 	const media = countPortableMedia(chats);
@@ -249,7 +272,8 @@ export async function createTakeoutDocument(args: CreateTakeoutDocumentArgs): Pr
 				apiKeys: countSettingsByCategory(settings, "apiKeys")
 			},
 			mediaBytes: media.mediaBytes,
-			apiKeysIncluded: categorySet.has("apiKeys")
+			apiKeysIncluded: categorySet.has("apiKeys"),
+			...(missingMedia.length > 0 ? { missingMedia } : {})
 		},
 		payload
 	};
@@ -456,8 +480,10 @@ function comparable(value: unknown): string {
 function cloneChatForImport(chat: DbChat | TakeoutChat): DbChat {
 	const candidate = chat as TakeoutChat;
 	const hasPortableAttachment = candidate.content?.some((message) =>
-		message.parts?.some((part) =>
-			part.attachments?.some((attachment) => isObject(attachment) && attachment.__takeoutAttachment === true)
+		message.parts?.some(
+			(part) =>
+				Array.isArray(part.attachments) &&
+				part.attachments.some((attachment) => isObject(attachment) && attachment.__takeoutAttachment === true)
 		)
 	);
 	const cloned = hasPortableAttachment ? deserializeTakeoutChat(candidate) : structuredClone(chat as DbChat);
@@ -470,15 +496,40 @@ function cloneChatForImport(chat: DbChat | TakeoutChat): DbChat {
 		const parsedLastModified = rawLastModified instanceof Date ? rawLastModified : new Date(rawLastModified);
 		cloned.lastModified = Number.isNaN(parsedLastModified.getTime()) ? undefined : parsedLastModified;
 	}
-	for (const message of cloned.content || []) {
+	return cloned;
+}
+
+/**
+ * Old per-chat exports never held media bytes: a FileList became `{"0":{}}`, a File `{}` or a bare `_blobRef`,
+ * and a cloud image an empty base64 beside its `_blobRef`. Every blob reference goes too, even with bytes
+ * present, because Sync keeps existing refs: an imported copy would share blobs with its original, and
+ * deleting either chat would destroy them for both.
+ */
+function dropUnrestorableMedia(chat: DbChat): number {
+	let dropped = 0;
+	for (const message of chat.content || []) {
+		if (message.generatedImages) {
+			const images = message.generatedImages.filter((image) => image.base64);
+			dropped += message.generatedImages.length - images.length;
+			for (const image of images) {
+				delete image._blobRef;
+				delete image._thoughtSignatureRef;
+			}
+			if (images.length > 0) message.generatedImages = images;
+			else delete message.generatedImages;
+		}
 		for (const part of message.parts || []) {
-			if (!Array.isArray(part.attachments)) continue;
-			const validFiles = part.attachments.filter((attachment): attachment is File => attachment instanceof File);
+			delete part._thoughtSignatureRef;
+			if (!part.attachments) continue;
+			// Object.values reads arrays, real FileLists, and their serialized `{"0":{}}` form alike.
+			const attachments: unknown[] = Object.values(part.attachments);
+			const validFiles = attachments.filter((attachment): attachment is File => attachment instanceof File);
+			dropped += attachments.length - validFiles.length;
 			if (validFiles.length > 0) part.attachments = validFiles;
 			else delete part.attachments;
 		}
 	}
-	return cloned;
+	return dropped;
 }
 
 function normalizePersonaForImport(
@@ -730,7 +781,17 @@ export function planTakeoutImport(args: PlanTakeoutImportArgs): TakeoutImportPla
 		personas.push({ ...normalized, id: targetId });
 	}
 
-	const candidateChats = (args.payload.chats || []).map(cloneChatForImport);
+	const warnings: string[] = [];
+	const candidateChats = (args.payload.chats || []).map((source) => {
+		const chat = cloneChatForImport(source);
+		const dropped = dropUnrestorableMedia(chat);
+		if (dropped > 0) {
+			warnings.push(
+				`Chat “${chat.title || chat.id}” is missing ${describeMediaCount(dropped)} because its export file never contained them.`
+			);
+		}
+		return chat;
+	});
 	const plannedChatInputs: Array<{ chat: DbChat; sourceId?: string; targetId: string }> = [];
 	const usedChatIds = new Set(args.existingChats.map((chat) => chat.id));
 	for (const chat of candidateChats) {
@@ -761,7 +822,6 @@ export function planTakeoutImport(args: PlanTakeoutImportArgs): TakeoutImportPla
 		...personas.map((persona) => persona.id),
 		...Object.values(personaIdMap)
 	]);
-	const warnings: string[] = [];
 	for (const chat of chats) {
 		for (const personaId of chatPersonaReferences(chat)) {
 			if (knownPersonaIds.has(personaId)) continue;

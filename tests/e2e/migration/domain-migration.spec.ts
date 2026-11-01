@@ -300,7 +300,9 @@ test("export failure and cancellation do not reset confirmation or change source
 	expect(record.content[0].parts[0].text).toBe("Keep this story");
 });
 
-test("an unresolved media item fails export but leaves confirmation available", async ({ page }) => {
+// Media with only a blob ref was never in this browser, so the takeout still holds everything here. Stopping
+// would cost the user the rest of their export to protect nothing, so it is named in the status instead.
+test("an unresolved media item is left out and named while the rest of the export downloads", async ({ page }) => {
 	await serveApp(page);
 	await seed(page, { chat: true });
 	await page.evaluate(async () => {
@@ -313,20 +315,14 @@ test("an unresolved media item fails export but leaves confirmation available", 
 	});
 	await page.goto(oldOrigin);
 	await page.locator("#btn-migration-export").click();
-	await page.locator("#btn-takeout-export").click();
-	await expect(page.locator("#takeout-export-status")).toContainText("unresolved cloud blob reference");
-	await page.locator("#btn-takeout-export-close").click();
-	await expect(page.locator("#btn-migration-continue")).toBeDisabled();
-	await page.locator("#migration-confirmed").check();
-	await expect(page.locator("#btn-migration-continue")).toBeEnabled();
-	await page.locator("#migration-confirmed").uncheck();
-	await page.locator("#btn-migration-export").click();
-	await page.locator("#takeout-category-media").uncheck();
 	const downloading = page.waitForEvent("download");
 	await page.locator("#btn-takeout-export").click();
 	const download = await downloading;
 	const takeout = JSON.parse(await readFile((await download.path())!, "utf8"));
-	expect(takeout.manifest.omittedCategories).toContain("media");
+	expect(takeout.payload.chats[0].content[0].parts[0].text).toBe("Keep this story");
+	expect(takeout.payload.chats[0].content[0].generatedImages).toBeUndefined();
+	expect(takeout.manifest.missingMedia).toHaveLength(1);
+	await expect(page.locator("#takeout-export-status")).toContainText("1 attachment or image");
 	await page.locator("#btn-takeout-export-close").click();
 	await expect(page.locator("#domain-migration-status")).toBeHidden();
 	await page.locator("#migration-confirmed").check();

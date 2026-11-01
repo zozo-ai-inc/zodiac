@@ -20,6 +20,7 @@ import {
 	modelRequiresThinking,
 	getRoleplaySuggestionThinkingCap,
 	modelSupportsTemperature,
+	REASONING_EFFORTS,
 	type ChatModelAccess
 } from "../../types/Models";
 import { PRO_REQUEST_ENDPOINT } from "../../services/Supabase.service";
@@ -1285,8 +1286,9 @@ async function requestWithLocalModel(model: string, systemInstruction: string, u
 			stream: false,
 			maxTokens: baseConfig.maxOutputTokens,
 			temperature: baseConfig.temperature,
+			//suggestions only think when the model requires it, and then at its lowest level
 			enableThinking: modelRequiresThinking(model),
-			thinkingBudget: modelRequiresThinking(model) ? (getRoleplaySuggestionThinkingCap(model) ?? 128) : 0,
+			reasoningEffort: REASONING_EFFORTS[0],
 			isInternetSearchEnabled: false,
 			responseFormat: buildRoleplaySuggestionOpenRouterResponseFormat()
 		});

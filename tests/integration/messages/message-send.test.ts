@@ -31,7 +31,7 @@ type MockSettings = {
 	imageModel: string;
 	streamResponses: boolean;
 	enableThinking: boolean;
-	thinkingBudget: number;
+	reasoningEffort: string;
 	safetySettings: unknown[];
 	rpgGroupChatsProgressAutomatically: boolean;
 	allowPersonaPinging: boolean;
@@ -43,6 +43,7 @@ const testState = vi.hoisted(() => ({
 	personas: new Map<string, Personality>(),
 	openRouterResults: [] as MockOpenRouterResult[],
 	googleGenerateContent: vi.fn(),
+	googleChatsCreate: vi.fn(),
 	settings: {
 		apiKey: "",
 		geminiApiKey: "",
@@ -53,7 +54,7 @@ const testState = vi.hoisted(() => ({
 		imageModel: "illustrious",
 		streamResponses: false,
 		enableThinking: false,
-		thinkingBudget: 0,
+		reasoningEffort: "high",
 		safetySettings: [],
 		rpgGroupChatsProgressAutomatically: true,
 		allowPersonaPinging: true,
@@ -65,7 +66,7 @@ const testState = vi.hoisted(() => ({
 vi.mock("@google/genai", () => ({
 	GoogleGenAI: class {
 		models = { generateContent: testState.googleGenerateContent };
-		chats = { create: vi.fn() };
+		chats = { create: testState.googleChatsCreate };
 	},
 	createPartFromUri: vi.fn(),
 	BlockedReason: { PROHIBITED_CONTENT: "PROHIBITED_CONTENT" },
@@ -109,6 +110,7 @@ vi.mock("../../../src/services/Personality.service", () => ({
 
 vi.mock("../../../src/services/Supabase.service", () => ({
 	SUPABASE_URL: "https://example.supabase.co",
+	PRO_REQUEST_ENDPOINT: "https://example.supabase.co/functions/v1/handle-pro-request-x",
 	getAuthHeaders: vi.fn(async () => ({})),
 	getUserSubscription: vi.fn(async () => null),
 	getSubscriptionTier: vi.fn(async () => "free"),
@@ -435,9 +437,13 @@ describe("Message send lifecycle", () => {
 		testState.personas.clear();
 		testState.openRouterResults.length = 0;
 		testState.googleGenerateContent.mockReset();
+		testState.googleChatsCreate.mockReset();
 		testState.settings.model = "openai/gpt-5.4";
 		testState.settings.streamResponses = false;
 		testState.settings.enableThinking = false;
+		testState.settings.reasoningEffort = "high";
+		testState.settings.geminiApiKey = "";
+		testState.settings.apiKey = "";
 		testState.settings.rpgGroupChatsProgressAutomatically = true;
 		testState.settings.allowPersonaPinging = true;
 		testState.settings.dynamicGroupChatPingOnly = false;
@@ -1510,5 +1516,85 @@ describe("Message send lifecycle", () => {
 			.catch(() => undefined);
 
 		expect(messageService.getIsGenerating(chatId), "the RPG chat should not stay stuck generating").toBe(false);
+	});
+
+	async function sendAndCaptureThinkingConfig(args: {
+		route: "premium" | "local-gemini";
+	}): Promise<Record<string, unknown> | undefined> {
+		seedMockPersonas([{ id: "persona-effort", persona: { name: "Effort Persona" } }]);
+
+		const { db: testDb, chatsService, messageService } = await loadServices();
+		db = testDb;
+
+		const fetchMock = vi.fn(async () => ({ ok: true, json: async () => ({ text: "Mocked reply" }) }));
+		if (args.route === "premium") {
+			const supabaseService = await import("../../../src/services/Supabase.service");
+			const apiKeyInput = await import("../../../src/components/static/ApiKeyInput.component");
+			vi.mocked(supabaseService.getUserSubscription).mockResolvedValue({
+				id: "sub-pro",
+				user_id: "user-pro",
+				status: "active",
+				price_id: "price-pro"
+			} as any);
+			vi.mocked(supabaseService.getSubscriptionTier).mockReturnValue("pro");
+			vi.mocked(apiKeyInput.shouldPreferPremiumEndpoint).mockReturnValue(true);
+			vi.stubGlobal("fetch", fetchMock);
+		} else {
+			testState.settings.geminiApiKey = "test-gemini-key";
+			testState.googleChatsCreate.mockReturnValue({
+				sendMessage: vi.fn(async () => ({ candidates: [{ content: { parts: [{ text: "Mocked reply" }] } }] }))
+			});
+		}
+
+		const chatId = await createAndLoadChat({
+			chatsService,
+			chat: makeChat({ id: "chat-effort", title: "Effort Chat", content: [] })
+		});
+
+		try {
+			await messageService.send("How hard will you think?", {
+				targetChatId: chatId,
+				selectedPersonalityId: "persona-effort",
+				attachmentFiles: makeEmptyFileList()
+			});
+		} finally {
+			vi.unstubAllGlobals();
+		}
+
+		if (args.route === "premium") {
+			const requestOptions = (fetchMock.mock.calls as unknown as Array<[string, RequestInit]>)[0]?.[1];
+			return JSON.parse(String(requestOptions?.body)).settings.thinkingConfig;
+		}
+		return testState.googleChatsCreate.mock.calls[0]?.[0]?.config?.thinkingConfig;
+	}
+
+	it("sends the premium endpoint the chosen effort moved to the model's nearest level, without a token budget", async () => {
+		testState.settings.model = "openai/gpt-5.4";
+		testState.settings.enableThinking = true;
+		testState.settings.reasoningEffort = "max";
+
+		const thinkingConfig = await sendAndCaptureThinkingConfig({ route: "premium" });
+
+		expect(thinkingConfig).toEqual({ includeThoughts: true, reasoningEffort: "xhigh" });
+	});
+
+	it("sends the premium endpoint the lowest level for a thinking-required model while thinking is off", async () => {
+		testState.settings.model = "google/gemini-3.5-flash";
+		testState.settings.enableThinking = false;
+		testState.settings.reasoningEffort = "high";
+
+		const thinkingConfig = await sendAndCaptureThinkingConfig({ route: "premium" });
+
+		expect(thinkingConfig).toEqual({ includeThoughts: false, reasoningEffort: "minimal" });
+	});
+
+	it("sends the local Gemini SDK a thinking level and never the premium-only reasoningEffort field", async () => {
+		testState.settings.model = "gemini-3.5-flash";
+		testState.settings.enableThinking = true;
+		testState.settings.reasoningEffort = "max";
+
+		const thinkingConfig = await sendAndCaptureThinkingConfig({ route: "local-gemini" });
+
+		expect(thinkingConfig).toEqual({ includeThoughts: true, thinkingLevel: "HIGH" });
 	});
 });

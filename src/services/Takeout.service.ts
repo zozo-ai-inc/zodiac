@@ -14,6 +14,7 @@ import type {
 } from "../types/Takeout";
 import { createTakeoutDocument, parseImportText, planTakeoutImport } from "../utils/takeout";
 import * as chatsService from "./Chats.service";
+import { assertCloudExportReady } from "./CloudExport.service";
 import { db } from "./Db.service";
 import * as loraService from "./Lora.service";
 import * as personalityService from "./Personality.service";
@@ -117,19 +118,6 @@ function readLocalPortableSettings(): Record<string, string> {
 		if (value !== null) settings[key] = value;
 	}
 	return settings;
-}
-
-function assertCloudExportReady(): void {
-	if (!syncService.isSyncActive()) {
-		throw new Error("Unlock Cloud Sync before exporting a complete takeout.");
-	}
-	const status = syncService.getSyncStatus();
-	if (status === "offline") throw new Error("Cloud Sync is offline. Reconnect and sync before exporting.");
-	if (status === "syncing") throw new Error("Cloud Sync is still syncing. Wait for it to finish before exporting.");
-	if (status === "error") throw new Error("Cloud Sync has an error. Resolve it before exporting.");
-	if (syncService.getPendingSyncOperationCount() > 0) {
-		throw new Error("Cloud Sync has pending changes. Sync them before exporting.");
-	}
 }
 
 function report(onProgress: ((progress: TakeoutProgress) => void) | undefined, progress: TakeoutProgress): void {
@@ -260,11 +248,17 @@ async function parseImportFiles(files: readonly File[]): Promise<ParsedTakeout> 
 	return { kind: "legacy", categories: [...categories], payload };
 }
 
-async function readCompleteCloudChats(): Promise<DbChat[]> {
+async function readCloudChatsForImport(importedIds: ReadonlySet<string | undefined>): Promise<DbChat[]> {
 	const metadata = await syncService.fetchSyncedChatsMetadata();
 	if (metadata === null) throw new Error("Failed to read your cloud chats.");
 	const chats: DbChat[] = [];
 	for (const chat of metadata) {
+		// Metadata is enough to keep IDs unique. Only a conflict compares content, and reading the rest would
+		// download the user's whole media library and fail the import on any unrelated chat's problem.
+		if (!importedIds.has(chat.id)) {
+			chats.push(chat);
+			continue;
+		}
 		const messages = await syncService.fetchAllSyncedChatMessages(chat.id);
 		if (messages === null) throw new Error(`Failed to inspect cloud chat “${chat.title || chat.id}”.`);
 		if (!syncService.isChatSnapshotFullyHydrated(chat.id, messages.length)) {
@@ -293,7 +287,10 @@ export async function inspectTakeoutImport(
 	await assertImportDestinationReady(destination);
 	report(onProgress, { phase: "validating", completed: 0, total: files.length, message: "Validating import…" });
 	const parsed = await parseImportFiles(files);
-	const existingChats = destination === "cloud" ? await readCompleteCloudChats() : await db.chats.toArray();
+	const existingChats =
+		destination === "cloud"
+			? await readCloudChatsForImport(new Set(parsed.payload.chats?.map((chat) => chat.id)))
+			: await db.chats.toArray();
 	const existingPersonas =
 		destination === "cloud" ? await syncService.fetchSyncedPersonas() : await db.personalities.toArray();
 	const existingSettings =

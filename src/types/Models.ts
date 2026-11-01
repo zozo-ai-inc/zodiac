@@ -30,6 +30,19 @@ const GEMINI_TO_OPENROUTER_CHAT_MODEL_IDS = new Map<string, string>([
 
 export type ModelProvider = "gemini" | "openrouter";
 
+export type ReasoningEffort = "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
+// Ascending. "none" is not a level: thinking is turned off with the thinking toggle instead.
+export const REASONING_EFFORTS: ReasoningEffort[] = ["minimal", "low", "medium", "high", "xhigh", "max"];
+export const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";
+export const REASONING_EFFORT_LABELS: Record<ReasoningEffort, string> = {
+	minimal: "Minimal",
+	low: "Low",
+	medium: "Medium",
+	high: "High",
+	xhigh: "Extra high",
+	max: "Max"
+};
+
 export interface ChatModelDefinition {
 	id: string;
 	label: string;
@@ -40,6 +53,9 @@ export interface ChatModelDefinition {
 	modelPickerGroup?: string;
 	supportsThinking: boolean;
 	requiresThinking?: boolean;
+	// Effort levels the model accepts with thinking on, ascending. Unset: thinking is on/off only.
+	// Keep in sync with PREMIUM_MODELS in zozo-edge's handle-pro-request-x.
+	reasoningEfforts?: ReasoningEffort[];
 	supportsTemperature: boolean;
 	supportsImageInput: boolean;
 	supportsFileInput: boolean;
@@ -81,6 +97,7 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash Lite",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -96,6 +113,7 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -110,6 +128,7 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -125,6 +144,7 @@ export const GEMINI_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		roleplaySuggestionThinkingCap: 128,
 		supportsTemperature: true,
 		supportsImageInput: true,
@@ -210,6 +230,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -224,6 +245,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -238,6 +260,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -252,6 +275,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -263,6 +287,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -274,6 +299,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -285,6 +311,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -296,6 +323,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -307,6 +335,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -318,6 +347,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -329,6 +359,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -341,6 +372,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -353,6 +385,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: true,
@@ -379,6 +412,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		roleplaySuggestionThinkingCap: 128,
 		supportsTemperature: true,
 		supportsImageInput: false,
@@ -416,6 +450,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Sonnet",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -441,6 +476,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -453,6 +489,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -465,6 +502,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -478,6 +516,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Sonnet",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -490,6 +529,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -503,6 +543,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -516,6 +557,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Fable",
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -529,6 +571,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Opus",
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -543,6 +586,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -556,6 +600,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Haiku",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh", "max"],
 		supportsTemperature: false,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -568,6 +613,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		modelPickerGroup: "Pro",
 		supportsThinking: true,
+		reasoningEfforts: ["high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -581,6 +627,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -594,6 +641,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -607,6 +655,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		modelPickerGroup: "Flash",
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -655,6 +704,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -668,6 +718,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -681,6 +732,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -694,6 +746,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -707,6 +760,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -720,6 +774,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -731,6 +786,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -742,6 +798,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		provider: "openrouter",
 		mega: false,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -852,6 +909,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -865,6 +923,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["minimal", "low", "medium", "high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -877,6 +936,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -890,6 +950,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -903,6 +964,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -916,6 +978,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "medium", "high", "xhigh"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -928,6 +991,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: true,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -940,6 +1004,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		mega: false,
 		roleplayModeSuggester: true,
 		supportsThinking: true,
+		reasoningEfforts: ["high"],
 		supportsTemperature: true,
 		supportsImageInput: true,
 		supportsFileInput: false,
@@ -953,6 +1018,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -966,6 +1032,7 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 		roleplayModeSuggester: true,
 		supportsThinking: true,
 		requiresThinking: true,
+		reasoningEfforts: ["low", "high", "max"],
 		supportsTemperature: true,
 		supportsImageInput: false,
 		supportsFileInput: false,
@@ -1014,6 +1081,22 @@ export function modelSupportsThinking(model: string | null | undefined): boolean
 
 export function modelRequiresThinking(model: string | null | undefined): boolean {
 	return getChatModelDefinition(model)?.requiresThinking === true;
+}
+
+export function isReasoningEffort(value: unknown): value is ReasoningEffort {
+	return REASONING_EFFORTS.includes(value as ReasoningEffort);
+}
+
+// The closest level the model accepts, ties going to the higher one; undefined when it takes no levels.
+// Mirrors resolveReasoningEffort in zozo-edge's handle-pro-request-x.
+export function resolveReasoningEffort(
+	model: string | null | undefined,
+	requested: ReasoningEffort
+): ReasoningEffort | undefined {
+	const rank = (effort: ReasoningEffort) => REASONING_EFFORTS.indexOf(effort);
+	const distance = (effort: ReasoningEffort) => Math.abs(rank(effort) - rank(requested));
+	const efforts = getChatModelDefinition(model)?.reasoningEfforts ?? [];
+	return [...efforts].sort((a, b) => distance(a) - distance(b) || rank(b) - rank(a))[0];
 }
 
 export function getRoleplaySuggestionThinkingCap(model: string | null | undefined): number | undefined {

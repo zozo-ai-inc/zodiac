@@ -26,7 +26,6 @@ import type { DbPersonality } from "../types/Personality";
 import { isBlobReference, type BlobReference } from "../types/BlobReference";
 import type { SubscriptionTier, UserSubscription } from "../types/Supabase";
 import { fileToBase64 } from "../utils/helpers";
-import { resolveAttachmentFile, resolveGeneratedImageSrc, resolveThoughtSignature } from "../utils/blobResolver";
 import { SETTINGS_STORAGE_KEYS, SYNCABLE_SETTINGS_KEYS } from "../constants/SettingsStorageKeys";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -592,29 +591,36 @@ export async function clearAllLocalSyncedData(): Promise<void> {
 	remoteMessageCountByChatId.clear();
 }
 
-function dataUriToBase64(dataUri: string): string {
-	const commaIndex = dataUri.indexOf(",");
-	return commaIndex >= 0 ? dataUri.slice(commaIndex + 1) : dataUri;
+/**
+ * Null means the blob is gone for good, so the media stays unresolved for the takeout serializer to leave out
+ * and report. Any other failure throws: skipping media over a network blip would produce a file that looks
+ * complete, which users then trust before deleting the original.
+ */
+async function downloadUnlessGone(ref: BlobReference): Promise<{ data: Uint8Array; mimeType: string } | null> {
+	try {
+		return await blobStore.downloadDecryptedBlob(ref);
+	} catch (error) {
+		if (error instanceof blobStore.BlobNotFoundError) return null;
+		throw error;
+	}
 }
 
 async function materializeMessageBlobBackedMedia(message: Message): Promise<Message> {
 	if (Array.isArray(message.generatedImages)) {
 		for (const image of message.generatedImages) {
 			if (image._blobRef) {
-				const resolvedSrc = await resolveGeneratedImageSrc(image);
-				if (!resolvedSrc) {
-					throw new Error(`Failed to materialize generated image blob ${image._blobRef.blobId}`);
+				if (!image.base64) {
+					const blob = await downloadUnlessGone(image._blobRef);
+					if (!blob) continue;
+					image.base64 = blobStore.uint8ArrayToBase64(blob.data);
 				}
-				image.base64 = dataUriToBase64(resolvedSrc);
 				delete (image as any)._blobRef;
 			}
 
 			if (image._thoughtSignatureRef) {
-				const resolvedThoughtSignature = await resolveThoughtSignature(image);
-				if (!resolvedThoughtSignature) {
-					throw new Error(
-						`Failed to materialize image thought signature blob ${image._thoughtSignatureRef.blobId}`
-					);
+				if (!image.thoughtSignature) {
+					const blob = await downloadUnlessGone(image._thoughtSignatureRef);
+					if (blob) image.thoughtSignature = new TextDecoder().decode(blob.data);
 				}
 				delete (image as any)._thoughtSignatureRef;
 			}
@@ -624,11 +630,9 @@ async function materializeMessageBlobBackedMedia(message: Message): Promise<Mess
 	if (Array.isArray(message.parts)) {
 		for (const part of message.parts) {
 			if (part._thoughtSignatureRef) {
-				const resolvedThoughtSignature = await resolveThoughtSignature(part);
-				if (!resolvedThoughtSignature) {
-					throw new Error(
-						`Failed to materialize part thought signature blob ${part._thoughtSignatureRef.blobId}`
-					);
+				if (!part.thoughtSignature) {
+					const blob = await downloadUnlessGone(part._thoughtSignatureRef);
+					if (blob) part.thoughtSignature = new TextDecoder().decode(blob.data);
 				}
 				delete (part as any)._thoughtSignatureRef;
 			}
@@ -640,13 +644,22 @@ async function materializeMessageBlobBackedMedia(message: Message): Promise<Mess
 
 			const resolvedAttachments: File[] = [];
 			for (const attachment of sourceAttachments) {
-				const originalBlobRef = (attachment as any)._blobRef as BlobReference | undefined;
-				const resolvedAttachment = await resolveAttachmentFile(attachment);
-				if (originalBlobRef && resolvedAttachment.size === 0) {
-					throw new Error(`Failed to materialize attachment blob ${originalBlobRef.blobId}`);
+				const blobRef = (attachment as any)._blobRef as BlobReference | undefined;
+				if (blobRef && attachment.size === 0) {
+					const blob = await downloadUnlessGone(blobRef);
+					const type = blob?.mimeType || attachment.type;
+					resolvedAttachments.push(
+						blob
+							? new File([blobStore.uint8ArrayToBlob(blob.data, type)], attachment.name, {
+									type,
+									lastModified: attachment.lastModified
+								})
+							: attachment
+					);
+					continue;
 				}
-				delete (resolvedAttachment as any)._blobRef;
-				resolvedAttachments.push(resolvedAttachment);
+				delete (attachment as any)._blobRef;
+				resolvedAttachments.push(attachment);
 			}
 			part.attachments = resolvedAttachments;
 		}

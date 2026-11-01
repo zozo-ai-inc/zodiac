@@ -1165,7 +1165,7 @@ async function runLocalSdkRpgTurn(args: {
 				maxTokens: parseInt(settings.maxTokens),
 				temperature: parseInt(settings.temperature) / 100,
 				enableThinking: settings.enableThinking,
-				thinkingBudget: settings.thinkingBudget,
+				reasoningEffort: settings.reasoningEffort,
 				isInternetSearchEnabled: false,
 				responseFormat: {
 					type: "json_schema",
@@ -1616,7 +1616,7 @@ async function generateNarratorLocalSdk(args: {
 				maxTokens: parseInt(settings.maxTokens),
 				temperature: 1.0,
 				enableThinking: false,
-				thinkingBudget: 0,
+				reasoningEffort: settings.reasoningEffort,
 				isInternetSearchEnabled: false
 			}),
 			signal

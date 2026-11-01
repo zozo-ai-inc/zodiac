@@ -6,7 +6,7 @@ export type Request = {
 
 	reasoning?: {
 		enabled?: boolean;
-		effort?: "xhigh" | "high" | "medium" | "low" | "minimal" | "none";
+		effort?: "max" | "xhigh" | "high" | "medium" | "low" | "minimal" | "none";
 		max_tokens?: number;
 		exclude?: boolean;
 	};

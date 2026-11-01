@@ -62,12 +62,18 @@ export interface TakeoutCounts {
 	apiKeys: number;
 }
 
+export interface TakeoutMissingMedia {
+	chat: string;
+	count: number;
+}
+
 export interface TakeoutManifest {
 	categories: TakeoutCategory[];
 	omittedCategories: TakeoutCategory[];
 	counts: TakeoutCounts;
 	mediaBytes: number;
 	apiKeysIncluded: boolean;
+	missingMedia?: TakeoutMissingMedia[];
 }
 
 export interface TakeoutDocument {

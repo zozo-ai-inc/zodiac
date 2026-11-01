@@ -1,4 +1,5 @@
 import type { BlobReference } from "./BlobReference";
+import type { ReasoningEffort } from "./Models";
 import type { ReasoningDetailFormat } from "./OpenRouterTypes";
 
 export interface ReasoningDetailMetadata {
@@ -57,7 +58,7 @@ export interface MessageDebugInfo {
 		temperature: number;
 		streamResponses: boolean;
 		thinkingEnabled: boolean;
-		thinkingBudget: number;
+		reasoningEffort: ReasoningEffort;
 	};
 	modeSettings?: {
 		requestModel?: string;

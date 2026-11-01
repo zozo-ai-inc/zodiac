@@ -154,3 +154,6 @@ zozo-edge/
 TASK_PROGRESS.md
 test-results/
 playwright-report/
+.claude/settings.local.json*
+trajector-doctor-*.tar.gz
+trajector-doctor-*/

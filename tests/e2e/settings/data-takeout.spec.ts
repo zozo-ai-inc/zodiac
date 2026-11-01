@@ -124,6 +124,102 @@ test("exports one selective takeout and restores its logical IDs through the ada
 	});
 });
 
+test("a chat exported from its menu restores its attachment bytes after the chat is deleted", async ({ page }) => {
+	await stubExternalTraffic(page, []);
+	await seedLocalSettings(page);
+	await page.goto("/");
+	await page.evaluate(async () => {
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
+		// Sent messages store a real FileList, which jsdom cannot build or clone.
+		const transfer = new DataTransfer();
+		transfer.items.add(new File(["attachment bytes"], "note.txt", { type: "text/plain" }));
+		await db.chats.put({
+			id: "chat-attachment",
+			title: "Attachment Chat",
+			timestamp: 1_725_000_000_000,
+			content: [{ role: "user", parts: [{ text: "see attached", attachments: transfer.files }] }]
+		});
+	});
+	await page.reload();
+	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
+
+	const row = page.locator("label[for='chatchat-attachment']");
+	await row.locator(".chat-actions-button").click();
+	const downloadPromise = page.waitForEvent("download");
+	await page.locator(".chat-actions-menu.dropdown-menu--portal .chat-actions-item", { hasText: "Export" }).click();
+	const download = await downloadPromise;
+	const downloadPath = await download.path();
+	if (!downloadPath) throw new Error("Chat export did not produce a readable file.");
+	const exportBytes = await readFile(downloadPath);
+
+	await row.locator(".chat-actions-button").click();
+	await page.locator(".chat-actions-menu.dropdown-menu--portal .chat-actions-item", { hasText: "Delete" }).click();
+	await expect(row).toHaveCount(0);
+
+	await openDataManagement(page);
+	await page.locator("#btn-import-data").click();
+	await page.locator("#takeout-import-files").setInputFiles({
+		name: download.suggestedFilename(),
+		mimeType: "application/json",
+		buffer: exportBytes
+	});
+	await page.locator("#btn-takeout-import").click();
+	await expect(page.locator("#takeout-import-status")).toContainText("containing 1 message, 1 attachment, and");
+
+	const restored = await page.evaluate(async () => {
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
+		const [chat] = await db.chats.toArray();
+		const [file] = Array.from(chat.content[0].parts[0].attachments ?? []) as File[];
+		return { text: chat.content[0].parts[0].text, name: file?.name, bytes: await file?.text() };
+	});
+	expect(restored).toEqual({ text: "see attached", name: "note.txt", bytes: "attachment bytes" });
+});
+
+test("an old chat export of a local attachment imports its text and says what is missing", async ({ page }) => {
+	await stubExternalTraffic(page, []);
+	await seedLocalSettings(page);
+	await page.goto("/");
+	await expect(page.locator("#main-container")).toHaveAttribute("aria-busy", "false");
+	// Serializes a real FileList the way the old exporter did, so the fixture cannot drift from the browser.
+	const oldExport = await page.evaluate(() => {
+		const transfer = new DataTransfer();
+		transfer.items.add(new File(["attachment bytes"], "note.txt", { type: "text/plain" }));
+		return JSON.stringify({
+			title: "Old Export",
+			timestamp: 1_725_000_000_000,
+			content: [
+				{ role: "user", parts: [{ text: "see attached", attachments: transfer.files }] },
+				{
+					role: "model",
+					parts: [{ text: "here" }],
+					generatedImages: [{ mimeType: "image/png", base64: "iVBORw==" }]
+				}
+			]
+		});
+	});
+
+	await openDataManagement(page);
+	await page.locator("#btn-import-data").click();
+	await page.locator("#takeout-import-files").setInputFiles({
+		name: "old_export.json",
+		mimeType: "application/json",
+		buffer: Buffer.from(oldExport)
+	});
+	await page.locator("#btn-takeout-import").click();
+	await expect(page.locator("#takeout-import-status")).toContainText("“Old Export” is missing 1 attachment or image");
+
+	const restored = await page.evaluate(async () => {
+		const { db } = await window.importModule<typeof DbService>("/services/Db.service.ts");
+		const [chat] = await db.chats.toArray();
+		return {
+			text: chat.content[0].parts[0].text,
+			attachments: chat.content[0].parts[0].attachments,
+			image: chat.content[1].generatedImages?.[0].base64
+		};
+	});
+	expect(restored).toEqual({ text: "see attached", attachments: undefined, image: "iVBORw==" });
+});
+
 test("restoring conflicts as copies remaps the imported chat to the copied persona", async ({ page }) => {
 	await stubExternalTraffic(page, []);
 	await seedLocalSettings(page);

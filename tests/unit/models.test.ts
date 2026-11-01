@@ -14,6 +14,8 @@ import {
 	getValidChatModel,
 	getValidRoleplaySuggestionModel,
 	modelRequiresThinking,
+	REASONING_EFFORTS,
+	resolveReasoningEffort,
 	type ChatModelAccess
 } from "../../src/types/Models";
 import { DEFAULT_IMAGE_EDIT_MODEL, DEFAULT_IMAGE_MODEL, IMAGE_MODELS } from "../../src/constants/ImageModels";
@@ -381,5 +383,41 @@ describe("chat model deprecation", () => {
 		setNow("2027-01-01T00:00:00Z");
 
 		expect(formatOriginModelLabel("openai/gpt-5.3-chat")).toBe("GPT-5.3 Chat");
+	});
+});
+
+describe("reasoning effort levels", () => {
+	it("keeps a requested level the model supports", () => {
+		expect(resolveReasoningEffort("anthropic/claude-opus-4.8", "max")).toBe("max");
+		expect(resolveReasoningEffort("openai/gpt-5.4", "low")).toBe("low");
+	});
+
+	it("moves an unsupported level to the model's nearest one", () => {
+		expect(resolveReasoningEffort("openai/gpt-5.4", "max")).toBe("xhigh");
+		expect(resolveReasoningEffort("deepseek/deepseek-v4-pro", "minimal")).toBe("high");
+		expect(resolveReasoningEffort("z-ai/glm-5.3", "xhigh")).toBe("max");
+	});
+
+	it("breaks a tie between two equally near levels toward the higher one", () => {
+		// z-ai/glm-5.3 takes low, high and max; medium sits one step from both low and high
+		expect(resolveReasoningEffort("z-ai/glm-5.3", "medium")).toBe("high");
+	});
+
+	it("resolves nothing for models that only turn thinking on or off", () => {
+		expect(resolveReasoningEffort("z-ai/glm-5", "high")).toBeUndefined();
+		expect(resolveReasoningEffort("unknown/model", "high")).toBeUndefined();
+	});
+
+	it("lists every model's levels in ascending order without duplicates", () => {
+		for (const model of CHAT_MODELS) {
+			const efforts = model.reasoningEfforts ?? [];
+			const ranks = efforts.map((effort) => REASONING_EFFORTS.indexOf(effort));
+			expect(ranks, model.id).toEqual([...new Set(ranks)].sort((a, b) => a - b));
+		}
+	});
+
+	it("only gives levels to models that support thinking", () => {
+		const leveledWithoutThinking = CHAT_MODELS.filter((model) => model.reasoningEfforts && !model.supportsThinking);
+		expect(leveledWithoutThinking.map((model) => model.id)).toEqual([]);
 	});
 });
