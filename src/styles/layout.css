@@ -227,9 +227,15 @@ body.settings-open .settings-sidebar {
 	opacity: 0.6;
 }
 
-#btn-show-sidebar {
+#btn-show-sidebar,
+#btn-header-settings {
 	display: none;
 	font-size: 1.75rem;
+}
+
+/* Pinned to the right end of the mobile chat header, whatever the title's length. */
+#btn-header-settings {
+	margin-left: auto;
 }
 
 .header {
@@ -399,7 +405,8 @@ body.settings-open .settings-sidebar {
 		border-bottom: 1px solid #aaaaaa45;
 	}
 
-	#btn-show-sidebar {
+	#btn-show-sidebar,
+	#btn-header-settings {
 		display: inline-flex;
 	}
 }
