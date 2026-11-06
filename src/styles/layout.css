@@ -38,10 +38,6 @@ body.maintenance-banner-visible #main-container {
 	--sidebar-stowed-margin: calc(-1 * (var(--sidebar-width) + 0.75rem + 0.5rem));
 }
 
-#chat-title {
-	font-size: 1.2rem;
-}
-
 .sidebar,
 .settings-sidebar {
 	flex-shrink: 0;
@@ -233,9 +229,10 @@ body.settings-open .settings-sidebar {
 	font-size: 1.75rem;
 }
 
-/* Pinned to the right end of the mobile chat header, whatever the title's length. */
+/* Pinned to the right end of the mobile chat header, whatever the title's length. A step below the menu icon. */
 #btn-header-settings {
 	margin-left: auto;
+	font-size: 1.5rem;
 }
 
 .header {
@@ -399,14 +396,56 @@ body.settings-open .settings-sidebar {
 		min-width: 100%;
 	}
 
+	/* A compact bar, so the chat keeps the screen. */
 	#mainContent .header {
 		display: flex;
-		padding: 2rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 1rem;
+		font-weight: 600;
 		border-bottom: 1px solid #aaaaaa45;
+	}
+
+	/* One line, cut off when long; tapping it wraps to show the full title. */
+	#btn-chat-title {
+		flex: 1;
+		min-width: 0;
+		padding: 0;
+		border: none;
+		background: none;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	/* The ellipsis sits on a block inside the button: Firefox ignores text-overflow on a button's own text. */
+	#chat-title {
+		display: block;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	#btn-chat-title[aria-expanded="true"] #chat-title {
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	/* No chat open: nothing to show or press. */
+	#btn-chat-title:has(#chat-title:empty) {
+		visibility: hidden;
 	}
 
 	#btn-show-sidebar,
 	#btn-header-settings {
 		display: inline-flex;
+	}
+
+	#btn-show-sidebar {
+		font-size: 1.5rem;
+	}
+
+	#btn-header-settings {
+		font-size: 1.25rem;
 	}
 }
