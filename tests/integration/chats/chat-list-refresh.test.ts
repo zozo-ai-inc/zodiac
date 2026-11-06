@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "../../../src/services/Db.service";
 import { makeChat } from "../../fixtures/chats";
 import { resetIndexedDb } from "../../helpers/db";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 vi.mock("highlight.js", () => ({
 	default: {
@@ -118,15 +118,7 @@ vi.mock("../../../src/events", () => ({
 }));
 
 function bootstrapChatDom(): void {
-	bootstrapDom(`
-        <div class="sidebar"></div>
-        <div id="chatHistorySection"></div>
-        <div id="chat-title"></div>
-        <div id="chat-loading-indicator" class="hidden"></div>
-        <div id="scrollable-chat-container">
-            <div class="message-container"></div>
-        </div>
-    `);
+	bootstrapAppDom();
 }
 
 async function loadServices() {

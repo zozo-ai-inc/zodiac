@@ -4,7 +4,7 @@ import type { Db } from "../../../src/services/Db.service";
 import { makeChat } from "../../fixtures/chats";
 import { makeUserMessage } from "../../fixtures/messages";
 import { resetIndexedDb } from "../../helpers/db";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 vi.mock("highlight.js", () => ({
 	default: {
@@ -113,15 +113,7 @@ vi.mock("../../../src/events", () => ({
 }));
 
 function bootstrapChatDom(): void {
-	bootstrapDom(`
-        <div class="sidebar"></div>
-        <div id="chatHistorySection"></div>
-        <div id="chat-title"></div>
-        <div id="chat-loading-indicator" class="hidden"></div>
-        <div id="scrollable-chat-container">
-            <div class="message-container"></div>
-        </div>
-    `);
+	bootstrapAppDom();
 }
 
 function getVisibleMessageTexts(): string[] {
@@ -530,7 +522,8 @@ describe("chat deletion behavior", () => {
 		expect(await chatsService.getCurrentChat()).toBeNull();
 
 		expect(document.querySelector<HTMLInputElement>("input[name='currentChat']:checked")).toBeNull();
-		expect(document.querySelectorAll("input[name='currentChat']")).toHaveLength(0);
+		// The sidebar's "none" placeholder radio stays; only chat entries count.
+		expect(document.querySelectorAll("input[name='currentChat'][value^='chat']")).toHaveLength(0);
 		expect(document.querySelectorAll("label.label-currentchat")).toHaveLength(0);
 		expect(document.querySelector("#chat-title")?.textContent).toBe("");
 		expect(document.querySelectorAll(".message")).toHaveLength(0);

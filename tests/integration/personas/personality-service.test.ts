@@ -5,7 +5,7 @@ import type { Personality } from "../../../src/types/Personality";
 import { makePersona } from "../../fixtures/personas";
 import { waitForCondition } from "../../helpers/async";
 import { resetIndexedDb } from "../../helpers/db";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 vi.mock("../../../src/services/Sync.service", () => ({
 	isOnlineSyncEnabled: vi.fn(() => false),
@@ -50,9 +50,7 @@ vi.mock("../../../src/utils/helpers", () => ({
 }));
 
 function bootstrapPersonalityDom(): void {
-	bootstrapDom(`
-        <div id="personalitiesDiv"></div>
-    `);
+	bootstrapAppDom();
 }
 
 function makeLocalPersonality(overrides: Partial<Personality> = {}): Personality {

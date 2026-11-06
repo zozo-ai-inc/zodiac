@@ -129,6 +129,21 @@
 	}
 }
 
+/* Mobile rounds run edge to edge, so their messages get the screen's width. */
+@media (max-width: 1032px) {
+	.round-block {
+		width: calc(100% + 2rem);
+		margin-inline: -1rem;
+		padding-inline: 0.5rem;
+		border-inline: none;
+		border-radius: 0;
+	}
+
+	.round-block .message {
+		width: 100%;
+	}
+}
+
 .narrator-originator {
 	margin-top: 0.4rem;
 }
