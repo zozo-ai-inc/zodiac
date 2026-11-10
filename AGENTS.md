@@ -1,311 +1,83 @@
 # Zodiac AI Agent Instructions
 
-A Vite + TypeScript frontend for Google Gemini and OpenRouter APIs with local-first IndexedDB storage and optional Supabase cloud sync.
+A Vite + TypeScript frontend for Google Gemini and OpenRouter APIs with local-first IndexedDB storage (Dexie) and optional Supabase cloud sync.
 
-Github repo: faetalize/zodiac
+Github repo: zozo-ai-inc/zodiac. Backend (migrations, edge functions): `../zozo-edge`, which has its own `AGENTS.md`.
 
-## Architecture Overview
+Read before working on these areas:
 
-### Core Structure
-
-- **Entry point**: [src/main.ts](src/main.ts) bootstraps services and eager-loads all static components
-- **Data layer**: Dexie (IndexedDB) in [src/services/Db.service.ts](src/services/Db.service.ts) - local-first with Supabase sync
-- **Two component types**:
-    - `components/static/*.component.ts` - DOM-bound singletons, auto-loaded at startup via `import.meta.glob`
-    - `components/dynamic/*.ts` - Template factories returning HTMLElements (e.g., `messageElement()`)
+- Releases, version bumps, changelogs, promotion to `production`: [docs/RELEASING.md](docs/RELEASING.md)
+- Image models or LoRAs: [docs/LORA_SUPPORT.md](docs/LORA_SUPPORT.md)
+- Styles: [src/styles/README.md](src/styles/README.md)
 
 ## Development
 
 ```bash
 npm install
-npm run dev          # Local dev server with SSL
-npm run build        # Type-check + production build
-npm run sync-db-types  # Sync Supabase types to src/types/database.types.ts
+npm run dev            # Local dev server with SSL
+npm run build          # Type-check + production build
+npm test               # Type-check + Vitest
+npm run test:e2e       # Playwright
+npm run sync-db-types  # Regenerate src/types/database.types.ts after schema changes
 ```
 
-### Agent worktree workflow
+- `src/main.ts` runs the domain migration, then [src/app.ts](src/app.ts) initializes services in dependency order and eager-loads `components/static/*`.
+- `components/static/*.component.ts` are DOM-bound singletons that query elements at module load and throw if missing. `components/dynamic/*.ts` are template factories returning HTMLElements.
+- Use `npm run create-worktree -- <branch> [worktree-path] [options]` (`create-worktree:win` on Windows) to create a sibling worktree; `--help` lists the flags.
+- Branch prefixes: `feature/*`, `release/*`, `bugfix/*`, `chore/*`, `hotfix/*`, `codex/*`. Issue branches use `prefix/issue-number-semantic-name`. Prefer `bugfix/*` for defects and `chore/*` for changes with no user-facing effect.
+- After every code or file change, end the final response with a short `Should we commit this?` section that considers the full current worktree and answers yes or no with a brief reason.
 
-- Use `npm run create-worktree -- <branch> [worktree-path] [options]` to create a sibling worktree without interactive prompts.
-- On Windows, use `npm run create-worktree:win -- <branch> [worktree-path] [options]` for the PowerShell entrypoint.
-- For issue-driven work, pass the full conventional branch name, for example `npm run create-worktree -- feature/162-profile-page-responsiveness`.
-- The script can create or reuse a local branch, optionally run `npm install`, optionally push with `-u` to the remote, and optionally open a new Alacritty window running `opencode` in the new worktree.
-- Run `npm run create-worktree -- --help` for the full flag list and positional argument rules.
+## Release And Merge Rules
 
-### Branch naming
+These apply even outside release work. The full process is in [docs/RELEASING.md](docs/RELEASING.md).
 
-- Supported branch prefixes are `feature/*`, `release/*`, `bugfix/*`, `chore/*`, `hotfix/*`, and `codex/*`.
-- Use the prefix that best matches the work. Prefer `bugfix/*` for defects and `chore/*` for maintenance or refactors that do not change user-facing behavior.
-- Issue branch names should use `prefix/issue-number-semantic-name`, for example `feature/162-profile-page-responsiveness`.
-
-## Release Cycle
-
-### Release approval and merge authority
-
-- Never create or publish a new tagged GitHub Release, create its version tag manually, or publish an existing draft until the user has reviewed and explicitly approved the exact final draft title, tag, target, full notes, and every proposed change. Approval of the code, an earlier draft, or the general release plan does not count as approval of the final release.
-- Never merge or close a pull request targeting `production`. The agent may prepare or update the pull request and monitor its checks, but only the user may manually merge or close it.
-- Never merge or close a pull request from a `release/*` branch into `main`. The agent may prepare or update the pull request and monitor its checks, but only the user may manually merge or close it.
-- When either protected pull request is ready, stop and give the user its URL, exact copy or release changes, and check status. Do not enable auto-merge or use any other mechanism that would complete it without the user's manual action.
-
-### Branching and deployment flow
-
-- Cloudflare Pages production deployments are pinned to the permanent `production` branch.
-- `main` is the ongoing development branch.
-- Feature and fix pull requests merge into `main`; do not commit feature work directly to `production`.
-- A temporary `release/vX.Y.Z` branch is created from `main` for the version bump and other release-only preparation. Build the in-app changelog from the current draft GitHub Release, polishing and combining its entries into user-facing copy.
-- Open a pull request from the prepared release branch into `main` with the `skip-changelog` label, then stop for the user to review and manually merge or close it.
-- After the user merges the release pull request, open a second pull request from `main` into `production`, then stop for the user to review and manually merge or close it.
-- Cloudflare deploys after the user merges the pull request into `production`. No release backmerge is needed because release preparation entered `main` before promotion.
-- Each promotion adds a merge commit that exists only on `production`, so `git rev-list main..production` normally lists the latest promotion merge. This is expected and carries no code difference.
-- The `production` branch protection intentionally has "Require branches to be up to date before merging" turned off (the `verify` check and the pull request requirement stay on). With it on, the source branch `main` would have to contain every `production` merge commit, which forces an empty "synchronize production history" pull request into `main` before each promotion. Do not turn it back on or add such sync pull requests.
-
-### Pull request release classification
-
-- Every pull request targeting `main` must have exactly one release classification label. The merge gate enforces this rule. Promotion pull requests targeting `production` still run the full merge gate but do not need a release classification.
-- Use `feature`, `enhancement`, or `bug` for user-facing changes. Write those pull request titles as concise release-note candidates because Release Drafter uses them directly.
-- Use `code improvement` for internal refactors, `documentation` for documentation-only work, and `skip-changelog` for release preparation or other administrative changes targeting `main`. These labels are excluded from user-facing release notes.
-- Release Drafter runs after merges into `main` and continuously maintains the next draft GitHub Release from included pull requests. While it is a draft, it targets `main` so unreleased PRs can populate the release-note candidates. After the user manually merges the production pull request and the deployment is verified, pin the draft target to the exact deployed production commit SHA; publishing remains blocked until the user explicitly approves the exact final draft.
-
-### Pro request edge function slots
-
-- The frontend targets the premium chat edge function through `PRO_REQUEST_FUNCTION_NAME` / `PRO_REQUEST_ENDPOINT` in [src/services/Supabase.service.ts](src/services/Supabase.service.ts).
-- Available Supabase function slots are `handle-pro-request`, `handle-pro-request-x`, and `handle-pro-request-test`.
-- `handle-pro-request` and `handle-pro-request-x` are equivalent rotating production slots. The currently released frontend points at one slot, while the other slot is available for the next synced frontend/backend release.
-- Only change the committed `PRO_REQUEST_FUNCTION_NAME` target as part of a new release workflow. Do not change the production target for ordinary feature work, fixes, local testing, or short-lived validation.
-- When a frontend/backend sync release is required, deploy the backend update to the production slot that the currently released frontend is not using, update `PRO_REQUEST_FUNCTION_NAME` to point the new frontend bundle at that slot, then deploy the frontend. This keeps old loaded clients on the old function and new clients on the new function.
-- Use `handle-pro-request-test` for quick backend iteration and local/manual validation. Point `PRO_REQUEST_FUNCTION_NAME` at the test slot only for local test builds or short-lived validation branches; do not promote a release to `production` while it points at the test slot.
-- Before changing the production target, verify every premium caller uses `PRO_REQUEST_ENDPOINT` rather than hardcoding a function URL.
-
-### Preparing a new release
-
-- Open the continuously maintained draft GitHub Release before creating the release branch. Its categorized entries are the release-note candidates collected since the previous published release.
-- Create `release/vX.Y.Z` from `main`, then use the draft entries as scope candidates for two distinct deliverables: concise user-facing in-app copy and more technical GitHub release notes.
-- Update the user-facing changelog in [src/index.html](src/index.html) under the `#whats-new` section.
-- Update the version string in [src/constants/App.ts](src/constants/App.ts) so the badge and changelog header display the new version.
-- Open the `release/*` pull request into `main` with `skip-changelog`, present the exact in-app changelog and version changes to the user, and wait for the user to merge it manually.
-- After the user merges it, wait for Release Drafter's final `main` update before replacing its generated PR titles with the prepared GitHub release notes.
-- Open the `main` pull request into `production`, report its checks, and wait for the user to merge it manually. After that merge, verify the Cloudflare deployment, record the exact deployed production commit SHA, and pin the draft target to that SHA.
-- Present the exact final GitHub Release title, tag, target, full notes, and all proposed edits to the user. Publish it only after the user explicitly approves that exact final draft.
-
-### How to build the changelog well
-
-- The in-app changelog is user-facing marketing/product copy, not a technical document.
-- Summarize released value, not implementation details. Prefer feature outcomes and user benefits over commit-level mechanics.
-- Do not mention developer-only infrastructure or internal workflow changes unless they directly affect Zodiac users.
-- Favor broad, human phrasing such as `RPG group chat stability improvements` over overly granular engineering detail.
-- When a shipped feature is genuinely user-visible, name it clearly (for example, `Message debug tools`) instead of hiding it behind vague wording.
-- Include only features the user has explicitly approved as release-ready. Code being merged or deployed does not by itself authorize announcing the feature.
-- Good entries should feel like release notes written for users: concise, readable, and slightly polished rather than deeply technical.
-
-### Tagging guidance
-
-- Release tags must point at the exact commit deployed from `production`.
-- Do not create or publish the tag while either the release-preparation PR into `main` or the promotion PR into `production` is still open.
-- Do not create or publish the tag until the user explicitly approves the exact final GitHub Release draft and every proposed change to it.
-- After the user manually merges the production pull request, verify the Cloudflare production deployment, pin the draft to the exact deployed production commit SHA, and present the final draft for approval. Publishing the approved draft creates the `vX.Y.Z` tag at that pinned commit.
-
-### Creating the GitHub Release
-
-- Release Drafter creates and maintains the upcoming GitHub Release as a draft; do not create a second release manually.
-- Publish the existing draft only after the user manually merges `main` into `production`, the Cloudflare deployment has been verified, and the user explicitly approves the exact final draft and all proposed edits.
-- Pin the draft target from `main` to the exact verified deployed production commit SHA, then confirm that its version tag matches the version in [src/constants/App.ts](src/constants/App.ts).
-- Title the release to match that version tag (for example, `v1.8.5`).
-- The GitHub Release notes and in-app changelog cover the same approved release scope but are separate deliverables and should not be assumed to use the same wording.
-- GitHub Release notes may be more technical and specific. They can describe concrete changes such as old-to-new copy, layout changes, and affected systems, while the in-app changelog should summarize the user-facing outcome.
-- Rewrite the generated PR titles as a Markdown list under a `## What's New` heading rather than publishing raw PR titles or commit messages:
-
-    ```markdown
-    ## What's New
-
-    - **Model picker navigation:** Reorganized models by provider family and added faster search and favorite pinning.
-    - **Composer layout:** Moved narrow-screen actions into the overflow menu so the primary controls remain accessible.
-    ```
-
-- Pin the prepared draft with `gh release edit <tag> --target <verified-production-commit-sha>` and verify that exact target commit. Show the user the exact final title, tag, target SHA, full notes, and proposed changes; only after explicit approval may it be published with `gh release edit <tag> --draft=false --latest`.
+- Never merge or close a pull request targeting `production`, or one from a `release/*` branch into `main`, and never enable auto-merge on them. Prepare it, monitor its checks, then stop and give the user its URL, exact changes, and check status.
+- Never create or publish a tagged GitHub Release, create its tag manually, or publish a draft until the user has explicitly approved the exact final title, tag, target, notes, and every change. Approval of code, an earlier draft, or the plan does not count.
+- Feature and fix pull requests merge into `main`. Do not commit feature work directly to `production`.
+- Do not turn on "Require branches to be up to date before merging" for `production` or add history-sync pull requests. Promotion merges existing only on `production` are expected.
+- Every pull request targeting `main` needs exactly one classification label, enforced by the merge gate. Use `feature`, `enhancement`, or `bug` for user-facing changes, and write those titles as release-note candidates. Use `code improvement`, `documentation`, or `skip-changelog` otherwise.
+- `PRO_REQUEST_FUNCTION_NAME` in [src/services/Supabase.service.ts](src/services/Supabase.service.ts) selects the premium edge function slot. Change the committed value only as part of a release workflow, and never promote a release pointing at `handle-pro-request-test`.
 
 ## Conventions
 
-### Abstraction Style
+- **Abstractions:** do not add getters or helpers around simple exported arrays, constants, or property access. Write `IMAGE_MODELS.find((model) => model.id === selectedModel)?.maxInputImages` at the call site. Add service getters only for real complexity such as async state, caching, persistence, authorization, or shared normalization.
+- **Cross-component communication:** use `CustomEvent` on `window` or `document`, which also avoids circular imports. To open settings, dispatch `open-settings` (optionally with a `page`) instead of clicking its DOM controls.
+- **Dexie migrations:** schema versions in `Db.service.ts` are additive. Use `.upgrade()` for data migrations.
+- **Subscription entitlements:** when plan allowance amounts change, preserve allowances already granted for the current window and apply new amounts at the next period unless the user explicitly requests otherwise. New subscriptions get the current configuration immediately. Cancellation and tier switches follow the active subscription state.
+- **Styling:** no Tailwind utility classes. Tailwind is imported for its reset only, and HTML uses semantic class names. Themes are CSS custom properties in `src/styles/themes/`.
 
-- Do not add getter/helper functions around simple exported arrays, constants, or direct property access. Prefer filtering, finding, and reading exported data directly at the call site when the backing logic is simple.
-- Only introduce service-style getters when there is real backing complexity: async state, caching, persistence, authorization, normalization shared across many call sites, or a non-trivial source that benefits from an explicit boundary.
-- Example: prefer `IMAGE_MODELS.find((model) => model.id === selectedModel)?.maxInputImages` over a `getImageModelDefinition(selectedModel)` wrapper when `IMAGE_MODELS` is just an exported array.
+### Overlays, Surfaces, And Dropdowns
 
-### Component Pattern
+- Use `Overlay.service.ts` for full-screen flows that intentionally blur the app and use the back button, such as auth, onboarding, changelog, and persona forms.
+- Use `surfaceService.show()` / `close()` from `Surface.service.ts` for transient floating surfaces that should not inherit overlay blur or the back button. Adaptive sheets belong here, on `#surface-plane`, with the `adaptive-sheet` class.
+- `#surface-plane` is always mounted. Do not hide it with `display: none`; it is click-through by default and hosted surfaces opt back into pointer handling.
+- Keep feature state resets in the feature component, using the `surface-closed` event dispatched after the close animation.
+- Prefer `openDropdownPortal(menu, anchor)` from `src/utils/dropdownPortal.ts` for `.dropdown-menu` elements inside the sidebar or other blurred surfaces. Nested `backdrop-filter`s blur the parent's flattened backdrop and look foggy. Keep open state in the owning component and reset it in the `onClose` callback.
 
-Static components query DOM elements at module load and throw if missing:
+## Bug Fixes And Tests
 
-```typescript
-// src/components/static/Example.component.ts
-const element = document.querySelector<HTMLButtonElement>("#my-button");
-if (!element) throw new Error("Missing DOM element: #my-button");
+- Surface every bug through a failing test before fixing it, and confirm it fails because of the bug. A fix without a test that would have caught the bug is not complete.
+- Before creating or materially expanding a test, get the user's approval on the behavior it protects, its layer, and why it is valuable.
+- Reproduce bugs with tests, not by manipulating a live browser. The exception is a concrete reason to judge something visually, such as spacing or alignment. State that reason.
 
-element.addEventListener("click", () => {
-	/* handler */
-});
-export { element };
-```
+Test layers:
 
-### Cross-Component Communication
+- **Type 1:** pure logic and unit tests. Mock freely, and make no UI behavior claims.
+- **Type 2:** service and state integration tests in Vitest, for app-owned invariants such as message index correctness, regenerate pruning, persistence, and sync payload construction.
+- **Type 3:** feature and user-story tests in Playwright, with the real component, DOM wiring, and user entrypoint. This is the default for feature tests, live behavior, and reported UI bugs, and is required when focus, selection, drag/drop, scrolling, async DOM timing, or reload behavior matters.
+- JSDOM is for narrow render-contract checks only, such as `messageElement(message)` rendering an edit button. Do not present those as proof a live flow works, and switch to Playwright if the test needs a rebuilt app shell.
 
-Use `CustomEvent` on `window` or `document` for decoupled messaging:
+Writing tests:
 
-```typescript
-// Emit
-window.dispatchEvent(new CustomEvent("generation-state-changed", { detail: { isGenerating: true } }));
+- Do not mock the layer whose behavior is under test. Mock only for a concrete reason, and say what a test does not cover.
+- Reproduce the actual user timeline rather than seeding an end state that resembles it.
+- For stateful UI bugs, assert both backing state and visible DOM state so the test catches them diverging.
+- Make the first failing assertion describe the user-visible symptom, and name tests after their primary failure reason.
+- Assert persisted state, in-memory state, and coarse DOM outcomes. Put selector or subtree expectations in a dedicated rendering test rather than coupling CRUD tests to them.
 
-// Listen
-window.addEventListener("generation-state-changed", (e) => {
-	/* handle */
-});
-```
+Cloud sync:
 
-Key events: `auth-state-changed`, `generation-state-changed`, `chat-model-changed`, `subscription-updated`, `round-state-changed`
-
-To open the settings panel from another module, dispatch `open-settings` (optionally with a `page`) instead of clicking its DOM controls.
-
-### Service Initialization
-
-Services export an `initialize()` function called from `main.ts` in dependency order. Avoid circular imports by using event-based communication.
-
-### Overlay And Surface Layers
-
-- Use [src/services/Overlay.service.ts](src/services/Overlay.service.ts) for true app-level overlays: full-screen flows that intentionally blur/take over the app and use the overlay back button, such as auth, onboarding, changelog, persona forms, and debug modals already hosted in `.overlay-content`.
-- Use [src/services/Surface.service.ts](src/services/Surface.service.ts) for transient floating surfaces that should not inherit overlay blur or the back button, such as adaptive sheets, lightweight editors, and contextual task surfaces.
-- `#surface-plane` is always mounted and should not be hidden with `display: none`; it is click-through by default (`pointer-events: none`) while hosted surfaces opt back into pointer handling.
-- Adaptive sheets belong on `#surface-plane` and should use the `adaptive-sheet` class. They present as compact modal-like surfaces on desktop and slide up as bottom sheets on mobile.
-- Prefer `surfaceService.show("element-id")` / `surfaceService.close("element-id")` for adaptive sheets instead of `overlayService.show()` / `overlayService.closeOverlay()`.
-- Keep feature-specific state resets in the feature component. `Surface.service.ts` dispatches `surface-closed` on the surface element after the close animation completes.
-
-### Dropdown Menus
-
-- Prefer [src/utils/dropdownPortal.ts](src/utils/dropdownPortal.ts) for `.dropdown-menu` elements that open inside the sidebar or other blurred surfaces.
-- The sidebar uses `backdrop-filter`; nested dropdowns with their own `backdrop-filter` can blur the sidebar's already-flattened backdrop instead of the real content behind the menu, which makes the menu look foggy rather than properly blurred.
-- `openDropdownPortal(menu, anchor)` temporarily moves the menu to `document.body`, positions it from the anchor's `getBoundingClientRect()`, closes it on scroll/resize, and restores it to its original parent on close.
-- Keep dropdown-specific open state in the owning component, and use the portal `onClose` callback to reset ARIA/state when the helper closes the menu externally.
-
-### Database Migrations
-
-Dexie schema versions in `Db.service.ts` are additive. Use `.upgrade()` for data migrations:
-
-```typescript
-db.version(N)
-	.stores({
-		/* schema */
-	})
-	.upgrade(async (tx) => {
-		/* migrate */
-	});
-```
-
-### Settings Persistence
-
-User preferences use `localStorage` with service-level get/set wrappers. See [src/services/Settings.service.ts](src/services/Settings.service.ts).
-
-### Subscription Entitlement Changes
-
-- When a plan's allowance amounts change, preserve allowances already granted for the subscriber's current allowance window and apply the new amounts at the next allowance period unless the user explicitly requests an immediate change.
-- New subscriptions receive the current allowance configuration immediately. Subscription lifecycle changes such as cancellation or switching tiers continue to follow the active subscription state and are not deferred by this rule.
-
-### Bug Fix Workflow
-
-- Surface every bug through a failing test before implementing the fix. Write the test first, confirm it fails on the unfixed code because of the bug, then implement the fix and confirm the same test passes.
-- Every issue and regression gets a test. A fix without a test that would have caught the bug is not complete.
-- Do not reproduce a bug by manipulating a live browser instance, such as resizing a preview tab, running scripts in the page, or clicking through the app by hand. Reproduce it with a test instead.
-- The exception is when there is a concrete reason to prefer a visual, such as judging appearance, spacing, or alignment. State that reason when you use the browser this way.
-- Reproduction tests follow the rules in Test Scope And Failure Mapping below, including proposing the coverage and test layer to the user before writing the test.
-
-### Test Scope And Failure Mapping
-
-- Before creating a new test or materially expanding an existing test, discuss the proposed coverage with the user and get approval. Explain which behavior the test will protect, which test layer it belongs to, and why the test is valuable before writing it.
-- Treat tests as three explicit layers:
-- Type 1: pure logic/unit tests. These can mock freely and should not make UI behavior claims.
-- Type 2: service/state integration tests. Use these for app-owned rules and invariants without claiming real browser behavior. Good examples: deleting the correct chat record, editing message `content[231]` without shifting other indices, pruning the correct tail on regenerate, or building the correct final payload at the cloud-sync boundary.
-- Type 3: feature/user-story tests. Use these when any real UI behavior matters. These should use the real component, real DOM wiring, and real user-triggered entrypoint wherever practical.
-- Default split: if the behavior under test involves the UI at all, use Playwright. If the behavior under test is state/persistence logic and does not need real UI behavior, use Vitest.
-- In practice, use Playwright for things like sidebar deletion, visible message editing controls, drag/drop, scrolling, loading older messages, abort-generation, selection/focus behavior, and end-to-end persistence after reload.
-- In practice, use Vitest for things like message index correctness, chat persistence invariants, regenerate/prune state rules, sync payload construction, and other logic where the main risk is incorrect state rather than incorrect browser behavior.
-- Do not force Vitest/JSDOM to stand in for full browser fidelity when the main risk is real browser behavior. If a feature story depends on focus, selection, drag/drop, scrolling, async DOM timing, reload behavior, or broad app-shell wiring, prefer Playwright over a heavily simulated JSDOM setup.
-- Default to using the real existing component/element unless there is a concrete reason to mock it, such as unsupported browser behavior, meaningfully harder setup, substantial test slowdown, or unrelated failure modes.
-- If the user asks to test a feature, user story, live behavior, or a reported UI bug, default to a Type 3 test unless they explicitly ask for a lower-layer test.
-- Most Zodiac feature-level tests should be Type 3. Use Type 1 and Type 2 tests to support targeted logic and service coverage, not as substitutes for feature behavior coverage.
-- Use Playwright for the highest-value user stories and browser-fidelity risks. In Zodiac this especially includes chat creation/selection flows, deleting selected vs unselected chats, attachment drag/drop, abort-generation behavior, and cloud-sync-critical stories.
-- Use Vitest for logic, state integrity, message index correctness, persistence behavior, and targeted integrations where browser fidelity is not the main uncertainty.
-- JSDOM is allowed for narrow render-contract checks only. Good examples: `messageElement(message)` renders a `.message`, includes the edit button for user messages, shows a reasoning block when `thinking` exists, or renders an attachment preview node. Do not present those tests as proof that the live UI flow works.
-- If making a JSDOM test requires rebuilding large parts of the browser environment or app shell just to exercise the user story, treat that as a signal to switch to Playwright instead of continuing to add harness complexity.
-- Name tests so their primary failure reason matches the behavior under test.
-- For CRUD or state-transition tests, prioritize assertions about persisted state, current in-memory state, and coarse DOM outcomes such as element presence, selection state, or removal from the list.
-- Do not make a `create`, `edit`, or `delete` test fail only because an internal child selector or styling hook changed unless that internal structure is the behavior being tested.
-- If a DOM structure is itself important, write a separate render-contract test for it, for example `renders a complete persona sidebar card`.
-- When a regression should be caught by a specific selector, class, or subtree shape, make that selector part of a dedicated rendering test instead of coupling unrelated behavioral tests to the same detail.
-- When the user asks for a test of live app behavior or reports a UI bug, do not mock the UI/component layer whose behavior is under test. Prefer the real component, real DOM wiring, and the real user-triggered entrypoint.
-- Prefer reproducing the actual user timeline over seeding an end-state that merely resembles it. If a bug happens after a live sequence of sends, skips, scrolls, or clicks, the test should create that sequence the same way.
-- Be explicit about the layer a test covers. If a test mocks a renderer or other boundary, do not present it as proof of real DOM behavior.
-- For stateful UI bugs, assert both backing state and visible DOM state, and ensure the assertion can catch them diverging in-session.
-- For bug-reproduction tests, make the first failing assertion describe the user-visible symptom as directly as possible so another agent can tell what is broken from the failure output.
-- Many Zodiac features are cloud-sync-aware, so feature behavior may depend on remote Supabase-backed state instead of only local Dexie state.
-- When adding tests for a feature, assess whether the cloud-sync path is meaningfully different and worth covering. If that tradeoff is unclear, discuss it with the user instead of guessing.
-- Distinguish between cloud-sync-aware feature tests and sync-implementation tests.
-- Cloud-sync-aware feature tests ask: `does the app use sync correctly for this feature?` Examples: deleting a synced chat, editing a synced message, or regenerating a synced conversation tail while preserving the correct app state.
-- Sync-implementation tests ask: `does the sync layer itself perform the correct remote work?` Examples: `deleteSyncedChat()` marks the correct remote chat deleted, marks the correct remote message rows deleted, triggers blob cleanup for the right blobs, and queues retries correctly on failure.
-- A cloud-sync variant means coverage for behavior that differs when app state arrives through the cloud-sync restore boundary. It does not automatically mean a live Supabase or end-to-end backend test.
-- If decrypted synced data is already correctly applied to localStorage, IndexedDB, or an app service boundary, and the risk is frontend rehydration, component state, or event wiring, use a local integration/component test with a simulated or mocked sync boundary.
-- Use live Supabase or end-to-end backend coverage only when the behavior under test is the sync implementation itself: remote persistence, encryption/decryption, RLS, migrations, Supabase queries, or real cross-device data flow.
-- Do not collapse those two responsibilities into one test unless there is a specific reason. Feature tests should usually mock the sync boundary. Sync-layer tests should exercise `Sync.service.ts` behavior directly.
-- When you add or revise a test, include a short explicit note in your final response stating whether a Supabase/cloud-sync variant is worth adding for that test and why.
-- When adding cloud-sync variants of tests, prefer exercising the remote-aware app path with clear contract-shaped fixtures or mocks at the sync boundary rather than duplicating the full backend implementation in tests.
-
-### Workflow Notes
-
-- After every code or file change, end the final response with a short `Should we commit this?` section that considers the full current worktree, including any earlier uncommitted changes, and answers yes or no with a brief reason.
-
-### Styling
-
-- **Custom CSS** - `src/styles/main.css` is the single app stylesheet entry point. Shared styles live in `base.css`, `tokens.css`, `layout.css`, and `components/`; feature styles live in `features/`. See [src/styles/README.md](src/styles/README.md) for ownership and cascade conventions.
-- **Responsive styles** - Keep states, media queries, and feature animations beside the owning component or feature. Preserve import order and selector specificity when moving rules.
-- **Mode defaults** - `src/styles/dark.css` and `src/styles/light.css` supply mode tokens; components consume those variables in their own files.
-- **Tailwind base reset** - `@import "tailwindcss"` in main.css for normalization only (no utility classes used)
-- **Dynamic theming** - CSS custom properties in `src/styles/themes/{color}-{mode}.css` (e.g., `blue-dark.css`)
-- **No utility classes** - HTML uses semantic class names, not Tailwind utilities
-
-## External Dependencies
-
-- **@google/genai** - Gemini SDK for chat and image generation
-- **@supabase/supabase-js** - Auth, database, realtime subscriptions
-- **Dexie** - IndexedDB wrapper with migrations
-- **marked + DOMPurify** - Markdown rendering with XSS protection
-- **highlight.js** - Code syntax highlighting
-
-## Common Patterns
-
-### Adding a New Static Component
-
-1. Create `src/components/static/MyComponent.component.ts`
-2. Query required DOM elements, throw on missing
-3. Export any needed functions/state
-4. Add corresponding HTML element to `src/index.html`
-5. Component auto-loads via glob import in `main.ts`
-
-### Adding a Model Message Type
-
-1. Extend `Message` interface in [src/types/Message.ts](src/types/Message.ts)
-2. Update rendering in [src/components/dynamic/message.ts](src/components/dynamic/message.ts)
-3. Handle in API processing in `Message.service.ts`
-
-### Image Models And LoRA Support
-
-- Image models are defined in [src/constants/ImageModels.ts](src/constants/ImageModels.ts). A model supports LoRAs only if its definition sets `loraArchitecture` (a Runware model-upload architecture value, e.g. `"illustrious"`, `"sdxl"`).
-- LoRA support is ultimately gated by Runware, not by us or Civitai: to upload user LoRAs, the architecture must exist in Runware's model-upload `architecture` enum, and the model itself must accept LoRAs on Runware. This is a per-model fact — check Runware's docs; don't assume from how the model is hosted. The current Alibaba/ByteDance-hosted Qwen and Seedream models do not support LoRAs.
-- Which Civitai LoRAs are accepted is decided by the hardcoded allowlist in [src/constants/Loras.ts](src/constants/Loras.ts), mapping exact Civitai `BaseModel` strings to Runware architectures. `Lora.service.add` rejects LoRAs whose base model is not in the table. The backend has an identical table in `zozo-edge/supabase/functions/handle-max-request/index.ts` — keep the two in sync.
-- Matching is strict (exact strings, same architecture only). Do not add cross-family entries (e.g. Pony on Illustrious) unless explicitly requested.
-- To add a LoRA-capable model: (1) verify the architecture exists on Runware and the checkpoint is Runware-hosted open weights — if not, stop, it cannot be supported; (2) get exact Civitai strings from `civitai.com/api/v1/enums` (`.BaseModel`); (3) extend the `LoraArchitecture` union in [src/types/ImageModels.ts](src/types/ImageModels.ts), set `loraArchitecture` on the model definition, add the entries to `Loras.ts`; (4) make the matching backend changes in zozo-edge.
-- LoRAs never block generation: the backend skips incompatible or unsupported LoRAs with a warning instead of failing the request.
-
-### Supabase Types
-
-After schema changes, run `npm run sync-db-types` to regenerate [src/types/database.types.ts](src/types/database.types.ts).
-
-### Supabase Dashboard Edge Function Quirk
-
-- The current deployment flow uses the Supabase Dashboard for individual edge functions in `zozo-edge/functions/`.
-- Do not rely on shared sibling folders like `functions/_shared/` or cross-function relative imports for deployable code.
-- Keep any required helpers/constants inside each deployed function file unless the user explicitly confirms a bundling/deploy process that supports shared files.
+- Feature behavior may depend on Supabase-backed state. When adding a test, assess whether the cloud-sync path differs enough to cover, and ask the user if that is unclear.
+- Keep two questions separate. Cloud-sync-aware feature tests ask whether the app uses sync correctly, and should usually mock the sync boundary with contract-shaped fixtures. Sync-implementation tests ask whether `Sync.service.ts` does the correct remote work.
+- A cloud-sync variant does not automatically mean a live backend test. Use live Supabase only when testing the sync implementation itself: remote persistence, encryption, RLS, migrations, queries, or real cross-device flow.
+- When you add or revise a test, state in your final response whether a cloud-sync variant is worth adding and why.
