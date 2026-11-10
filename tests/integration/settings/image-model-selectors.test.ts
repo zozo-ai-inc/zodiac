@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SETTINGS_STORAGE_KEYS } from "../../../src/constants/SettingsStorageKeys";
 import { DEFAULT_IMAGE_EDIT_MODEL, DEFAULT_IMAGE_MODEL, IMAGE_MODELS } from "../../../src/constants/ImageModels";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 vi.mock("../../../src/services/Supabase.service", () => ({
 	isImageGenerationAvailable: vi.fn(async () => ({ enabled: true, type: "all" }))
@@ -13,38 +13,7 @@ vi.mock("../../../src/services/Sync.service", () => ({
 }));
 
 function bootstrapSettingsDom(): void {
-	bootstrapDom(`
-		<input id="apiKeyInput" value="">
-		<input id="openRouterApiKeyInput" value="">
-		<div id="gemini-api-key-error" class="hidden"></div>
-		<div id="openrouter-api-key-error" class="hidden"></div>
-		<div id="prefer-premium-endpoint-toggle"></div>
-		<input id="preferPremiumEndpoint" type="checkbox">
-		<input id="maxTokens" value="1000">
-		<input id="temperature" value="60">
-		<select id="selectedModel"><option value="gemini-3.5-flash" selected>Gemini Flash</option></select>
-		<select id="selectedImageModel"></select>
-		<select id="selectedImageEditingModel"></select>
-		<select id="roleplaySuggestionModel"><option value="gemini-3.5-flash" selected>Gemini Flash</option></select>
-		<input id="autoscroll" type="checkbox">
-		<input id="streamResponses" type="checkbox">
-		<select id="enableThinkingSelect"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select>
-		<div id="reasoning-effort-setting"><select id="reasoningEffort"></select></div>
-		<input id="rpgGroupChatsProgressAutomatically" type="checkbox">
-		<input id="allowPersonaPinging" type="checkbox">
-		<input id="dynamicGroupChatPingOnly" type="checkbox">
-		<input id="fullWidthChat" type="checkbox">
-		<input id="uiScale" value="2">
-		<select id="delimiterPreset"><option value="zodiac" selected>Zodiac</option><option value="novel">Novel</option><option value="custom">Custom</option></select>
-		<div id="customDelimiterInstructions"></div>
-		<div id="delimiterPreview"></div>
-		<input id="customDialogueInstruction" value="">
-		<input id="customActionInstruction" value="">
-		<input id="customThoughtInstruction" value="">
-		<p id="delimiterPreviewDialogue"></p>
-		<p id="delimiterPreviewAction"></p>
-		<p id="delimiterPreviewThought"></p>
-	`);
+	bootstrapAppDom();
 }
 
 function selectValues(selector: string): string[] {
