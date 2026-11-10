@@ -26,7 +26,7 @@ npm test            # Type-check and run the Vitest suite
 npm run test:e2e    # Run the Playwright browser suite
 ```
 
-See [AGENTS.md](AGENTS.md) for architecture, contribution conventions, and the release workflow.
+See [AGENTS.md](AGENTS.md) for architecture and contribution conventions, and [docs/RELEASING.md](docs/RELEASING.md) for the release workflow.
 
 ## Contact
 
