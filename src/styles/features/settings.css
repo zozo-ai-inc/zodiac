@@ -318,6 +318,10 @@
 	padding: 1rem;
 }
 
+#tip-me-section .btn-array > .card {
+	max-width: 6.5rem;
+}
+
 #tip-me-section button {
 	flex-grow: 1;
 }
