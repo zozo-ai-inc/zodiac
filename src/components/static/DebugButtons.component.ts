@@ -103,34 +103,45 @@ const modelMessages = [
 ];
 
 // Register listeners only in localhost
+export async function generateRandomChats(
+	addChat: typeof chatService.addChat = chatService.addChat,
+	showError: typeof toastService.danger = toastService.danger
+): Promise<void> {
+	try {
+		await Promise.all(
+			titles.map(async (title) => {
+				const randomConversation: Message[] = [];
+
+				for (let i = 0; i < 10; i++) {
+					// User message
+					const userText = userMessages[Math.floor(Math.random() * userMessages.length)];
+					randomConversation.push({
+						role: "user",
+						parts: [{ text: userText }]
+					});
+
+					// Model response
+					const modelText = modelMessages[Math.floor(Math.random() * modelMessages.length)];
+					randomConversation.push({
+						role: "model",
+						parts: [{ text: modelText }],
+						personalityid: "-1"
+					});
+				}
+
+				await addChat(title, randomConversation);
+			})
+		);
+	} catch (error) {
+		showError({
+			title: "Generate Chats Failed",
+			text: error instanceof Error ? error.message : "Failed to generate random chats."
+		});
+	}
+}
+
 if (isDev && generateRandomChatsButton)
-	generateRandomChatsButton.addEventListener(
-		"click",
-		() =>
-			void (async () => {
-				titles.forEach((title) => {
-					const randomConversation: Message[] = [];
-
-					for (let i = 0; i < 10; i++) {
-						// User message
-						const userText = userMessages[Math.floor(Math.random() * userMessages.length)];
-						randomConversation.push({
-							role: "user",
-							parts: [{ text: userText }]
-						});
-
-						// Model response
-						const modelText = modelMessages[Math.floor(Math.random() * modelMessages.length)];
-						randomConversation.push({
-							role: "model",
-							parts: [{ text: modelText }],
-							personalityid: "-1"
-						});
-					}
-					void chatService.addChat(title, randomConversation);
-				});
-			})()
-	);
+	generateRandomChatsButton.addEventListener("click", () => void generateRandomChats());
 
 // Random personality data arrays
 const personalityNames = [
