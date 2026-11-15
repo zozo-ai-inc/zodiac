@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 import { waitForCondition } from "../../helpers/async";
 import { makeChat } from "../../fixtures/chats";
 import { makeModelMessage, makeUserMessage } from "../../fixtures/messages";
@@ -244,60 +244,7 @@ function confirmDangerDialog(): void {
 }
 
 function bootstrapRoleplayDom(): void {
-	bootstrapDom(`
-		<div id="dialog" class="dialog hidden">
-			<div id="dialog-message"></div>
-			<div id="dialog-buttons" class="btn-array">
-				<button class="btn-danger btn" id="btn-dialog-ok">OK</button>
-				<button class="btn-neutral btn" id="btn-dialog-cancel">Cancel</button>
-			</div>
-		</div>
-		<div id="message-box">
-			<button id="btn-roleplay" type="button"></button>
-			<button id="btn-send" type="button"></button>
-			<div id="roleplay-composer" class="hidden">
-				<div class="roleplay-composer__header">
-					<div class="navbar roleplay-composer__tabs" role="tablist">
-						<div class="navbar-tab navbar-tab-active" data-roleplay-tab="dialogue" aria-selected="true">Dialogue</div>
-						<div class="navbar-tab" data-roleplay-tab="actions" aria-selected="false">Actions</div>
-						<div class="navbar-tab-highlight"></div>
-					</div>
-					<button id="btn-roleplay-refresh" type="button">
-						<span class="material-symbols-outlined">refresh</span>
-						<span class="loading-spinner roleplay-refresh-spinner hidden"></span>
-					</button>
-				</div>
-				<div class="roleplay-composer__selection-bar">
-					<div id="roleplay-selected-actions"></div>
-					<button id="btn-roleplay-clear-actions" class="hidden" type="button">Clear</button>
-				</div>
-				<div class="roleplay-panel" data-roleplay-panel="dialogue">
-					<div id="roleplay-suggestions"></div>
-				</div>
-				<div class="roleplay-panel hidden" data-roleplay-panel="actions">
-					<div id="roleplay-actions-root"></div>
-				</div>
-			</div>
-		</div>
-		<div class="overlay hidden" id="overlay">
-			<button id="btn-hide-overlay" type="button">BACK</button>
-			<div class="overlay-content"></div>
-		</div>
-		<div id="surface-plane" class="surface-plane">
-			<div id="modal-roleplay-add" class="adaptive-sheet hidden" role="dialog" aria-labelledby="roleplay-add-modal-title">
-					<h1 id="roleplay-add-modal-title">Add</h1>
-					<input id="roleplay-add-modal-label-input" type="text">
-					<input id="roleplay-add-modal-input" type="text">
-					<div id="roleplay-add-modal-error" class="hidden">
-						<span id="roleplay-add-modal-error-message"></span>
-					</div>
-					<button id="btn-roleplay-add-modal-submit" type="button">Add</button>
-					<button id="btn-roleplay-add-modal-cancel" type="button">Cancel</button>
-			</div>
-		</div>
-		<div id="personalitiesDiv"></div>
-		<select id="roleplaySuggestionModel"></select>
-	`);
+	bootstrapAppDom();
 }
 
 async function importRoleplayComposer(): Promise<void> {

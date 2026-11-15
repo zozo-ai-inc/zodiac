@@ -5,7 +5,7 @@ import { makeChat } from "../../fixtures/chats";
 import { makeUserMessage } from "../../fixtures/messages";
 import { waitForCondition } from "../../helpers/async";
 import { resetIndexedDb } from "../../helpers/db";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 import { MockDataTransfer } from "../../helpers/files";
 
 vi.mock("highlight.js", () => ({
@@ -110,15 +110,7 @@ vi.mock("../../../src/events", () => ({
 }));
 
 function bootstrapChatDom(): void {
-	bootstrapDom(`
-        <div class="sidebar"></div>
-        <div id="chatHistorySection"></div>
-        <div id="chat-title"></div>
-        <div id="chat-loading-indicator" class="hidden"></div>
-        <div id="scrollable-chat-container">
-            <div class="message-container"></div>
-        </div>
-    `);
+	bootstrapAppDom();
 }
 
 function makeLongChatMessageContent(total: number): ReturnType<typeof makeUserMessage>[] {

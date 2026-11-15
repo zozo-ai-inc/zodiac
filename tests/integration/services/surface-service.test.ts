@@ -1,21 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 describe("Surface service", () => {
 	beforeEach(() => {
 		vi.resetModules();
 		vi.useFakeTimers();
-		bootstrapDom(`
-			<div id="surface-plane" class="surface-plane">
+		bootstrapAppDom();
+		// Test-only surfaces, hosted on the real plane.
+		document.querySelector("#surface-plane")!.insertAdjacentHTML(
+			"beforeend",
+			`
 				<div id="adaptive-test-sheet" class="adaptive-sheet hidden">
 					<button type="button">Close</button>
 				</div>
 				<div id="plain-test-surface" class="hidden">
 					<button type="button">Close</button>
 				</div>
-			</div>
-		`);
+			`
+		);
 	});
 
 	afterEach(() => {

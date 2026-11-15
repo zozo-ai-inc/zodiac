@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 // Saving only fails on the cloud-sync path (locked sync or a failed push), which a browser test cannot reach
 // without a signed-in, unlocked sync account. These tests mount the real form component and stand the persona
@@ -40,18 +40,12 @@ async function flushPromises(): Promise<void> {
 
 async function mountForm(personaId = ""): Promise<HTMLFormElement> {
 	vi.resetModules();
-	bootstrapDom(`
-		<form id="form-add-personality">
-			<input name="id" value="${personaId}" />
-			<input name="name" value="Ada" />
-			<div class="step">
-				<button id="btn-add-tone-example" type="button">Add</button>
-			</div>
-			<button class="btn-stepper-submit" type="submit">Submit</button>
-		</form>
-	`);
+	bootstrapAppDom();
 	await import("../../../src/components/static/AddPersonalityForm.component");
-	return document.querySelector<HTMLFormElement>("#form-add-personality")!;
+	const form = document.querySelector<HTMLFormElement>("#form-add-personality")!;
+	form.querySelector<HTMLInputElement>('input[name="id"]')!.value = personaId;
+	form.querySelector<HTMLInputElement>('input[name="name"]')!.value = "Ada";
+	return form;
 }
 
 function submit(form: HTMLFormElement): void {

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MAX_ATTACHMENTS } from "../../../src/utils/attachments";
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 import { MockDataTransfer, makeEmptyFileList } from "../../helpers/files";
 
 vi.mock("../../../src/services/Message.service", () => ({
@@ -71,26 +71,7 @@ vi.mock("../../../src/components/static/ImageCreditsLabel.component", () => ({
 }));
 
 function bootstrapAttachmentDom(): void {
-	bootstrapDom(`
-        <div id="personalitiesDiv"></div>
-        <div id="scrollable-chat-container"></div>
-        <div id="bottom-ui-container">
-            <div id="message-box">
-                <div id="messageInput" contenteditable="true"></div>
-                <div id="attachment-preview"></div>
-            </div>
-        </div>
-        <input id="attachments" type="file">
-        <button id="btn-send" type="button"></button>
-        <button id="btn-internet" type="button"></button>
-        <button id="btn-roleplay" type="button"></button>
-        <div id="turn-control-panel" class="hidden"></div>
-        <span id="turn-control-label"></span>
-        <button id="btn-start-turn" type="button"></button>
-        <span id="start-round-text"></span>
-        <button id="btn-skip-turn" type="button"></button>
-        <button id="btn-rpg-settings" type="button"></button>
-    `);
+	bootstrapAppDom();
 }
 
 function createFile(name: string, type: string, contents: string): File {

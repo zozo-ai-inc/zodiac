@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SETTINGS_STORAGE_KEYS } from "../../../src/constants/SettingsStorageKeys";
-import { addHighlightThemeLink, bootstrapDom } from "../../helpers/dom";
+import { addHighlightThemeLink, bootstrapAppDom } from "../../helpers/dom";
 
 const syncServiceMock = vi.hoisted(() => ({
 	isSyncActive: vi.fn(() => true),
@@ -22,21 +22,7 @@ function setStoredTheme(colorTheme: string, mode: "light" | "dark"): void {
 }
 
 function bootstrapThemeControlsDom(): void {
-	bootstrapDom(`
-		<div class="stepped-slider">
-			<input type="hidden" id="themeMode" value="1">
-			<button class="stepped-slider-btn" data-value="0" data-icon="light_mode">Light</button>
-			<button class="stepped-slider-btn" data-value="1" data-icon="contrast">Auto</button>
-			<button class="stepped-slider-btn" data-value="2" data-icon="dark_mode">Dark</button>
-		</div>
-		<div class="theme-selector">
-			<button class="theme-btn" data-theme="blue" aria-label="Blue theme"></button>
-			<button class="theme-btn" data-theme="red" aria-label="Red theme"></button>
-			<button class="theme-btn" data-theme="green" aria-label="Green theme"></button>
-			<button class="theme-btn" data-theme="purple" aria-label="Purple theme"></button>
-			<button class="theme-btn" data-theme="monochrome" aria-label="Monochrome theme"></button>
-		</div>
-	`);
+	bootstrapAppDom();
 }
 
 describe("synced theme settings", () => {

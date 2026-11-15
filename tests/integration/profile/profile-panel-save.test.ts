@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { bootstrapDom } from "../../helpers/dom";
+import { bootstrapAppDom } from "../../helpers/dom";
 
 const serviceState = vi.hoisted(() => ({
 	updateUser: vi.fn(),
@@ -43,29 +43,7 @@ async function flushPromises(): Promise<void> {
 }
 
 function mountProfileDom(): void {
-	bootstrapDom(`
-		<button id="btn-change-pfp"></button>
-		<img id="profile-pfp" />
-		<input id="profile-preferred-name" />
-		<textarea id="profile-system-prompt"></textarea>
-		<button id="btn-profile-save">
-			<span id="profile-save-spinner" class="loading-spinner hidden" aria-hidden="true"></span>
-			<span id="profile-save-label">Save</span>
-		</button>
-		<div id="subscription-status-row" class="collapsed"><div class="collapsible-card-header"></div></div>
-		<div id="subscription-card-content"></div>
-		<span id="subscription-badge"></span>
-		<button id="btn-manage-subscription"></button>
-		<span id="subscription-remaining-generations"></span>
-		<span id="subscription-remaining-mega-credits"></span>
-		<div id="profile-info-card" class="collapsed"><div class="collapsible-card-header"></div></div>
-		<div id="profile-info-content"></div>
-		<div id="account-info-card" class="collapsed"><div class="collapsible-card-header"></div></div>
-		<div id="account-info-content"></div>
-		<span id="account-email"></span>
-		<button id="btn-reset-password"></button>
-		<button id="btn-change-email"></button>
-	`);
+	bootstrapAppDom();
 }
 
 async function loadProfilePanel(): Promise<void> {
