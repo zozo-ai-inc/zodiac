@@ -25,6 +25,7 @@ import {
 	DEFAULT_OPENROUTER_TITLE_MODEL,
 	getChatModelDefinition,
 	getValidChatModel,
+	isDemonRouteModel,
 	isGeminiModel,
 	isOpenRouterModel,
 	modelRequiresThinking,
@@ -738,6 +739,9 @@ function generateThinkingConfig(
 }
 
 function getLocalApiKeyForModel(model: string, settings: ReturnType<typeof settingsService.getSettings>): string {
+	if (isDemonRouteModel(model)) {
+		return (settings.demonRouteApiKey || "").trim();
+	}
 	return isOpenRouterModel(model)
 		? (settings.openRouterApiKey || "").trim()
 		: (settings.geminiApiKey || settings.apiKey || "").trim();
@@ -1091,7 +1095,10 @@ export async function constructGeminiChatHistoryFromLocalChat(
 				// OpenRouter-origin signatures are incompatible with Gemini (see the
 				// SKIP_THOUGHT_SIGNATURE_VALIDATOR doc block). For OpenRouter origin we
 				// ignore the stored signature and fall back to the skip-validator below.
-				const canUseStoredSignature = isModelMessage && !isOpenRouterModel(dbMessage.originModel || "");
+				const canUseStoredSignature =
+					isModelMessage &&
+					!isOpenRouterModel(dbMessage.originModel || "") &&
+					!isDemonRouteModel(dbMessage.originModel || "");
 				const resolvedSignature = canUseStoredSignature ? await resolveThoughtSignature(part) : undefined;
 				const ts =
 					resolvedSignature ||
@@ -1128,7 +1135,8 @@ export async function constructGeminiChatHistoryFromLocalChat(
 			suppressThoughtSignature: hasThoughtSignature,
 			// OpenRouter image signatures are incompatible with Gemini; disallow reusing
 			// them so the builder substitutes the skip-validator when required.
-			allowStoredThoughtSignatures: !isOpenRouterModel(dbMessage.originModel || "")
+			allowStoredThoughtSignatures:
+				!isOpenRouterModel(dbMessage.originModel || "") && !isDemonRouteModel(dbMessage.originModel || "")
 		});
 		if (imageParts.length > 0) {
 			genAiMessage.parts?.push(...imageParts);
@@ -1759,6 +1767,8 @@ async function performEarlyValidation(msg: string, options: SendOptions = {}): P
 		settings.model = getValidChatModel(settings.model, {
 			hasGeminiAccess: true,
 			hasOpenRouterAccess: true,
+			// The premium endpoint cannot serve Demon Route models.
+			hasDemonRouteAccess: false,
 			isPremiumEndpointPreferred: true
 		});
 	}
@@ -1786,21 +1796,26 @@ async function performEarlyValidation(msg: string, options: SendOptions = {}): P
 	// The chat-model API-key gate does not apply to image requests: those are gated by
 	// the resolved image route above, not by the selected chat model's provider key.
 	if (!isImageRequest && !isPremiumEndpointPreferred && !hasLocalApiKey) {
-		const providerName = isOpenRouterModel(settings.model) ? "OpenRouter" : "Gemini";
+		const providerName = isOpenRouterModel(settings.model)
+			? "OpenRouter"
+			: isDemonRouteModel(settings.model)
+				? "Demon Route"
+				: "Gemini";
 		warn({
 			title: `${providerName} API Key Required`,
 			text: `Please enter your ${providerName} API key in settings, switch to a model from a provider you already configured, or subscribe to Pro for unlimited access.`,
-			actions: isOpenRouterModel(settings.model)
-				? [
-						{
-							label: "Open API Settings",
-							onClick(dismiss) {
-								dispatchAppEvent("open-settings", { page: "api" });
-								dismiss();
+			actions:
+				isOpenRouterModel(settings.model) || isDemonRouteModel(settings.model)
+					? [
+							{
+								label: "Open API Settings",
+								onClick(dismiss) {
+									dispatchAppEvent("open-settings", { page: "api" });
+									dismiss();
+								}
 							}
-						}
-					]
-				: []
+						]
+					: []
 		});
 		return { canProceed: false };
 	}
@@ -2058,7 +2073,7 @@ async function handleTextChat(ctx: SendContext): Promise<HTMLElement | undefined
 	try {
 		if (ctx.isPremiumEndpointPreferred) {
 			await handleTextChatPremium(ctx, state);
-		} else if (isOpenRouterModel(ctx.settings.model)) {
+		} else if (isOpenRouterModel(ctx.settings.model) || isDemonRouteModel(ctx.settings.model)) {
 			await handleTextChatOpenRouter(ctx, state);
 		} else {
 			await handleTextChatLocalSdk(ctx, state);

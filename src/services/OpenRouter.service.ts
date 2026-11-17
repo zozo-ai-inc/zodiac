@@ -50,7 +50,19 @@ export interface OpenRouterCompletionArgs {
 	}) => void | Promise<void>;
 }
 
-function getHeaders(apiKey: string): Record<string, string> {
+const OPENROUTER_CHAT_COMPLETIONS_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+export const DEMONROUTE_CHAT_COMPLETIONS_ENDPOINT = "https://api.demonroute.com/v1/chat/completions";
+
+function getHeaders(apiKey: string, isDemonRoute: boolean): Record<string, string> {
+	if (isDemonRoute) {
+		// Demon Route's CORS preflight allows only Authorization and Content-Type, so the
+		// OpenRouter attribution headers (HTTP-Referer, X-OpenRouter-Title) must not be sent.
+		return {
+			Authorization: `Bearer ${apiKey}`,
+			"Content-Type": "application/json"
+		};
+	}
+
 	return {
 		Authorization: `Bearer ${apiKey}`,
 		"Content-Type": "application/json",
@@ -487,6 +499,7 @@ export function buildOpenRouterRequest(args: {
 	responseFormat?: OpenRouterRequest["response_format"];
 }): OpenRouterRequest {
 	const definition = getChatModelDefinition(args.model);
+	const isDemonRoute = definition?.provider === "demonroute";
 
 	return {
 		model: args.model,
@@ -494,12 +507,18 @@ export function buildOpenRouterRequest(args: {
 		stream: args.stream,
 		max_tokens: args.maxTokens,
 		temperature: modelSupportsTemperature(args.model) ? args.temperature : undefined,
-		reasoning: buildOpenRouterReasoning({
-			model: args.model,
-			enableThinking: args.enableThinking,
-			reasoningEffort: args.reasoningEffort
-		}),
-		plugins: buildOpenRouterPlugins({ isInternetSearchEnabled: args.isInternetSearchEnabled }),
+		// The reasoning, plugins and provider fields are OpenRouter-only; Demon Route takes a
+		// plain Chat Completions body, so they are dropped for its models.
+		reasoning: isDemonRoute
+			? undefined
+			: buildOpenRouterReasoning({
+					model: args.model,
+					enableThinking: args.enableThinking,
+					reasoningEffort: args.reasoningEffort
+				}),
+		plugins: isDemonRoute
+			? undefined
+			: buildOpenRouterPlugins({ isInternetSearchEnabled: args.isInternetSearchEnabled }),
 		response_format: args.responseFormat,
 		provider: definition?.provider === "openrouter" ? { require_parameters: false } : undefined,
 		modalities: definition?.supportsImageOutput ? (definition.outputModalities ?? ["text", "image"]) : undefined
@@ -507,15 +526,19 @@ export function buildOpenRouterRequest(args: {
 }
 
 export async function requestOpenRouterCompletion(args: OpenRouterCompletionArgs): Promise<OpenRouterCompletionResult> {
-	const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-		method: "POST",
-		headers: getHeaders(args.apiKey),
-		body: JSON.stringify(args.request),
-		signal: args.signal
-	});
+	const isDemonRoute = getChatModelDefinition(args.request.model)?.provider === "demonroute";
+	const response = await fetch(
+		isDemonRoute ? DEMONROUTE_CHAT_COMPLETIONS_ENDPOINT : OPENROUTER_CHAT_COMPLETIONS_ENDPOINT,
+		{
+			method: "POST",
+			headers: getHeaders(args.apiKey, isDemonRoute),
+			body: JSON.stringify(args.request),
+			signal: args.signal
+		}
+	);
 
 	if (!response.ok) {
-		let message = `OpenRouter error: ${response.status}`;
+		let message = `${isDemonRoute ? "Demon Route" : "OpenRouter"} error: ${response.status}`;
 		try {
 			const json = (await response.json()) as { error?: { message?: string } };
 			message = json.error?.message || message;

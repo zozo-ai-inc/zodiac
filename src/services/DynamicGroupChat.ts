@@ -14,7 +14,7 @@ import hljs from "highlight.js";
 import type { Message } from "../types/Message";
 import type { DbChat } from "../types/Chat";
 import type { DbPersonality } from "../types/Personality";
-import { isOpenRouterModel, modelSupportsTemperature } from "../types/Models";
+import { isDemonRouteModel, isOpenRouterModel, modelSupportsTemperature } from "../types/Models";
 import { resolveGuardForPersona } from "../utils/dynamicGroupChatGuards";
 import type { PremiumEndpoint } from "../types/PremiumEndpoint";
 
@@ -411,7 +411,7 @@ async function respondAsPersona(args: {
 			resultText = extracted.text;
 			resultThinking = extracted.thinking;
 		} else {
-			if (isOpenRouterModel(settings.model)) {
+			if (isOpenRouterModel(settings.model) || isDemonRouteModel(settings.model)) {
 				const messages = await buildOpenRouterRequestMessages({
 					history,
 					systemInstructionText,
@@ -419,7 +419,7 @@ async function respondAsPersona(args: {
 				});
 
 				const response = await requestOpenRouterCompletion({
-					apiKey: settings.openRouterApiKey,
+					apiKey: isDemonRouteModel(settings.model) ? settings.demonRouteApiKey : settings.openRouterApiKey,
 					request: buildOpenRouterRequest({
 						model: settings.model,
 						messages,

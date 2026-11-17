@@ -15,6 +15,7 @@ import {
 	ChatModel,
 	getPremiumEndpointChatModel,
 	getPreferredNarratorLocalModel,
+	isDemonRouteModel,
 	isOpenRouterModel,
 	modelSupportsTemperature,
 	requiresThoughtSignaturesInHistory
@@ -1148,12 +1149,12 @@ async function runLocalSdkRpgTurn(args: {
 }): Promise<TextAndThinking> {
 	const { settings, history, config, turnInstruction, signal, onThinking, onText } = args;
 
-	if (isOpenRouterModel(settings.model)) {
+	if (isOpenRouterModel(settings.model) || isDemonRouteModel(settings.model)) {
 		const systemInstructionText = (
 			(config.systemInstruction as Content | undefined)?.parts?.[0]?.text || ""
 		).toString();
 		return await requestOpenRouterCompletion({
-			apiKey: settings.openRouterApiKey,
+			apiKey: isDemonRouteModel(settings.model) ? settings.demonRouteApiKey : settings.openRouterApiKey,
 			request: buildOpenRouterRequest({
 				model: settings.model,
 				messages: await buildOpenRouterRequestMessages({
@@ -1986,7 +1987,10 @@ async function constructGeminiChatHistoryForGroupChatRpg(
 			if (text.trim().length > 0) {
 				const partObj: any = { text: maybePrefixSpeaker(text, speaker) };
 				const isModelMessage = dbMessage.role === "model";
-				const canUseStoredSignature = isModelMessage && !isOpenRouterModel(dbMessage.originModel || "");
+				const canUseStoredSignature =
+					isModelMessage &&
+					!isOpenRouterModel(dbMessage.originModel || "") &&
+					!isDemonRouteModel(dbMessage.originModel || "");
 				const resolvedSignature = canUseStoredSignature ? await resolveThoughtSignature(part) : undefined;
 				const ts =
 					resolvedSignature ||
@@ -2016,7 +2020,8 @@ async function constructGeminiChatHistoryForGroupChatRpg(
 			// Mirror the single-chat builder: OpenRouter image signatures are
 			// incompatible with Gemini, so disallow reuse (see the
 			// SKIP_THOUGHT_SIGNATURE_VALIDATOR doc in Message.service.ts).
-			allowStoredThoughtSignatures: !isOpenRouterModel(dbMessage.originModel || "")
+			allowStoredThoughtSignatures:
+				!isOpenRouterModel(dbMessage.originModel || "") && !isDemonRouteModel(dbMessage.originModel || "")
 		});
 		if (imageParts.length > 0) {
 			genAiMessage.parts?.push(...imageParts);

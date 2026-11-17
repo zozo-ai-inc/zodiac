@@ -165,7 +165,11 @@ describe("roleplay suggestion models", () => {
 
 	it("includes only models flagged for roleplay suggestions", () => {
 		setNow(BEFORE_ANY_DEPRECATION);
-		const fullAccess: ChatModelAccess = { hasGeminiAccess: true, hasOpenRouterAccess: true };
+		const fullAccess: ChatModelAccess = {
+			hasGeminiAccess: true,
+			hasOpenRouterAccess: true,
+			hasDemonRouteAccess: true
+		};
 
 		const expectedModels = [
 			"Gemini 3.1 Flash Lite",
@@ -215,7 +219,12 @@ describe("roleplay suggestion models", () => {
 			"Qwen3.7 Flash",
 			"Qwen3.8 Flash",
 			"Qwen3.8 Max",
-			"Qwen3.8 Max Prime"
+			"Qwen3.8 Max Prime",
+			"Bathory X 26B",
+			"LuneLight 31B",
+			"Wicked Tutu 31B",
+			"Cydonia Magnum Diamond 24B",
+			"GLM 5.3 Uncensored"
 		];
 		const receivedModels = getAccessibleRoleplaySuggestionModels(fullAccess).map((model) => model.label);
 
@@ -226,6 +235,7 @@ describe("roleplay suggestion models", () => {
 		const premiumAccess: ChatModelAccess = {
 			hasGeminiAccess: true,
 			hasOpenRouterAccess: true,
+			hasDemonRouteAccess: false,
 			isPremiumEndpointPreferred: true
 		};
 
@@ -273,10 +283,15 @@ describe("thinking-required models", () => {
 });
 
 describe("chat model deprecation", () => {
-	const fullAccess: ChatModelAccess = { hasGeminiAccess: true, hasOpenRouterAccess: true };
+	const fullAccess: ChatModelAccess = {
+		hasGeminiAccess: true,
+		hasOpenRouterAccess: true,
+		hasDemonRouteAccess: true
+	};
 	const premiumAccess: ChatModelAccess = {
 		hasGeminiAccess: true,
 		hasOpenRouterAccess: true,
+		hasDemonRouteAccess: false,
 		isPremiumEndpointPreferred: true
 	};
 
@@ -356,7 +371,11 @@ describe("chat model deprecation", () => {
 
 	it("falls back to the first offered model when the named replacement is not offered either", () => {
 		setNow("2026-10-20T00:00:00Z");
-		const openRouterOnly: ChatModelAccess = { hasGeminiAccess: false, hasOpenRouterAccess: true };
+		const openRouterOnly: ChatModelAccess = {
+			hasGeminiAccess: false,
+			hasOpenRouterAccess: true,
+			hasDemonRouteAccess: false
+		};
 
 		expect(getValidChatModel("gemini-2.5-pro", openRouterOnly)).toBe(getAccessibleChatModels(openRouterOnly)[0].id);
 	});

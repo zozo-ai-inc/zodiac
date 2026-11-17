@@ -28,6 +28,7 @@ vi.mock("../../../src/services/Settings.service", () => ({
 		roleplaySuggestionModel: "",
 		model: "openai/gpt-5.4",
 		openRouterApiKey: "test-openrouter-key",
+		demonRouteApiKey: "",
 		geminiApiKey: "test-gemini-key",
 		maxTokens: "512",
 		temperature: "60",
