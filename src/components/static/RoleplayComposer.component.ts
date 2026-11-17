@@ -16,6 +16,7 @@ import {
 	formatChatModelLabel,
 	getAccessibleRoleplaySuggestionModels,
 	getValidRoleplaySuggestionModel,
+	isDemonRouteModel,
 	isOpenRouterModel,
 	modelRequiresThinking,
 	getRoleplaySuggestionThinkingCap,
@@ -1172,6 +1173,8 @@ function buildAccess(): ChatModelAccess {
 		hasOpenRouterAccess:
 			hasPremiumModelAccess ||
 			(localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "").trim().length > 0,
+		// The premium endpoint cannot serve Demon Route models, so premium access never grants this.
+		hasDemonRouteAccess: (localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "").trim().length > 0,
 		isPremiumEndpointPreferred: usePremiumEndpoint
 	};
 }
@@ -1274,9 +1277,13 @@ async function requestWithLocalModel(model: string, systemInstruction: string, u
 	const settings = settingsService.getSettings();
 	const baseConfig = buildRoleplaySuggestionBaseConfig(model);
 
-	if (isOpenRouterModel(model)) {
-		const apiKey = settings.openRouterApiKey.trim();
-		if (!apiKey) throw new Error("OpenRouter API key required for the selected suggestion model.");
+	if (isOpenRouterModel(model) || isDemonRouteModel(model)) {
+		const isDemonRoute = isDemonRouteModel(model);
+		const apiKey = (isDemonRoute ? settings.demonRouteApiKey : settings.openRouterApiKey).trim();
+		if (!apiKey)
+			throw new Error(
+				`${isDemonRoute ? "Demon Route" : "OpenRouter"} API key required for the selected suggestion model.`
+			);
 		const request = buildOpenRouterRequest({
 			model,
 			messages: [
@@ -1354,9 +1361,11 @@ async function refreshSuggestions(force = false): Promise<void> {
 		const tier = supabaseService.getSubscriptionTier(subscription);
 		const canUsePremium =
 			(tier === "pro" || tier === "pro_plus" || tier === "max") && shouldPreferPremiumEndpoint();
-		const hasLocalKey = isOpenRouterModel(model)
-			? settings.openRouterApiKey.trim().length > 0
-			: settings.geminiApiKey.trim().length > 0;
+		const hasLocalKey = isDemonRouteModel(model)
+			? settings.demonRouteApiKey.trim().length > 0
+			: isOpenRouterModel(model)
+				? settings.openRouterApiKey.trim().length > 0
+				: settings.geminiApiKey.trim().length > 0;
 
 		const raw =
 			canUsePremium && !hasLocalKey

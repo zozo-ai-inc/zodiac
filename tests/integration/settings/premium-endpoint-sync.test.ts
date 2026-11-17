@@ -10,7 +10,8 @@ vi.mock("../../../src/services/Supabase.service", () => ({
 
 vi.mock("../../../src/services/ApiKeyValidation.service", () => ({
 	validateGeminiApiKey: vi.fn(),
-	validateOpenRouterApiKey: vi.fn()
+	validateOpenRouterApiKey: vi.fn(),
+	validateDemonRouteApiKey: vi.fn()
 }));
 
 vi.mock("../../../src/services/Sync.service", () => ({

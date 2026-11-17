@@ -16,6 +16,7 @@ import {
 	GEMINI_CHAT_MODELS,
 	formatChatModelLabel,
 	OPENROUTER_CHAT_MODELS,
+	DEMONROUTE_CHAT_MODELS,
 	getAccessibleChatModels,
 	getDefaultChatModel,
 	getValidChatModel,
@@ -294,6 +295,8 @@ async function getOnboardingModelAccess(): Promise<ChatModelAccess> {
 		hasOpenRouterAccess:
 			hasPremiumAccess ||
 			(localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "").trim().length > 0,
+		// The premium endpoint cannot serve Demon Route models, so premium access never grants this.
+		hasDemonRouteAccess: (localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "").trim().length > 0,
 		isPremiumEndpointPreferred: shouldUsePremiumEndpointForOnboarding(hasPremiumAccess)
 	};
 }
@@ -335,6 +338,9 @@ async function refreshOnboardingModelOptions(preferredModel?: string): Promise<v
 		const openRouterModels = available.filter((model) =>
 			OPENROUTER_CHAT_MODELS.some((candidate) => candidate.id === model.id)
 		);
+		const demonRouteModels = available.filter((model) =>
+			DEMONROUTE_CHAT_MODELS.some((candidate) => candidate.id === model.id)
+		);
 
 		if (geminiModels.length > 0) {
 			advancedModelSelect!.append(buildOptionGroup("Gemini", geminiModels));
@@ -342,6 +348,10 @@ async function refreshOnboardingModelOptions(preferredModel?: string): Promise<v
 
 		if (openRouterModels.length > 0) {
 			advancedModelSelect!.append(buildOptionGroup("OpenRouter", openRouterModels));
+		}
+
+		if (demonRouteModels.length > 0) {
+			advancedModelSelect!.append(buildOptionGroup("Demon Route", demonRouteModels));
 		}
 	}
 

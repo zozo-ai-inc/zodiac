@@ -28,7 +28,7 @@ const GEMINI_TO_OPENROUTER_CHAT_MODEL_IDS = new Map<string, string>([
 	[ChatModel.PRO_2_5, "google/gemini-2.5-pro"]
 ]);
 
-export type ModelProvider = "gemini" | "openrouter";
+export type ModelProvider = "gemini" | "openrouter" | "demonroute";
 
 export type ReasoningEffort = "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
 // Ascending. "none" is not a level: thinking is turned off with the thinking toggle instead.
@@ -74,6 +74,7 @@ export interface ChatModelDefinition {
 export interface ChatModelAccess {
 	hasGeminiAccess: boolean;
 	hasOpenRouterAccess: boolean;
+	hasDemonRouteAccess: boolean;
 	isPremiumEndpointPreferred?: boolean;
 }
 
@@ -81,6 +82,7 @@ export const DEFAULT_GEMINI_CHAT_MODEL = ChatModel.FLASH;
 export const DEFAULT_OPENROUTER_CHAT_MODEL = "openai/gpt-5.4";
 export const DEFAULT_OPENROUTER_NARRATOR_MODEL = DEFAULT_OPENROUTER_CHAT_MODEL;
 export const DEFAULT_OPENROUTER_TITLE_MODEL = "z-ai/glm-5";
+export const DEFAULT_DEMONROUTE_CHAT_MODEL = "Nabbers1999/Bathory-X-26B-A4B-0.2";
 const UI_DISABLED_CHAT_MODELS = new Set(["openai/gpt-5.4-pro"]);
 
 export function requiresThoughtSignaturesInHistory(_model: string): boolean {
@@ -1040,7 +1042,93 @@ export const OPENROUTER_CHAT_MODELS: ChatModelDefinition[] = [
 	}
 ];
 
-export const CHAT_MODELS: ChatModelDefinition[] = [...GEMINI_CHAT_MODELS, ...OPENROUTER_CHAT_MODELS];
+// Demon Route is BYOK-only like the Gemini key path: the premium endpoint cannot serve
+// these models, so they are localOnly and gated on the user's own Demon Route key.
+export const DEMONROUTE_CHAT_MODELS: ChatModelDefinition[] = [
+	{
+		id: "Nabbers1999/Bathory-X-26B-A4B-0.2",
+		label: "Bathory X 26B",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "zerofata/G4-LuneLight-31B",
+		label: "LuneLight 31B",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "ReadyArt/Wicked-Tutu-31B-Final",
+		label: "Wicked Tutu 31B",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "knifeayumu/Cydonia-v4.1-MS3.2-Magnum-Diamond-24B",
+		label: "Cydonia Magnum Diamond 24B",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "glm-5.3-uncensored",
+		label: "GLM 5.3 Uncensored",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		roleplayModeSuggester: true,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	},
+	{
+		id: "NousResearch/Hermes-3-Llama-3.1-8B",
+		label: "Hermes 3 Llama 3.1 8B",
+		provider: "demonroute",
+		localOnly: true,
+		mega: false,
+		supportsThinking: false,
+		supportsTemperature: true,
+		supportsImageInput: false,
+		supportsFileInput: false,
+		supportsImageOutput: false
+	}
+];
+
+export const CHAT_MODELS: ChatModelDefinition[] = [
+	...GEMINI_CHAT_MODELS,
+	...OPENROUTER_CHAT_MODELS,
+	...DEMONROUTE_CHAT_MODELS
+];
 
 const chatModelMap = new Map(CHAT_MODELS.map((model) => [model.id, model]));
 const legacyOpenRouterImageModelIds = new Set([
@@ -1073,6 +1161,10 @@ export function isOpenRouterModel(model: string | null | undefined): boolean {
 		!!model &&
 		(getChatModelDefinition(model)?.provider === "openrouter" || legacyOpenRouterImageModelIds.has(model))
 	);
+}
+
+export function isDemonRouteModel(model: string | null | undefined): boolean {
+	return !!model && getChatModelDefinition(model)?.provider === "demonroute";
 }
 
 export function modelSupportsThinking(model: string | null | undefined): boolean {
@@ -1125,6 +1217,7 @@ export function getAccessibleChatModels(access: ChatModelAccess): ChatModelDefin
 		}
 
 		if (model.provider === "gemini") return access.hasGeminiAccess;
+		if (model.provider === "demonroute") return access.hasDemonRouteAccess;
 		return access.hasOpenRouterAccess;
 	});
 }
@@ -1173,6 +1266,10 @@ export function getDefaultChatModel(access: ChatModelAccess): string {
 
 	if (access.hasOpenRouterAccess) {
 		return DEFAULT_OPENROUTER_CHAT_MODEL;
+	}
+
+	if (access.hasDemonRouteAccess) {
+		return DEFAULT_DEMONROUTE_CHAT_MODEL;
 	}
 
 	return DEFAULT_GEMINI_CHAT_MODEL;

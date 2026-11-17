@@ -4,6 +4,7 @@ import {
 	GEMINI_CHAT_MODELS,
 	formatChatModelLabel,
 	OPENROUTER_CHAT_MODELS,
+	DEMONROUTE_CHAT_MODELS,
 	getAccessibleChatModels,
 	getDefaultChatModel,
 	getValidChatModel,
@@ -15,15 +16,19 @@ import { SETTINGS_STORAGE_KEYS } from "../../constants/SettingsStorageKeys";
 export const modelSelect = document.querySelector<HTMLSelectElement>("#selectedModel");
 const geminiApiKeyInput = document.querySelector<HTMLInputElement>("#apiKeyInput");
 const openRouterApiKeyInput = document.querySelector<HTMLInputElement>("#openRouterApiKeyInput");
+const demonRouteApiKeyInput = document.querySelector<HTMLInputElement>("#demonRouteApiKeyInput");
 
-if (!modelSelect || !geminiApiKeyInput || !openRouterApiKeyInput) {
+if (!modelSelect || !geminiApiKeyInput || !openRouterApiKeyInput || !demonRouteApiKeyInput) {
 	console.error("Model selector component initialization failed");
-	throw new Error("Missing DOM element: #selectedModel, #apiKeyInput, or #openRouterApiKeyInput");
+	throw new Error(
+		"Missing DOM element: #selectedModel, #apiKeyInput, #openRouterApiKeyInput, or #demonRouteApiKeyInput"
+	);
 }
 
 const ensuredModelSelect = modelSelect;
 const ensuredGeminiApiKeyInput = geminiApiKeyInput;
 const ensuredOpenRouterApiKeyInput = openRouterApiKeyInput;
+const ensuredDemonRouteApiKeyInput = demonRouteApiKeyInput;
 
 let hasPremiumModelAccess = false;
 
@@ -43,6 +48,10 @@ function buildAccess(): ChatModelAccess {
 			hasPremiumModelAccess ||
 			ensuredOpenRouterApiKeyInput.value.trim().length > 0 ||
 			(localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "").trim().length > 0,
+		// The premium endpoint cannot serve Demon Route models, so premium access never grants this.
+		hasDemonRouteAccess:
+			ensuredDemonRouteApiKeyInput.value.trim().length > 0 ||
+			(localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "").trim().length > 0,
 		isPremiumEndpointPreferred: usePremiumEndpoint
 	};
 }
@@ -83,6 +92,9 @@ export function refreshModelSelectorOptions(): void {
 		const openRouterModels = available.filter((model) =>
 			OPENROUTER_CHAT_MODELS.some((candidate) => candidate.id === model.id)
 		);
+		const demonRouteModels = available.filter((model) =>
+			DEMONROUTE_CHAT_MODELS.some((candidate) => candidate.id === model.id)
+		);
 
 		if (geminiModels.length > 0) {
 			ensuredModelSelect.append(setOptGroup("Gemini", geminiModels));
@@ -91,12 +103,16 @@ export function refreshModelSelectorOptions(): void {
 		if (openRouterModels.length > 0) {
 			ensuredModelSelect.append(setOptGroup("OpenRouter", openRouterModels));
 		}
+
+		if (demonRouteModels.length > 0) {
+			ensuredModelSelect.append(setOptGroup("Demon Route", demonRouteModels));
+		}
 	}
 
 	if (available.length === 0) {
 		const option = document.createElement("option");
 		option.value = "";
-		option.textContent = "Add a Gemini or OpenRouter key to unlock models";
+		option.textContent = "Add a Gemini, OpenRouter or Demon Route key to unlock models";
 		option.disabled = true;
 		option.selected = true;
 		ensuredModelSelect.append(option);
@@ -127,6 +143,7 @@ ensuredModelSelect.addEventListener("change", () => {
 
 ensuredGeminiApiKeyInput.addEventListener("input", refreshModelSelectorOptions);
 ensuredOpenRouterApiKeyInput.addEventListener("input", refreshModelSelectorOptions);
+ensuredDemonRouteApiKeyInput.addEventListener("input", refreshModelSelectorOptions);
 
 onAppEvent("auth-state-changed", (event) => {
 	const tier = getSubscriptionTier(event.detail.subscription ?? null);

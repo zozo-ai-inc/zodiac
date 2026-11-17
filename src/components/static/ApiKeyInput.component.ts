@@ -5,13 +5,19 @@ import {
 } from "../../services/Supabase.service";
 import { dispatchAppEvent, onAppEvent } from "../../events";
 import { SETTINGS_STORAGE_KEYS } from "../../constants/SettingsStorageKeys";
-import { validateGeminiApiKey, validateOpenRouterApiKey } from "../../services/ApiKeyValidation.service";
+import {
+	validateDemonRouteApiKey,
+	validateGeminiApiKey,
+	validateOpenRouterApiKey
+} from "../../services/ApiKeyValidation.service";
 import * as syncService from "../../services/Sync.service";
 
 const geminiApiKeyInput = document.querySelector<HTMLInputElement>("#apiKeyInput");
 const openRouterApiKeyInput = document.querySelector<HTMLInputElement>("#openRouterApiKeyInput");
+const demonRouteApiKeyInput = document.querySelector<HTMLInputElement>("#demonRouteApiKeyInput");
 const geminiError = document.querySelector<HTMLElement>("#gemini-api-key-error");
 const openRouterError = document.querySelector<HTMLElement>("#openrouter-api-key-error");
+const demonRouteError = document.querySelector<HTMLElement>("#demonroute-api-key-error");
 const preferPremiumToggle = document.querySelector<HTMLDivElement>("#prefer-premium-endpoint-toggle");
 const preferPremiumCheckbox = document.querySelector<HTMLInputElement>("#preferPremiumEndpoint");
 const preferPremiumImageToggle = document.querySelector<HTMLDivElement>("#prefer-premium-image-endpoint-toggle");
@@ -24,8 +30,10 @@ const preferPremiumImageSubtitle = preferPremiumImageToggle?.querySelector<HTMLE
 if (
 	!geminiApiKeyInput ||
 	!openRouterApiKeyInput ||
+	!demonRouteApiKeyInput ||
 	!geminiError ||
 	!openRouterError ||
+	!demonRouteError ||
 	!preferPremiumToggle ||
 	!preferPremiumCheckbox ||
 	!preferPremiumImageToggle ||
@@ -39,8 +47,10 @@ if (
 
 const ensuredGeminiApiKeyInput = geminiApiKeyInput;
 const ensuredOpenRouterApiKeyInput = openRouterApiKeyInput;
+const ensuredDemonRouteApiKeyInput = demonRouteApiKeyInput;
 const ensuredGeminiError = geminiError;
 const ensuredOpenRouterError = openRouterError;
+const ensuredDemonRouteError = demonRouteError;
 const ensuredPreferPremiumToggle = preferPremiumToggle;
 const ensuredPreferPremiumCheckbox = preferPremiumCheckbox;
 const ensuredPreferPremiumImageToggle = preferPremiumImageToggle;
@@ -226,6 +236,12 @@ attachValidation({
 	validator: validateOpenRouterApiKey
 });
 
+attachValidation({
+	input: ensuredDemonRouteApiKeyInput,
+	errorElement: ensuredDemonRouteError,
+	validator: validateDemonRouteApiKey
+});
+
 export function shouldPreferPremiumEndpoint(): boolean {
 	const saved = localStorage.getItem(SETTINGS_STORAGE_KEYS.PREFER_PREMIUM_ENDPOINT);
 	return saved === null ? true : saved === "true";
@@ -242,6 +258,13 @@ export function hasOpenRouterApiKey(): boolean {
 	return (
 		ensuredOpenRouterApiKeyInput.value.trim().length > 0 ||
 		(localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "").trim().length > 0
+	);
+}
+
+export function hasDemonRouteApiKey(): boolean {
+	return (
+		ensuredDemonRouteApiKeyInput.value.trim().length > 0 ||
+		(localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "").trim().length > 0
 	);
 }
 

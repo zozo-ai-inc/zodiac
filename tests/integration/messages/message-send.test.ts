@@ -48,6 +48,7 @@ const testState = vi.hoisted(() => ({
 		apiKey: "",
 		geminiApiKey: "",
 		openRouterApiKey: "test-openrouter-key",
+		demonRouteApiKey: "",
 		maxTokens: "256",
 		temperature: "50",
 		model: "openai/gpt-5.4",

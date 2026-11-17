@@ -16,6 +16,7 @@ import { dispatchAppEvent, dispatchEmptyAppEvent } from "../events";
 
 const geminiApiKeyInput = document.querySelector("#apiKeyInput") as HTMLInputElement;
 const openRouterApiKeyInput = document.querySelector("#openRouterApiKeyInput") as HTMLInputElement;
+const demonRouteApiKeyInput = document.querySelector("#demonRouteApiKeyInput") as HTMLInputElement;
 const maxTokensInput = document.querySelector("#maxTokens") as HTMLInputElement;
 const temperatureInput = document.querySelector("#temperature") as HTMLInputElement;
 const modelSelect = document.querySelector("#selectedModel") as HTMLSelectElement;
@@ -49,6 +50,7 @@ const delimiterPreviewThought = document.querySelector("#delimiterPreviewThought
 if (
 	!geminiApiKeyInput ||
 	!openRouterApiKeyInput ||
+	!demonRouteApiKeyInput ||
 	!maxTokensInput ||
 	!temperatureInput ||
 	!modelSelect ||
@@ -93,6 +95,10 @@ function getCurrentModelAccess() {
 			isPremiumModelList ||
 			openRouterApiKeyInput.value.trim().length > 0 ||
 			(localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "").trim().length > 0,
+		// The premium endpoint cannot serve Demon Route models, so premium access never grants this.
+		hasDemonRouteAccess:
+			demonRouteApiKeyInput.value.trim().length > 0 ||
+			(localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "").trim().length > 0,
 		isPremiumEndpointPreferred: isPremiumModelList
 	};
 }
@@ -354,6 +360,7 @@ export function initialize() {
 	loadSettings();
 	geminiApiKeyInput.addEventListener("input", saveSettings);
 	openRouterApiKeyInput.addEventListener("input", saveSettings);
+	demonRouteApiKeyInput.addEventListener("input", saveSettings);
 	maxTokensInput.addEventListener("input", saveSettings);
 	temperatureInput.addEventListener("input", saveSettings);
 	modelSelect.addEventListener("change", saveSettings);
@@ -388,6 +395,7 @@ export function loadSettings() {
 	try {
 		geminiApiKeyInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.API_KEY) || "";
 		openRouterApiKeyInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "";
+		demonRouteApiKeyInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "";
 		maxTokensInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.MAX_TOKENS) || "1000";
 		temperatureInput.value = localStorage.getItem(SETTINGS_STORAGE_KEYS.TEMPERATURE) || "60";
 		modelSelect.value = getSelectedOrFallbackModel();
@@ -448,11 +456,17 @@ export function saveSettings() {
 
 	const prevGeminiKey = localStorage.getItem(SETTINGS_STORAGE_KEYS.API_KEY) || "";
 	const prevOpenRouterKey = localStorage.getItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY) || "";
+	const prevDemonRouteKey = localStorage.getItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY) || "";
 
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.API_KEY, geminiApiKeyInput.value);
 	localStorage.setItem(SETTINGS_STORAGE_KEYS.OPENROUTER_API_KEY, openRouterApiKeyInput.value);
+	localStorage.setItem(SETTINGS_STORAGE_KEYS.DEMONROUTE_API_KEY, demonRouteApiKeyInput.value);
 
-	if (prevGeminiKey !== geminiApiKeyInput.value || prevOpenRouterKey !== openRouterApiKeyInput.value) {
+	if (
+		prevGeminiKey !== geminiApiKeyInput.value ||
+		prevOpenRouterKey !== openRouterApiKeyInput.value ||
+		prevDemonRouteKey !== demonRouteApiKeyInput.value
+	) {
 		dispatchAppEvent("api-keys-changed", {});
 	}
 
@@ -500,11 +514,13 @@ function debouncedSyncPush() {
 export function getSettings() {
 	const geminiApiKey = geminiApiKeyInput.value;
 	const openRouterApiKey = openRouterApiKeyInput.value;
+	const demonRouteApiKey = demonRouteApiKeyInput.value;
 
 	return {
 		apiKey: geminiApiKey,
 		geminiApiKey,
 		openRouterApiKey,
+		demonRouteApiKey,
 		maxTokens: maxTokensInput.value,
 		temperature: temperatureInput.value,
 		safetySettings: [
