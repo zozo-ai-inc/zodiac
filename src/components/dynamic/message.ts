@@ -319,15 +319,13 @@ export const messageElement = async (message: Message, index: number): Promise<H
                         <img ${needsBlobResolve ? "" : `src="${URL.createObjectURL(attachment)}"`} alt="${attachment.name}" class="attachment-image" data-attachment-index="${attachmentIndex}">
                         </div>`;
 					}
-					if (attachment.type === "application/pdf" || attachment.type === "text/plain") {
-						return `<div class="attachment-container">
+					return `<div class="attachment-container">
                         <span class="material-symbols-outlined attachment-icon">text_snippet</span>
                         <div class="attachment-details">
                             <span class="attachment-name">${attachment.name}</span>
                             <span class="attachment-type">${attachment.type}</span>
                         </div>
                     </div>`;
-					}
 				})
 				.join("")}
         </div>`;
@@ -573,7 +571,7 @@ function setupMessageEditing(messageElement: HTMLElement) {
 							img.alt = attachment.name;
 							img.classList.add("attachment-image");
 							container.appendChild(img);
-						} else if (attachment.type === "application/pdf" || attachment.type === "text/plain") {
+						} else {
 							const fileIcon = document.createElement("span");
 							fileIcon.classList.add("material-symbols-outlined", "attachment-icon");
 							fileIcon.textContent = "text_snippet";
@@ -632,7 +630,7 @@ function setupMessageEditing(messageElement: HTMLElement) {
 				img.alt = attachment.name;
 				img.classList.add("attachment-image");
 				container.appendChild(img);
-			} else if (attachment.type === "application/pdf" || attachment.type === "text/plain") {
+			} else {
 				const fileIcon = document.createElement("span");
 				fileIcon.classList.add("material-symbols-outlined", "attachment-icon");
 				fileIcon.textContent = "text_snippet";
@@ -742,7 +740,7 @@ function setupMessageEditing(messageElement: HTMLElement) {
 						img.alt = attachment.name;
 						img.classList.add("attachment-image");
 						container.appendChild(img);
-					} else if (attachment.type === "application/pdf" || attachment.type === "text/plain") {
+					} else {
 						const fileIcon = document.createElement("span");
 						fileIcon.classList.add("material-symbols-outlined", "attachment-icon");
 						fileIcon.textContent = "text_snippet";
