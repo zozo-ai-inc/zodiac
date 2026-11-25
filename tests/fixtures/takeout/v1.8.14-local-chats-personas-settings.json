@@ -1,0 +1,97 @@
+{
+	"format": "zozo-chat-takeout",
+	"schemaVersion": 1,
+	"appVersion": "1.8.14",
+	"exportedAt": "2026-11-25T12:00:00.000Z",
+	"source": "local",
+	"manifest": {
+		"categories": [
+			"chats",
+			"media",
+			"personas",
+			"settings",
+			"pins",
+			"roleplay"
+		],
+		"omittedCategories": [
+			"themes",
+			"loras",
+			"apiKeys"
+		],
+		"counts": {
+			"chats": 1,
+			"messages": 2,
+			"personas": 1,
+			"attachments": 0,
+			"generatedImages": 0,
+			"settings": 3,
+			"themes": 0,
+			"loras": 0,
+			"pins": 2,
+			"roleplay": 1,
+			"apiKeys": 0
+		},
+		"mediaBytes": 0,
+		"apiKeysIncluded": false
+	},
+	"payload": {
+		"chats": [
+			{
+				"id": "v1814-chat",
+				"title": "Exported on v1.8.14",
+				"timestamp": 1795608000000,
+				"content": [
+					{
+						"role": "user",
+						"parts": [
+							{
+								"text": "Hello"
+							}
+						]
+					},
+					{
+						"role": "model",
+						"personalityid": "v1814-persona",
+						"parts": [
+							{
+								"text": "Hi there"
+							}
+						]
+					}
+				]
+			}
+		],
+		"personas": [
+			{
+				"id": "v1814-persona",
+				"name": "Persona",
+				"image": "",
+				"description": "",
+				"prompt": "Be helpful.",
+				"aggressiveness": 0,
+				"sensuality": 0,
+				"independence": 0,
+				"nsfw": false,
+				"internetEnabled": false,
+				"roleplayEnabled": false,
+				"toneExamples": [],
+				"tags": [],
+				"category": "character",
+				"dateAdded": 1795608000000,
+				"lastModified": 1795608000000
+			}
+		],
+		"settings": {
+			"model": "gemini-2.5-flash",
+			"enableThinking": "true",
+			"reasoningEffort": "high",
+			"pinnedChatIds": "[\"v1814-chat\"]",
+			"pinnedPersonaIds": "[\"v1814-persona\"]",
+			"delimiterPreset": "novel"
+		}
+	},
+	"integrity": {
+		"algorithm": "SHA-256",
+		"digest": "43d4d9015e16c072ce2a0d1fe6cc4a72babbe285510a0cf9f7c9defd92af0cb4"
+	}
+}

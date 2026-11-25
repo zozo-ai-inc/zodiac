@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SETTINGS_STORAGE_KEYS } from "../../../src/constants/SettingsStorageKeys";
+import { TAKEOUT_SETTING_KEYS } from "../../../src/constants/Takeout";
+import type { TakeoutDocument } from "../../../src/types/Takeout";
 import { createTakeoutDocument } from "../../../src/utils/takeout";
 import { makeChat } from "../../fixtures/chats";
 import { makePersona } from "../../fixtures/personas";
@@ -57,6 +59,20 @@ vi.mock("../../../src/services/Personality.service", () => personalityServiceMoc
 vi.mock("../../../src/services/Lora.service", () => loraServiceMock);
 vi.mock("../../../src/services/Settings.service", () => settingsServiceMock);
 vi.mock("../../../src/events", () => eventMock);
+
+// Frozen exports from released versions, keyed by path. Never regenerate or edit them: each one is
+// the exact shape an older version wrote, and every later version has to keep importing it.
+const FROZEN_TAKEOUTS = import.meta.glob<string>("../../fixtures/takeout/*.json", {
+	query: "?raw",
+	import: "default",
+	eager: true
+});
+
+function frozenTakeout(name: string): string {
+	const text = FROZEN_TAKEOUTS[`../../fixtures/takeout/${name}`];
+	if (!text) throw new Error(`Missing frozen takeout fixture ${name}`);
+	return text;
+}
 
 describe("Takeout service source and destination routing", () => {
 	beforeEach(() => {
@@ -346,5 +362,52 @@ describe("Takeout service source and destination routing", () => {
 			partial: true
 		});
 		expect(result.errors.join(" ")).toMatch(/depends on a persona that failed/i);
+	});
+
+	it("restores a v1.8.12 takeout whose settings include the retired thinkingBudget key", async () => {
+		const { inspectTakeoutImport, commitTakeoutImport } = await import("../../../src/services/Takeout.service");
+		const inspection = await inspectTakeoutImport(
+			[
+				new File(
+					[frozenTakeout("v1.8.12-local-with-thinking-budget.json")],
+					"zozo-chat-takeout-2026-09-09.json",
+					{ type: "application/json" }
+				)
+			],
+			"local"
+		);
+		const result = await commitTakeoutImport(inspection, "overwrite");
+
+		expect(result).toMatchObject({
+			imported: { chats: 1, personas: 1, settings: 2 },
+			failed: { chats: 0, personas: 0, settings: 0 },
+			partial: false
+		});
+		expect(dbMock.chats.bulkPut).toHaveBeenCalledWith([expect.objectContaining({ id: "v1812-chat" })]);
+		expect(dbMock.personalities.bulkPut).toHaveBeenCalledWith([expect.objectContaining({ id: "v1812-persona" })]);
+		expect(localStorage.getItem(SETTINGS_STORAGE_KEYS.MODEL)).toBe("gemini-2.5-flash");
+		expect(localStorage.getItem(SETTINGS_STORAGE_KEYS.ENABLE_THINKING)).toBe("true");
+		expect(localStorage.getItem("thinkingBudget")).toBeNull();
+	});
+
+	it.each(Object.keys(FROZEN_TAKEOUTS))("still restores the frozen export %s", async (path) => {
+		const text = FROZEN_TAKEOUTS[path];
+		const manifest = (JSON.parse(text) as TakeoutDocument).manifest;
+		const portableKeys = new Set<string>(Object.values(TAKEOUT_SETTING_KEYS).flat());
+
+		const { inspectTakeoutImport, commitTakeoutImport } = await import("../../../src/services/Takeout.service");
+		const inspection = await inspectTakeoutImport(
+			[new File([text], "takeout.json", { type: "application/json" })],
+			"local"
+		);
+		const result = await commitTakeoutImport(inspection, "overwrite");
+
+		expect(result).toMatchObject({
+			imported: { chats: manifest.counts.chats, personas: manifest.counts.personas },
+			failed: { chats: 0, personas: 0, settings: 0 },
+			partial: false
+		});
+		const storedKeys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index)!);
+		expect(storedKeys.filter((key) => !portableKeys.has(key))).toEqual([]);
 	});
 });
