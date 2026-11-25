@@ -20,6 +20,8 @@ export const DEFAULT_TAKEOUT_CATEGORIES: readonly TakeoutCategory[] = TAKEOUT_CA
 	(category) => category !== "apiKeys"
 );
 
+// Settings a takeout may carry, by category. Older exports can still hold keys removed from this
+// list; import drops them, so add a fixture to tests/fixtures/takeout/ when removing or renaming one.
 export const TAKEOUT_SETTING_KEYS: Readonly<
 	Record<Exclude<TakeoutCategory, "chats" | "media" | "personas">, readonly string[]>
 > = {

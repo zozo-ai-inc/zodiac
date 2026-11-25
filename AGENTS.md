@@ -75,6 +75,13 @@ Writing tests:
 - Make the first failing assertion describe the user-visible symptom, and name tests after their primary failure reason.
 - Assert persisted state, in-memory state, and coarse DOM outcomes. Put selector or subtree expectations in a dedicated rendering test rather than coupling CRUD tests to them.
 
+Backwards compatibility:
+
+- Anything persisted or exported and read back by a later version (takeout files, legacy chat and persona imports, Dexie schemas, synced settings) must keep working with data written by every released version.
+- Keep frozen samples of that data, written by the real code of the version that produced them, under `tests/fixtures/<feature>/`, named after that version (for example `tests/fixtures/takeout/v1.8.12-local-with-thinking-budget.json`). Never regenerate or edit one; add a new file instead. List each fixture folder in `.prettierignore` so formatting never rewrites them.
+- When a change removes, renames or reshapes a persisted field, setting key or category, first add a sample from the current release, then make the change and keep that sample passing.
+- Removed fields and settings are ignored on read, renamed ones are migrated, and a validation check rejects only inconsistent or unsafe data, never data the current version no longer uses.
+
 Cloud sync:
 
 - Feature behavior may depend on Supabase-backed state. When adding a test, assess whether the cloud-sync path differs enough to cover, and ask the user if that is unclear.

@@ -1,3 +1,16 @@
+/**
+ * Takeout files are user backups and must keep restoring after the app changes.
+ *
+ * A file exported by any released version has to import on every later version:
+ * - Removing or renaming a setting, field or category must not reject older files. Unknown
+ *   settings are dropped on import, and renamed ones need an explicit migration here.
+ * - Validation rejects tampered or inconsistent files, not data the current version lacks.
+ * - Breaking the document shape means a new TAKEOUT_SCHEMA_VERSION plus an upgrade path for
+ *   older versions, never a stricter check on the existing one.
+ *
+ * Frozen exports from older versions live in tests/fixtures/takeout/ and must keep importing.
+ * Add one there whenever the format or its settings change.
+ */
 import { v4 as uuidv4 } from "uuid";
 import { APP_VERSION } from "../constants/App";
 import {
@@ -332,14 +345,26 @@ function validateTakeoutPayload(
 		throw new Error("Takeout settings are invalid.");
 	}
 	for (const [key, value] of Object.entries(payload.settings || {})) {
+		if (typeof value !== "string") throw new Error(`Takeout setting “${key}” must be a string.`);
 		const category = takeoutCategoryForSetting(key);
-		if (!category || !categories.includes(category)) {
+		// Unknown keys are settings this version no longer has; withoutUnknownSettings drops them.
+		if (category && !categories.includes(category)) {
 			throw new Error(`Takeout setting “${key}” is not allowed by its manifest categories.`);
 		}
-		if (typeof value !== "string") throw new Error(`Takeout setting “${key}” must be a string.`);
 	}
 }
 
+function withoutUnknownSettings(payload: TakeoutPayload): TakeoutPayload {
+	if (!payload.settings) return payload;
+	const settings = Object.fromEntries(
+		Object.entries(payload.settings).filter(([key]) => takeoutCategoryForSetting(key) !== undefined)
+	);
+	const { settings: _settings, ...rest } = payload;
+	return Object.keys(settings).length > 0 ? { ...rest, settings } : rest;
+}
+
+// Settings counts are not compared: older exports count settings this version no longer has,
+// and nothing on import reads them. The integrity digest already covers corruption.
 function validateManifestCounts(document: TakeoutDocument): void {
 	const chats = document.payload.chats || [];
 	const personas = document.payload.personas || [];
@@ -349,13 +374,7 @@ function validateManifestCounts(document: TakeoutDocument): void {
 		messages: chats.reduce((total, chat) => total + chat.content.length, 0),
 		personas: personas.length,
 		attachments: media.attachments,
-		generatedImages: media.generatedImages,
-		settings: countSettingsByCategory(document.payload.settings || {}, "settings"),
-		themes: countSettingsByCategory(document.payload.settings || {}, "themes"),
-		loras: countSettingsByCategory(document.payload.settings || {}, "loras"),
-		pins: countSettingsByCategory(document.payload.settings || {}, "pins"),
-		roleplay: countSettingsByCategory(document.payload.settings || {}, "roleplay"),
-		apiKeys: countSettingsByCategory(document.payload.settings || {}, "apiKeys")
+		generatedImages: media.generatedImages
 	};
 	for (const [key, count] of Object.entries(actual)) {
 		if (document.manifest.counts[key as keyof typeof actual] !== count) {
@@ -409,7 +428,7 @@ export async function parseImportText(text: string, _fileName = "takeout.json"):
 		return {
 			kind: "unified",
 			categories: [...document.manifest.categories],
-			payload: document.payload,
+			payload: withoutUnknownSettings(document.payload),
 			manifest: document.manifest
 		};
 	}
