@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { SETTINGS_STORAGE_KEYS } from "../../src/constants/SettingsStorageKeys";
 import type { DbChat } from "../../src/types/Chat";
 import type { DbPersonality } from "../../src/types/Personality";
-import type { TakeoutDocument } from "../../src/types/Takeout";
+import { TAKEOUT_SETTING_KEYS } from "../../src/constants/Takeout";
 import {
 	TAKEOUT_FORMAT,
 	TAKEOUT_SCHEMA_VERSION,
@@ -15,16 +15,9 @@ import {
 import { makeChat } from "../fixtures/chats";
 import { makeUserMessage } from "../fixtures/messages";
 import { makePersona } from "../fixtures/personas";
+import { resign } from "../helpers/takeout";
 
 const EXPORTED_AT = "2026-09-04T12:00:00.000Z";
-
-async function resign(takeout: TakeoutDocument): Promise<void> {
-	const { integrity: _oldIntegrity, ...content } = takeout;
-	const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(content)));
-	takeout.integrity.digest = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join(
-		""
-	);
-}
 
 function takeoutArgs(overrides: Record<string, unknown> = {}) {
 	return {
@@ -195,14 +188,30 @@ describe("Zozo Chat takeout format", () => {
 		await expect(parseImportText(JSON.stringify(takeout), "takeout.json")).rejects.toThrow(/integrity/i);
 	});
 
-	it("rejects a correctly signed document that contains an unknown or out-of-category setting", async () => {
+	// Unknown keys are dropped rather than rejected: exports from older versions carry settings this
+	// version no longer has, and rejecting them blocked whole restores.
+	it("drops a setting this version does not know instead of importing it", async () => {
 		const takeout = await createTakeoutDocument(
 			takeoutArgs({ categories: ["settings"], settings: { [SETTINGS_STORAGE_KEYS.MODEL]: "openai/gpt-5.4" } })
 		);
 		takeout.payload.settings!["sb-project-auth-token"] = "must-never-import";
 		await resign(takeout);
 
-		await expect(parseImportText(JSON.stringify(takeout), "takeout.json")).rejects.toThrow(/setting/i);
+		const parsed = await parseImportText(JSON.stringify(takeout), "takeout.json");
+
+		expect(parsed.payload.settings).toEqual({ [SETTINGS_STORAGE_KEYS.MODEL]: "openai/gpt-5.4" });
+	});
+
+	it("rejects a correctly signed document that contains a setting outside its declared categories", async () => {
+		const takeout = await createTakeoutDocument(
+			takeoutArgs({ categories: ["settings"], settings: { [SETTINGS_STORAGE_KEYS.MODEL]: "openai/gpt-5.4" } })
+		);
+		takeout.payload.settings![SETTINGS_STORAGE_KEYS.API_KEY] = "must-never-import";
+		await resign(takeout);
+
+		await expect(parseImportText(JSON.stringify(takeout), "takeout.json")).rejects.toThrow(
+			/not allowed by its manifest categories/
+		);
 	});
 
 	it("rejects a signed document whose payload contains a category omitted by its manifest", async () => {
@@ -550,5 +559,48 @@ describe("takeout import planning", () => {
 
 		expect(plan.chats[0].content[0].personalityid).toBe("missing-persona");
 		expect(plan.warnings.join(" ")).toMatch(/missing-persona/);
+	});
+});
+
+describe("Takeout setting keys", () => {
+	// Tripwire for backwards compatibility. Exports made before a change still carry the old keys.
+	// Before updating this list after removing or renaming a key, add a frozen export from the
+	// current release to tests/fixtures/takeout/ and make sure it still restores. A renamed key also
+	// needs a migration on import, or its value is silently dropped.
+	it("lists exactly the settings older exports were written against", () => {
+		expect(TAKEOUT_SETTING_KEYS).toEqual({
+			settings: [
+				"maxTokens",
+				"TEMPERATURE",
+				"model",
+				"imageModel",
+				"imageEditModel",
+				"autoscroll",
+				"streamResponses",
+				"enableThinking",
+				"reasoningEffort",
+				"rpgGroupChatsProgressAutomatically",
+				"allowPersonaPinging",
+				"dynamicGroupChatPingOnly",
+				"fullWidthChat",
+				"uiScale",
+				"preferPremiumEndpoint",
+				"preferPremiumImageEndpoint"
+			],
+			themes: ["theme-settings"],
+			loras: ["loras"],
+			pins: ["pinnedChatIds", "pinnedPersonaIds", "pinnedModelIds"],
+			roleplay: [
+				"delimiterPreset",
+				"customDialogueInstruction",
+				"customActionInstruction",
+				"customThoughtInstruction",
+				"roleplaySuggestionModel",
+				"roleplayFavoriteActions",
+				"roleplayCustomCategories",
+				"roleplayCustomActions"
+			],
+			apiKeys: ["API_KEY", "OPENROUTER_API_KEY"]
+		});
 	});
 });

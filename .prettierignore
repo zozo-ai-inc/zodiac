@@ -5,3 +5,6 @@ node_modules/
 playwright-report/
 test-results/
 TASK_PROGRESS.md
+
+# Frozen exports from released versions stay byte-for-byte as the exporter wrote them.
+tests/fixtures/takeout/

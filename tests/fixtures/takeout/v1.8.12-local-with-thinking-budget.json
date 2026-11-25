@@ -1,0 +1,94 @@
+{
+	"format": "zozo-chat-takeout",
+	"schemaVersion": 1,
+	"appVersion": "1.8.12",
+	"exportedAt": "2026-09-09T12:00:00.000Z",
+	"source": "local",
+	"manifest": {
+		"categories": [
+			"chats",
+			"personas",
+			"settings"
+		],
+		"omittedCategories": [
+			"media",
+			"themes",
+			"loras",
+			"pins",
+			"roleplay",
+			"apiKeys"
+		],
+		"counts": {
+			"chats": 1,
+			"messages": 2,
+			"personas": 1,
+			"attachments": 0,
+			"generatedImages": 0,
+			"settings": 3,
+			"themes": 0,
+			"loras": 0,
+			"pins": 0,
+			"roleplay": 0,
+			"apiKeys": 0
+		},
+		"mediaBytes": 0,
+		"apiKeysIncluded": false
+	},
+	"payload": {
+		"chats": [
+			{
+				"id": "v1812-chat",
+				"title": "Exported before v1.8.13",
+				"timestamp": 1757419200000,
+				"content": [
+					{
+						"role": "user",
+						"parts": [
+							{
+								"text": "Hello"
+							}
+						]
+					},
+					{
+						"role": "model",
+						"personalityid": "v1812-persona",
+						"parts": [
+							{
+								"text": "Hi there"
+							}
+						]
+					}
+				]
+			}
+		],
+		"personas": [
+			{
+				"id": "v1812-persona",
+				"name": "Old Persona",
+				"image": "",
+				"description": "",
+				"prompt": "Be helpful.",
+				"aggressiveness": 0,
+				"sensuality": 0,
+				"independence": 0,
+				"nsfw": false,
+				"internetEnabled": false,
+				"roleplayEnabled": false,
+				"toneExamples": [],
+				"tags": [],
+				"category": "character",
+				"dateAdded": 1757419200000,
+				"lastModified": 1757419200000
+			}
+		],
+		"settings": {
+			"model": "gemini-2.5-flash",
+			"enableThinking": "true",
+			"thinkingBudget": "500"
+		}
+	},
+	"integrity": {
+		"algorithm": "SHA-256",
+		"digest": "060688a8980c5efed7f51ad20b1da907db5d47987ccfc5dbb080d26d5164d0cf"
+	}
+}
